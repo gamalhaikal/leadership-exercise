@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Situational Leadership Matrix Exercise | تمرين مصفوفة القيادة الموقفية</title>
+<style>
+:root{
+  --ink:#1b2430;--muted:#5d6b7c;--line:#d9e0e8;--bg:#f4f6f9;--card:#fff;--brand:#1f3a5f;--accent:#f5c400;
+  --d1:#bf9000;--d1b:#f6ecc8;--d2:#4472c4;--d2b:#dbe5f6;--d3:#2e5597;--d3b:#d3ddf0;--d4:#00b050;--d4b:#d2f1de;
+  --ok:#1f9d55;--bad:#d64545;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:"Segoe UI",Tahoma,"Noto Naskh Arabic","Noto Sans Arabic",Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+header{background:var(--brand);color:#fff;padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:4px solid var(--accent)}
+header h1{font-size:18px;margin:0;font-weight:700}
+.lang{background:transparent;border:1px solid rgba(255,255,255,.6);color:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;font:inherit;font-size:14px}
+.lang:hover{background:rgba(255,255,255,.15)}
+main{max-width:1180px;margin:0 auto;padding:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+.hidden{display:none!important}
+h2{margin:0 0 8px;font-size:22px}
+p.lead{color:var(--muted);margin:0 0 16px}
+label{display:block;font-weight:600;margin-bottom:4px}
+input[type=text],textarea{width:100%;font:inherit;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+input[type=text]:focus,textarea:focus{outline:2px solid var(--brand);border-color:transparent}
+.btn{background:var(--brand);color:#fff;border:0;border-radius:10px;padding:11px 22px;font:inherit;font-weight:700;cursor:pointer}
+.btn:hover{filter:brightness(1.12)}
+.btn:disabled{background:#b8c1cc;cursor:not-allowed;filter:none}
+.btn.sec{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+.welcome{max-width:620px;margin:30px auto}
+.welcome .row{margin-bottom:14px}
+.steps{margin:0 0 16px;padding-inline-start:20px;color:var(--ink)}
+.steps li{margin-bottom:4px}
+.err{color:var(--bad);font-size:14px;margin-top:6px;min-height:20px}
+
+/* exercise layout */
+.cases{display:flex;flex-direction:column;gap:14px;margin-top:16px}
+.case{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.case h3{margin:0 0 6px;font-size:17px;color:var(--brand)}
+.case p{margin:0 0 12px;font-size:15px}
+.case textarea{min-height:56px;font-size:14px;resize:vertical}
+.case .q{font-size:13px;color:var(--muted);margin:10px 0 4px}
+.qtxt{font-weight:700;font-size:14px;margin-bottom:8px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:620px){.opts{grid-template-columns:1fr}}
+.opt{display:flex;align-items:center;gap:10px;border:2px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;font-weight:600;font-size:15px;margin:0;background:#fff}
+.opt:hover{border-color:#9db0c8}
+.opt input{width:18px;height:18px;accent-color:var(--brand);margin:0;flex:none}
+.opt.on{border-color:var(--brand);background:#eaf0f8}
+.opt .dd{width:16px;height:16px;border-radius:50%;color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.opt .dd.D1{background:var(--d1)}.opt .dd.D2{background:var(--d2)}.opt .dd.D3{background:var(--d3)}.opt .dd.D4{background:var(--d4)}
+.refgrid{display:grid;grid-template-columns:1fr;gap:18px;align-items:start;margin-top:10px}
+@media(max-width:820px){.refgrid{grid-template-columns:1fr}}
+.matrix-wrap{direction:ltr}
+.axis-row{display:flex;gap:8px}
+.yaxis{writing-mode:vertical-rl;transform:rotate(180deg);text-align:center;font-size:12px;font-weight:700;color:var(--muted);display:flex;align-items:center;justify-content:center}
+.mx{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:8px}
+.slot{border-radius:12px;padding:12px;min-height:110px}
+.slot[data-slot=D3]{background:var(--d3b)}.slot[data-slot=D2]{background:var(--d2b)}
+.slot[data-slot=D4]{background:var(--d4b)}.slot[data-slot=D1]{background:var(--d1b)}
+.slot .tag{display:flex;align-items:center;gap:6px;font-weight:800;font-size:14px}
+.slot .dot{width:26px;height:26px;border-radius:50%;color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center;flex:none}
+.slot[data-slot=D3] .dot{background:var(--d3)}.slot[data-slot=D2] .dot{background:var(--d2)}
+.slot[data-slot=D4] .dot{background:var(--d4)}.slot[data-slot=D1] .dot{background:var(--d1)}
+.slot .desc{font-size:13px;font-weight:700;color:#fff;background:#c55a11;border-radius:6px;padding:6px 8px;margin-top:8px;text-align:center}.slot .alt{font-size:12px;color:#4a5563;font-weight:600}.slot .tag{flex-direction:column;align-items:flex-start;gap:0!important}.slot .nm{font-size:16px}
+.xaxis{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--muted);margin-top:6px;padding:0 4px}
+.lv{display:flex;flex-direction:column;gap:8px}
+.lv div.r{border-radius:10px;padding:9px 12px;display:flex;gap:10px;align-items:center;font-size:14px}
+.lv .r.D4{background:var(--d4b)}.lv .r.D3{background:var(--d3b)}.lv .r.D2{background:var(--d2b)}.lv .r.D1{background:var(--d1b)}
+.lv .r b{display:block;font-size:15px}
+.lv .r .dd{width:30px;height:30px;border-radius:50%;color:#fff;font-size:12px;display:inline-flex;align-items:center;justify-content:center;flex:none;font-weight:800}
+.lv .r.D1 .dd{background:var(--d1)}.lv .r.D2 .dd{background:var(--d2)}.lv .r.D3 .dd{background:#c9a800}.lv .r.D4 .dd{background:var(--d4)}
+.actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:16px;flex-wrap:wrap}
+.progress{font-size:14px;color:var(--muted)}
+.subh{font-weight:800;font-size:15px;margin:0 0 6px;color:var(--brand)}
+
+/* modal */
+.modal{position:fixed;inset:0;background:rgba(15,23,35,.55);display:flex;align-items:center;justify-content:center;z-index:1000;padding:16px}
+.modal .box{background:#fff;border-radius:14px;padding:22px;max-width:440px;width:100%}
+.modal .box h3{margin:0 0 8px}
+.modal .row{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
+
+/* report */
+.score{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:14px}
+.ring{width:96px;height:96px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:800;color:#fff;flex:none}
+.rep{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fff;border-inline-start-width:6px}
+.rep.ok{border-inline-start-color:var(--ok)}.rep.no{border-inline-start-color:var(--bad)}
+.rep h4{margin:0 0 6px;font-size:16px}
+.pill{display:inline-block;border-radius:999px;padding:2px 12px;font-size:13px;font-weight:700;margin-inline-end:6px;margin-bottom:4px;color:#fff}
+.pill.D1{background:var(--d1)}.pill.D2{background:var(--d2)}.pill.D3{background:var(--d3)}.pill.D4{background:var(--d4)}
+.rep .why{font-size:14px;color:#2d3a4a;margin-top:6px}
+.rep .mine{font-size:13px;color:var(--muted);margin-top:6px;border-top:1px dashed var(--line);padding-top:6px}
+.status{border-radius:10px;padding:10px 14px;font-size:14px;margin:12px 0;background:#eef2f7}
+.status.good{background:#dff5e7;color:#14532d}.status.warn{background:#fff3d6;color:#6b4a00}
+.status .b{margin-top:8px;display:flex;gap:8px;flex-wrap:wrap}
+.small{font-size:13px}
+footer{text-align:center;color:var(--muted);font-size:12px;padding:20px}
+</style>
+</head>
+<body>
+<header>
+  <h1 id="hTitle"></h1>
+  <button class="lang" id="langBtn" type="button"></button>
+</header>
+<main>
+
+<!-- WELCOME -->
+<section id="vWelcome" class="card welcome">
+  <h2 id="wTitle"></h2>
+  <p class="lead" id="wLead"></p>
+  <ol class="steps" id="wSteps"></ol>
+  <div class="row"><label for="co" id="lCo"></label><input type="text" id="co" autocomplete="organization"></div>
+  <div class="err" id="wErr"></div>
+  <button class="btn" id="startBtn" type="button"></button>
+</section>
+
+<!-- EXERCISE -->
+<section id="vEx" class="hidden">
+  <div class="card" style="margin-bottom:16px">
+    <h2 id="refTitle"></h2>
+    <p class="lead" style="margin:0" id="refIntro"></p>
+    <div class="refgrid">
+      <div>
+        <div class="subh" id="refStyleH"></div>
+        <div class="matrix-wrap">
+          <div class="axis-row">
+            <div class="yaxis" id="yAxis"></div>
+            <div class="mx" id="mx"></div>
+          </div>
+          <div class="xaxis"><span id="xLow"></span><span id="xAx"></span><span id="xHigh"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h2 id="exTitle"></h2>
+    <p class="lead" style="margin:0" id="exIntro"></p>
+  </div>
+  <div class="cases" id="cases"></div>
+  <div class="actions">
+    <span class="progress" id="prog"></span>
+    <button class="btn" id="submitBtn" type="button" disabled></button>
+  </div>
+</section>
+
+<!-- REPORT -->
+<section id="vRep" class="hidden">
+  <div class="card" style="margin-bottom:14px">
+    <h2 id="rTitle"></h2>
+    <div class="score"><div class="ring" id="ring"></div><div><div style="font-size:18px;font-weight:700" id="rWho"></div><div id="rLevel" style="color:var(--muted)"></div></div></div>
+    <div class="status" id="sendStatus"></div>
+  </div>
+  <div id="repList"></div>
+  <div class="card small" id="rNote"></div>
+</section>
+</main>
+<footer id="foot"></footer>
+
+<script>
+(function(){
+"use strict";
+var TRAINER_EMAIL="gamal.haikal@gmail.com";
+var LS_KEY="slm_exercise_v1";
+
+/* ---------- Data ---------- */
+var CASES=["aziz","sherif","abbas","fawzia"];
+var CORRECT={aziz:"D1",sherif:"D3",abbas:"D4",fawzia:"D2"};
+var STYLE={D1:{ar:"السلوك الآمر",en:"Directive"},D2:{ar:"التوجيه",en:"Coaching"},D3:{ar:"الدعم",en:"Supportive"},D4:{ar:"التفويض",en:"Delegation"}};
+var STYLE_ALT={D1:{ar:"Directive",en:"السلوك الآمر"},D2:{ar:"Coaching",en:"التوجيه"},D3:{ar:"Supportive",en:"الدعم"},D4:{ar:"Delegation",en:"التفويض"}};
+var LEVEL={D1:{ar:"مهارة منخفضة، التزام منخفض",en:"Low skill, low commitment"},D2:{ar:"مهارة متوسطة، التزام متوسط",en:"Medium skill, medium commitment"},D3:{ar:"مهارة عالية، التزام منخفض",en:"High skill, low commitment"},D4:{ar:"مهارة ممتازة، التزام ممتاز",en:"Excellent skill, excellent commitment"}};
+
+var T={
+ ar:{
+  dir:"rtl",lang:"English",
+  title:"تمرين مصفوفة القيادة الموقفية",
+  wTitle:"أهلاً بك في التمرين",
+  wLead:"حلقة نقاشية: المهندس مرسي الزناتي، رئيس قسم سلاسل الإمداد، يواجه تراجعًا في أداء أربعة من فريقه.",
+  wSteps:["راجع مصفوفة القيادة الموقفية في أول الصفحة.","اقرأ الحالات الأربع، واختر لكل موظف أسلوب القيادة الأنسب له.","اكتب سبب اختيارك (اختياري)، ثم أرسل إجابتك.","بعد الإرسال ينتهي التمرين وتظهر لك النتيجة والإجابة الصحيحة."],
+  lCo:"اسم الشركة / الجهة (إجباري)",
+  nameErr:"من فضلك اكتب اسم الشركة للمتابعة.",start:"ابدأ التمرين",
+  exTitle:"الحالات الأربع",
+  exIntro:"من خلال دراسة تقارير الأداء، وجد المهندس مرسي أربعة موظفين بأداء أقل من المتوقع. حدّد الأسلوب المناسب لتطوير أداء كل منهم وفق مصفوفة القيادة الموقفية.",
+  q:"لماذا اخترت هذا الأسلوب؟ (اختياري)",
+  mcq:function(n){return "ما أسلوب القيادة الأنسب مع "+n+"؟"},
+  refTitle:"مصفوفة القيادة الموقفية",refIntro:"استخدمها كمرجع عند الإجابة: يتحدد أسلوب القائد حسب مهارة الموظف والتزامه.",refStyleH:"السلوك الداعم (رأسيًا) × السلوك الآمر (أفقيًا)",
+  yAx:"السلوك الداعم",xAx:"السلوك الآمر",low:"منخفض",high:"مرتفع",
+  prog:function(n){return "تمت الإجابة عن "+n+" من 4"},
+  submit:"إرسال الإجابة",
+  confirmT:"إرسال الإجابة نهائيًا؟",confirmP:"بعد الإرسال ينتهي التمرين ولا يمكن تعديل إجابتك.",cancel:"رجوع",ok:"نعم، أرسل",
+  rTitle:"نتيجتك",rWho:function(n){return n},
+  levels:["يحتاج إلى مراجعة المفاهيم","بداية جيدة","جيد","جيد جدًا","ممتاز! إجابات صحيحة بالكامل"],
+  yourAns:"إجابتك",correct:"الإجابة الصحيحة",none:"لم تُحدَّد",myWhy:"تبريرك: ",
+  sending:"جاري إرسال إجابتك إلى المدرّب…",sent:"تم إرسال إجابتك إلى المدرّب بنجاح.",
+  failed:"تعذّر الإرسال تلقائيًا (قد يكون الاتصال بالإنترنت غير متاح). يمكنك إعادة المحاولة أو نسخ النتيجة وإرسالها للمدرّب.",
+  retry:"إعادة المحاولة",copy:"نسخ النتيجة",copied:"تم النسخ",mail:"إرسال بالبريد",
+  note:"المرجع: مصفوفة القيادة الموقفية — السلوك الآمر، التوجيه، الدعم، التفويض. يتحدد الأسلوب حسب مهارة الموظف والتزامه.",
+  foot:"Lancaster Business School",
+  cases:{
+   aziz:{n:"عزيز الطاير",t:"عزيز الطاير خريج جديد، انضم للفريق بعد تخرجه بشهرين. لم يكن الأستاذ مرسي موافقًا تمامًا على تعيينه، خصوصًا بعد تأخره مرتين عن مقابلته الشخصية، وكان تبريره ازدحام الطريق. لكن ضغط العمل وعدم وجود بديل مناسب كانا سبب تعيينه."},
+   sherif:{n:"شريف حبطوطي",t:"شريف حبطوطي كان أحد أركان الفريق، ويطلق عليه الأستاذ مرسي «الدينامو الضاحك»؛ فقد كان يملأ المكان بالضحك، ولم يمنعه ذلك من تنفيذ عمله بمنتهى الدقة والمهارة. مؤخرًا تراجع أداؤه وبدأ يتأخر في مهامه، ولعل ذلك بسبب الإحباط الذي أصابه؛ فقد وعدته الإدارة بدورة بالخارج لمدة 3 أشهر، لكن ظروف كورونا حالت دون سفره."},
+   abbas:{n:"عباس الضو",t:"الأستاذ عباس الضو لديه خبرة تزيد على 12 عامًا في الشركة، وأكثر من 8 سنوات في إدارة سلاسل الإمداد. وفاؤه لصاحب الشركة كبير، فقد وقف معه في مواقف كثيرة، خاصة عندما تعرّضت ابنته فايزة لحادث طريق. وهو أكثر أفراد الفريق خبرة بعد المهندس مرسي، لكنه بدأ يشعر ببعض القلق، إذ يرى أن الوقت قد حان للانتقال من موقعه الحالي إلى موقع إداري."},
+   fawzia:{n:"فوزية فراويلة",t:"الأستاذة فوزية فراويلة تعمل منذ 4 سنوات في القسم، وهذه وظيفتها الأولى بعد التخرج. تقارير أدائها متوسطة دائمًا رغم علاقتها الجيدة بزملائها، وتسود بين الجميع فكرة أنه لا يمكن الاعتماد عليها. لكن المهندس مرسي يرى أن لديها إمكانات كبيرة وليس لديها الحافز لاستخدامها."}
+  },
+  why:{
+   aziz:"خريج جديد بلا خبرة عملية (مهارة منخفضة)، والتزامه ضعيف ظهر في تأخره مرتين عن المقابلة (التزام منخفض). الأنسب «السلوك الآمر»: تعليمات واضحة، وقواعد انضباط محددة، ومتابعة لصيقة.",
+   sherif:"مهارته عالية ويثبتها أداؤه السابق بدقة ومهارة، لكن التزامه انخفض بسبب إحباط إلغاء الدورة (مهارة عالية، التزام منخفض). الأنسب «الدعم»: الإنصات له وتحفيزه وإيجاد بديل للدورة، لا مزيدًا من الأوامر.",
+   abbas:"خبرة تزيد على 8 سنوات في سلاسل الإمداد وولاء كبير (مهارة ممتازة، التزام ممتاز). الأنسب «التفويض»: إسناد مسؤوليات أكبر له وتمكينه، مع الحوار حول طموحه للانتقال إلى منصب إداري.",
+   fawzia:"أداؤها متوسط باستمرار رغم إمكاناتها، وحافزها محدود (مهارة متوسطة، التزام متوسط). الأنسب «التوجيه»: تحديد أهداف واضحة ومتابعتها مع تدريبها وتحفيزها لاستثمار إمكاناتها."
+  }
+ },
+ en:{
+  dir:"ltr",lang:"العربية",
+  title:"Situational Leadership Matrix Exercise",
+  wTitle:"Welcome to the exercise",
+  wLead:"Discussion case: Eng. Morsi El-Zanaty, Head of Supply Chain, faces declining performance from four members of his team.",
+  wSteps:["Review the Situational Leadership matrix at the top of the page.","Read the four cases and choose the most suitable leadership style for each employee.","Write why you chose it (optional), then submit your answer.","After you submit, the exercise ends and you see your result with the correct answers."],
+  lCo:"Company / organisation (required)",
+  nameErr:"Please enter your company name to continue.",start:"Start the exercise",
+  exTitle:"The four cases",
+  exIntro:"Reviewing performance reports, Eng. Morsi found four employees performing below expectations. Decide the right style to develop each one using the Situational Leadership matrix.",
+  q:"Why did you choose this style? (optional)",
+  mcq:function(n){return "Which leadership style fits "+n+" best?"},
+  refTitle:"Situational Leadership matrix",refIntro:"Use it as a reference: the leader's style depends on the employee's skill and commitment.",refStyleH:"Supportive behaviour (vertical) × Directive behaviour (horizontal)",
+  yAx:"SUPPORTIVE BEHAVIOUR",xAx:"DIRECTIVE BEHAVIOUR",low:"Low",high:"High",
+  prog:function(n){return n+" of 4 answered"},
+  submit:"Submit answer",
+  confirmT:"Submit your answer for good?",confirmP:"Once submitted the exercise ends and you cannot change your answer.",cancel:"Back",ok:"Yes, submit",
+  rTitle:"Your result",rWho:function(n){return n},
+  levels:["Needs a concept review","A good start","Good","Very good","Excellent! All correct"],
+  yourAns:"Your answer",correct:"Correct answer",none:"Not placed",myWhy:"Your reasoning: ",
+  sending:"Sending your answer to the trainer…",sent:"Your answer was sent to the trainer successfully.",
+  failed:"Automatic sending failed (you may be offline). You can retry, or copy the result and send it to the trainer.",
+  retry:"Retry",copy:"Copy result",copied:"Copied",mail:"Send by email",
+  note:"Reference: Situational Leadership matrix — Directive, Coaching, Supportive, Delegation. The style depends on the employee's skill and commitment.",
+  foot:"Lancaster Business School",
+  cases:{
+   aziz:{n:"Aziz El-Tayer",t:"Aziz El-Tayer is a fresh graduate who joined the team two months after graduating. Mr Morsi was not fully convinced about hiring him, especially after Aziz was late twice to his job interview, blaming traffic. But work pressure and the lack of a suitable alternative led to his appointment."},
+   sherif:{n:"Sherif Habtouty",t:"Sherif Habtouty used to be a pillar of the team. Mr Morsi called him “the laughing dynamo”: he filled the place with laughter without ever compromising the accuracy and skill of his work. Lately his performance has dropped and he has started missing deadlines, probably because of the frustration he felt after management promised him a 3-month training course abroad that the COVID situation made impossible."},
+   abbas:{n:"Abbas El-Daw",t:"Mr Abbas El-Daw has over 12 years with the company and more than 8 years in supply chain management. He is deeply loyal to the company owner, who stood by him in many situations, notably when his daughter Fayza was injured in a road accident. He is the most experienced member of the team after Eng. Morsi, but he has begun to feel some concern, as he believes it is time to move from his current position into a managerial one."},
+   fawzia:{n:"Fawzia Frawila",t:"Ms Fawzia Frawila has worked in the department for 4 years; it is her first job after graduation. Her performance reports are consistently average despite her good relations with colleagues, and everyone feels she cannot be relied on. Eng. Morsi, however, believes she has great potential but lacks the motivation to use it."}
+  },
+  why:{
+   aziz:"A new graduate with no practical experience (low skill), and his low commitment showed in being late twice to the interview (low commitment). The right style is Directive: clear instructions, defined discipline rules and close follow-up.",
+   sherif:"His skill is high, proven by his previous accuracy and expertise, but his commitment dropped after the cancelled course (high skill, low commitment). The right style is Supportive: listen, motivate him and find an alternative to the course, rather than giving more orders.",
+   abbas:"Over 8 years in supply chain and strong loyalty (excellent skill, excellent commitment). The right style is Delegation: give him bigger responsibilities and empower him, while discussing his ambition to move into a managerial role.",
+   fawzia:"Consistently average despite her potential, with limited motivation (medium skill, medium commitment). The right style is Coaching: set clear goals and follow up, coach and motivate her to use her potential."
+  }
+ }
+};
+
+/* ---------- State ---------- */
+var lang="ar";
+var state={company:"",place:{},why:{},result:null};
+var $=function(id){return document.getElementById(id)};
+
+function lsGet(){try{return JSON.parse(localStorage.getItem(LS_KEY)||"null")}catch(e){return null}}
+function lsSet(v){try{localStorage.setItem(LS_KEY,JSON.stringify(v))}catch(e){}}
+function lsClear(){try{localStorage.removeItem(LS_KEY)}catch(e){}}
+function t(){return T[lang]}
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+
+/* ---------- View switching ---------- */
+function show(id){["vWelcome","vEx","vRep"].forEach(function(v){$(v).classList.toggle("hidden",v!==id)})}
+
+function applyLang(){
+  var L=t();
+  document.documentElement.lang=lang;document.documentElement.dir=L.dir;
+  $("hTitle").textContent=L.title;$("langBtn").textContent=L.lang;
+  $("wTitle").textContent=L.wTitle;$("wLead").textContent=L.wLead;
+  $("wSteps").innerHTML=L.wSteps.map(function(s){return "<li>"+esc(s)+"</li>"}).join("");
+  $("lCo").textContent=L.lCo;$("startBtn").textContent=L.start;
+  $("exTitle").textContent=L.exTitle;$("exIntro").textContent=L.exIntro;
+  $("refTitle").textContent=L.refTitle;$("refIntro").textContent=L.refIntro;$("refStyleH").textContent=L.refStyleH;
+  $("yAxis").textContent=L.yAx;$("xAx").textContent=L.xAx;$("xLow").textContent=L.low;$("xHigh").textContent=L.high;
+  $("submitBtn").textContent=L.submit;
+  $("foot").textContent=L.foot;
+  document.title=L.title;
+  renderRef();renderCases();
+  if(state.result)renderReport();
+}
+
+/* ---------- Reference matrix ---------- */
+var SLOT_ORDER=["D3","D2","D4","D1"]; // top-left, top-right, bottom-left, bottom-right (as on the slide)
+function renderRef(){
+  $("mx").innerHTML=SLOT_ORDER.map(function(s){
+    return '<div class="slot" data-slot="'+s+'"><div class="tag"><span class="nm" style="font-weight:800">'+esc(STYLE[s][lang])+'</span><span class="alt">'+esc(STYLE_ALT[s][lang])+'</span></div><div class="desc">'+esc(LEVEL[s][lang])+'</div></div>';
+  }).join("");
+}
+
+/* ---------- Cases (MCQ) ---------- */
+function renderCases(){
+  var L=t();
+  var keep={};CASES.forEach(function(c){var el=document.getElementById("why_"+c);if(el)keep[c]=el.value});
+  $("cases").innerHTML=CASES.map(function(c,i){
+    var cs=L.cases[c];
+    var opts=["D1","D2","D3","D4"].map(function(d){
+      var on=state.place[c]===d;
+      return '<label class="opt'+(on?" on":"")+'"><input type="radio" name="q_'+c+'" value="'+d+'"'+(on?" checked":"")+'><span class="dd '+d+'"></span><span>'+esc(STYLE[d][lang])+' <small style="color:var(--muted);font-weight:500">'+esc(STYLE_ALT[d][lang])+'</small></span></label>';
+    }).join("");
+    return '<article class="case"><h3>'+(i+1)+". "+esc(cs.n)+'</h3><p>'+esc(cs.t)+'</p>'+
+      '<div class="qtxt">'+esc(L.mcq(cs.n))+'</div><div class="opts" data-c="'+c+'">'+opts+'</div>'+
+      '<div class="q">'+esc(L.q)+'</div><textarea id="why_'+c+'" rows="2"></textarea></article>';
+  }).join("");
+  CASES.forEach(function(c){
+    var el=$("why_"+c);var v=keep[c]!==undefined?keep[c]:(state.why[c]||"");
+    el.value=v;el.addEventListener("input",function(){state.why[c]=el.value});
+  });
+  updateProg();
+}
+document.addEventListener("change",function(e){
+  var r=e.target;
+  if(r&&r.type==="radio"&&r.name&&r.name.indexOf("q_")===0){
+    state.place[r.name.slice(2)]=r.value;
+    var grp=r.closest(".opts");
+    grp.querySelectorAll(".opt").forEach(function(o){o.classList.toggle("on",o.querySelector("input").checked)});
+    updateProg();
+  }
+});
+function placedCount(){return Object.keys(state.place).length}
+function updateProg(){
+  var n=placedCount();
+  $("prog").textContent=t().prog(n);
+  $("submitBtn").disabled=n<4;
+}
+function renderBoard(){renderRef();updateProg()}
+
+/* ---------- Flow ---------- */
+$("langBtn").addEventListener("click",function(){
+  lang=lang==="ar"?"en":"ar";
+  var co=$("co").value;
+  applyLang();$("co").value=co;
+});
+$("startBtn").addEventListener("click",function(){
+  var c=$("co").value.trim();
+  if(!c){$("wErr").textContent=t().nameErr;$("co").focus();return}
+  state.company=c;
+  $("wErr").textContent="";show("vEx");window.scrollTo(0,0);
+});
+$("co").addEventListener("keydown",function(e){if(e.key==="Enter")$("startBtn").click()});
+
+function modal(opts){
+  var L=t();
+  var m=document.createElement("div");m.className="modal";
+  m.innerHTML='<div class="box"><h3>'+esc(opts.title)+'</h3><p>'+esc(opts.text)+'</p><div class="row"><button class="btn sec" data-a="no">'+esc(L.cancel)+'</button><button class="btn" data-a="yes">'+esc(L.ok)+'</button></div></div>';
+  document.body.appendChild(m);
+  m.addEventListener("click",function(e){var a=e.target.dataset&&e.target.dataset.a;if(a){m.remove();if(a==="yes")opts.onYes()}});
+}
+$("submitBtn").addEventListener("click",function(){
+  if(placedCount()<4)return;
+  modal({title:t().confirmT,text:t().confirmP,onYes:submitAnswer});
+});
+
+function score(place){var s=0;CASES.forEach(function(c){if(place[c]===CORRECT[c])s++});return s}
+
+function submitAnswer(){
+  var res={company:state.company,place:JSON.parse(JSON.stringify(state.place)),why:JSON.parse(JSON.stringify(state.why)),
+    score:score(state.place),lang:lang,at:new Date().toISOString(),sent:false};
+  state.result=res;lsSet(res);
+  show("vRep");window.scrollTo(0,0);renderReport();sendResult();
+}
+
+/* ---------- Report ---------- */
+function renderReport(){
+  var L=t(),r=state.result;
+  $("rTitle").textContent=L.rTitle;
+  var ring=$("ring");ring.textContent=r.score+"/4";
+  ring.style.background=r.score>=3?"#1f9d55":(r.score===2?"#e08a1e":"#d64545");
+  $("rWho").textContent=r.company;
+  $("rLevel").textContent=L.levels[r.score];
+  $("repList").innerHTML=CASES.map(function(c,i){
+    var ok=r.place[c]===CORRECT[c];
+    var mine=r.place[c];
+    var mineHTML=mine?'<span class="pill '+mine+'">'+esc(STYLE[mine][lang])+'</span>':esc(L.none);
+    return '<div class="rep '+(ok?"ok":"no")+'"><h4>'+(ok?"✔ ":"✘ ")+esc(L.cases[c].n)+'</h4>'+
+      '<div class="small"><b>'+esc(L.yourAns)+':</b> '+mineHTML+'</div>'+
+      '<div class="small"><b>'+esc(L.correct)+':</b> <span class="pill '+CORRECT[c]+'">'+esc(STYLE[CORRECT[c]][lang])+'</span> <span style="color:var(--muted)">('+esc(LEVEL[CORRECT[c]][lang])+')</span></div>'+
+      '<div class="why">'+esc(L.why[c])+'</div>'+
+      (r.why&&r.why[c]?'<div class="mine">'+esc(L.myWhy)+esc(r.why[c])+'</div>':"")+'</div>';
+  }).join("");
+  $("rNote").textContent=L.note;
+  renderStatus();
+}
+
+/* ---------- Sending to trainer ---------- */
+function plain(r){
+  var lines=["Situational Leadership Matrix – result","Company: "+r.company,"Score: "+r.score+"/4","Submitted: "+r.at,""];
+  CASES.forEach(function(c){
+    lines.push(T.en.cases[c].n+" | answer: "+(r.place[c]?STYLE[r.place[c]].en:"-")+" | correct: "+STYLE[CORRECT[c]].en+" | "+(r.place[c]===CORRECT[c]?"RIGHT":"WRONG"));
+    if(r.why&&r.why[c])lines.push("   reasoning: "+r.why[c]);
+  });
+  return lines.join("\n");
+}
+var sendState="idle";
+function renderStatus(){
+  var L=t(),r=state.result,el=$("sendStatus");
+  el.className="status";
+  if(r.sent||sendState==="ok"){el.classList.add("good");el.textContent="✔ "+L.sent;return}
+  if(sendState==="sending"){el.textContent=L.sending;return}
+  if(sendState==="fail"){
+    el.classList.add("warn");
+    el.innerHTML=esc(L.failed)+'<div class="b"><button class="btn" id="bRetry" type="button">'+esc(L.retry)+'</button><button class="btn sec" id="bCopy" type="button">'+esc(L.copy)+'</button><a class="btn sec" style="text-decoration:none;display:inline-block" id="bMail" href="mailto:'+TRAINER_EMAIL+'?subject='+encodeURIComponent("Situational Leadership result – "+r.company)+'&body='+encodeURIComponent(plain(r))+'">'+esc(L.mail)+'</a></div>';
+    $("bRetry").onclick=sendResult;
+    $("bCopy").onclick=function(){
+      var done=function(){$("bCopy").textContent=L.copied};
+      try{navigator.clipboard.writeText(plain(r)).then(done,fallback)}catch(e){fallback()}
+      function fallback(){var ta=document.createElement("textarea");ta.value=plain(r);document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){}ta.remove()}
+    };
+    return;
+  }
+  el.textContent="";
+}
+function sendResult(){
+  var r=state.result;if(!r||r.sent)return;
+  sendState="sending";renderStatus();
+  var body={_subject:"Situational Leadership result – "+r.company+" ("+r.score+"/4)",_template:"table",_captcha:"false",
+    Company:r.company,Score:r.score+"/4",Submitted:r.at,Result:plain(r)};
+  CASES.forEach(function(c){body[T.en.cases[c].n]=(r.place[c]?STYLE[r.place[c]].en:"-")+" (correct: "+STYLE[CORRECT[c]].en+")"+(r.why&&r.why[c]?" — "+r.why[c]:"")});
+  var ctrl=("AbortController" in window)?new AbortController():null;
+  var to=setTimeout(function(){if(ctrl)ctrl.abort()},15000);
+  fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body),signal:ctrl?ctrl.signal:undefined})
+   .then(function(res){return res.json().catch(function(){return {}}).then(function(j){return {ok:res.ok,j:j}})})
+   .then(function(o){
+     clearTimeout(to);
+     if(o.ok&&(o.j.success===true||o.j.success==="true")){r.sent=true;sendState="ok";lsSet(r)}else sendState="fail";
+     renderStatus();
+   })
+   .catch(function(){clearTimeout(to);sendState="fail";renderStatus()});
+}
+
+/* ---------- Init ---------- */
+(function init(){
+  if(location.hash==="#reset"){lsClear();location.hash=""}
+  var saved=lsGet();
+  applyLang();
+  $("co").dir="auto";
+  if(saved&&saved.place){ // one submission only: reopening shows the locked report
+    state.result=saved;lang=saved.lang||lang;applyLang();
+    sendState=saved.sent?"ok":"idle";show("vRep");renderReport();
+    if(!saved.sent)sendResult();
+  } else show("vWelcome");
+})();
+})();
+</script>
+</body>
+</html>
