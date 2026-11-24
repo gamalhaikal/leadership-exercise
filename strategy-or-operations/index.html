@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Activity 1.1: Strategy or Operations?</title>
+<title>Strategy in Action: Module 1 Activities</title>
 <style>
 /* VOICE: workshop worksheet, crisp and friendly
-   IDEA: a sorting board on a training-room table
-   PICTURE: the board itself: card tray and two columns
+   IDEA: sorting and labelling cards on a training-room table
+   PICTURE: the activity board itself
    COLOUR and TYPE: Beltone charcoal #343432, yellow #FFF200, white; system sans
-   LAYOUT: header, one-column steps; board 2 columns, stacks under 700px */
-:root{--ink:#222;--muted:#5d6268;--line:#dcdcdc;--bg:#f3f3f1;--card:#fff;--dk:#343432;--yl:#fff200;--s:#343432;--sb:#ecebe6;--o:#c9a800;--ob:#fff9c4;--ok:#1f9d55;--bad:#d64545}
+   LAYOUT: header, activity tabs, one card per step; columns stack under 700px */
+:root{--ink:#222;--muted:#5d6268;--line:#dcdcdc;--bg:#f3f3f1;--card:#fff;--dk:#343432;--yl:#fff200;--sb:#ecebe6;--o:#c9a800;--ob:#fff9c4;--ok:#1f9d55;--bad:#d64545}
 *{box-sizing:border-box;min-width:0}
 html,body{margin:0}
 body{font:16px/1.55 "Segoe UI",Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink)}
@@ -21,6 +21,7 @@ main{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
 .hidden{display:none!important}
 h2{margin:0 0 6px;font-size:24px;line-height:1.2}
+h3{margin:18px 0 8px}
 .lead{color:var(--muted);margin:0 0 16px}
 label{display:block;font-weight:600;margin:12px 0 4px}
 input[type=text]{width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid #bbb;border-radius:10px}
@@ -32,12 +33,17 @@ input:focus-visible,button:focus-visible,.item:focus-visible{outline:3px solid v
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
 .who{font-size:14px;color:var(--muted)}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.tab{font:inherit;font-weight:600;border:1px solid var(--dk);background:#fff;color:var(--dk);border-radius:999px;padding:9px 18px;min-height:44px;cursor:pointer}
+.tab[aria-selected=true]{background:var(--dk);color:#fff}
+.tab .ck{color:var(--ok);margin-left:6px}
+.tab[aria-selected=true] .ck{color:var(--yl)}
 .prog{height:10px;background:#e4e4e4;border-radius:6px;overflow:hidden;flex:1 1 160px}
 .prog i{display:block;height:100%;background:var(--o);width:0;transition:width .25s}
 .tray{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:14px 0;min-height:60px;padding:12px;border:2px dashed #c8c8c8;border-radius:12px;background:#fafafa}
 .tray:empty::after{content:"All statements placed. Review, then submit.";color:var(--muted);font-size:14px}
 .item{background:#fff;border:1px solid #cfcfcf;border-radius:10px;padding:10px 12px;cursor:grab;box-shadow:0 1px 2px rgba(0,0,0,.06);display:flex;gap:10px;align-items:flex-start;touch-action:none;user-select:none}
-.item b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--dk);color:#fff;font-size:13px;display:grid;place-items:center}
+.item b,.q .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--dk);color:#fff;font-size:13px;display:grid;place-items:center;font-weight:700}
 .item.sel{outline:3px solid var(--o)}
 .item.drag{opacity:.4}
 .board{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
@@ -50,6 +56,16 @@ input:focus-visible,button:focus-visible,.item:focus-visible{outline:3px solid v
 .tap{display:none;font-size:14px;color:var(--muted);margin:6px 0 0}
 @media(hover:none){.tap{display:block}}
 @media(max-width:700px){.board{grid-template-columns:minmax(0,1fr)}}
+.defs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:12px 0 6px}
+.defs div{background:var(--sb);border-radius:10px;padding:10px 12px;font-size:14px}
+.defs b{display:block;font-size:15px}
+.qs{display:grid;gap:10px;margin-top:12px}
+.q{border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff}
+.q .top{display:flex;gap:10px;align-items:flex-start;font-weight:600}
+.opts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
+@media(max-width:600px){.opts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.opt{font:inherit;font-size:15px;min-height:44px;border:1px solid #bbb;background:#fff;border-radius:10px;cursor:pointer;padding:8px}
+.opt[aria-pressed=true]{background:var(--yl);border-color:var(--dk);font-weight:700}
 .score{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin:6px 0 16px}
 .big{font-size:56px;font-weight:800;line-height:1;color:var(--dk)}
 .big small{font-size:22px;color:var(--muted)}
@@ -60,6 +76,7 @@ input:focus-visible,button:focus-visible,.item:focus-visible{outline:3px solid v
 .res .tag{font-size:13px;color:var(--muted)}
 .res .ex{font-size:14px;margin-top:4px}
 .status{margin-top:16px;padding:12px 14px;border-radius:10px;background:#f1f1f1;font-size:15px}
+.status:empty{display:none}
 .status.good{background:#e3f4ea;color:#14663a}
 .status.warn{background:#fff3cd;color:#7a5600}
 .status .b{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
@@ -69,49 +86,74 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
 </style>
 </head>
 <body>
-<header><h1>Activity 1.1: Strategy or Operations?</h1><span>Strategy in Action &middot; Beltone Academy &middot; Case: Delta Crest Insurance</span></header>
+<header><h1>Strategy in Action: Module 1 Activities</h1><span>Beltone Academy &middot; Case: Delta Crest Insurance</span></header>
 <main>
 
 <section id="vStart" class="card">
-  <h2>Sort ten decisions at Delta Crest Insurance</h2>
-  <p class="lead">Is each statement a <b>strategic choice</b> (where to play, how to win, what not to do) or an <b>operational improvement</b> (doing current activities better)? Work with your partner, place every statement, then submit. Your result goes to the trainer.</p>
-  <div id="fStart">
+  <h2>Welcome</h2>
+  <p class="lead">Enter your company once. Then choose an activity tab, complete it and submit. Your result is shown to you and sent to the trainer.</p>
+  <div>
     <label for="co">Company / organisation (required)</label>
     <input type="text" id="co" autocomplete="organization" maxlength="80">
     <label for="tm">Your name or table (optional)</label>
     <input type="text" id="tm" maxlength="80">
     <div id="coErr" class="err hidden">Please enter your company name to continue.</div>
-    <div class="row"><button class="btn y" id="bStart" type="button">Start the activity</button></div>
+    <div class="row"><button class="btn y" id="bStart" type="button">Continue</button></div>
   </div>
 </section>
 
-<section id="vBoard" class="hidden">
-  <div class="card">
-    <div class="row" style="margin-top:0">
-      <div class="who" id="whoB"></div>
-      <div class="prog" aria-hidden="true"><i id="progBar"></i></div>
-      <div class="who" id="progTxt">0 / 10 placed</div>
-    </div>
-    <p class="tap">On a phone or tablet: tap a statement, then tap the column it belongs to.</p>
-    <div class="tray" id="tray" data-zone="T" aria-label="Statements to sort"></div>
-    <div class="board">
-      <div class="zone S" id="zS" data-zone="S" tabindex="-1"><h3>Strategy <small id="cS">0</small></h3><p class="hint">Choices about where to play, how to win, what not to do</p></div>
-      <div class="zone O" id="zO" data-zone="O" tabindex="-1"><h3>Operations <small id="cO">0</small></h3><p class="hint">Doing today's activities faster, cheaper, better</p></div>
-    </div>
-    <div class="row">
-      <button class="btn y" id="bSubmit" type="button" disabled>Submit answers</button>
-      <button class="btn sec" id="bReset" type="button">Start sorting again</button>
-    </div>
+<section id="vApp" class="hidden">
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" id="t11" type="button">1.1 Strategy or Operations?<span class="ck" id="ck11"></span></button>
+    <button class="tab" role="tab" id="t14" type="button">1.4 Signal Spotting<span class="ck" id="ck14"></span></button>
   </div>
-</section>
 
-<section id="vRes" class="card hidden">
-  <h2>Your result</h2>
-  <div class="who" id="whoR"></div>
-  <div class="score"><div class="big" id="sc"></div><div id="scMsg" class="lead" style="margin:0;max-width:560px"></div></div>
-  <div id="sendStatus" class="status"></div>
-  <h3>Model answer</h3>
-  <ul class="res" id="resList"></ul>
+  <div id="p11" class="card" role="tabpanel">
+    <div id="b11">
+      <h2>Activity 1.1: Strategy or Operations?</h2>
+      <p class="lead">Is each DCI statement a <b>strategic choice</b> (where to play, how to win, what not to do) or an <b>operational improvement</b> (doing current activities better)? Place all ten, then submit.</p>
+      <div class="row" style="margin-top:0">
+        <div class="who wh"></div>
+        <div class="prog" aria-hidden="true"><i id="pb11"></i></div>
+        <div class="who" id="pt11">0 / 10 placed</div>
+      </div>
+      <p class="tap">On a phone or tablet: tap a statement, then tap the column it belongs to.</p>
+      <div class="tray" id="tray" data-zone="T" aria-label="Statements to sort"></div>
+      <div class="board">
+        <div class="zone S" id="zS" data-zone="S"><h3>Strategy <small id="cS">0</small></h3><p class="hint">Choices about where to play, how to win, what not to do</p></div>
+        <div class="zone O" id="zO" data-zone="O"><h3>Operations <small id="cO">0</small></h3><p class="hint">Doing today's activities faster, cheaper, better</p></div>
+      </div>
+      <div class="row">
+        <button class="btn y" id="sub11" type="button" disabled>Submit answers</button>
+        <button class="btn sec" id="rst11" type="button">Start sorting again</button>
+      </div>
+    </div>
+    <div id="r11" class="hidden"></div>
+  </div>
+
+  <div id="p14" class="card hidden" role="tabpanel">
+    <div id="b14">
+      <h2>Activity 1.4: Signal Spotting</h2>
+      <p class="lead">Read each possible future development for DCI and choose what kind of change it is.</p>
+      <div class="defs">
+        <div><b>Trend</b>Long-term, broad, slow-moving shift already under way</div>
+        <div><b>Event</b>A discrete change or shock with immediate impact</div>
+        <div><b>Weak signal</b>An early, ambiguous hint of a possible future change</div>
+        <div><b>Wild card</b>Low probability, very high impact</div>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <div class="who wh"></div>
+        <div class="prog" aria-hidden="true"><i id="pb14"></i></div>
+        <div class="who" id="pt14">0 / 8 answered</div>
+      </div>
+      <div class="qs" id="qs14"></div>
+      <div class="row">
+        <button class="btn y" id="sub14" type="button" disabled>Submit answers</button>
+        <button class="btn sec" id="rst14" type="button">Clear my answers</button>
+      </div>
+    </div>
+    <div id="r14" class="hidden"></div>
+  </div>
 </section>
 </main>
 <footer>Delta Crest Insurance is a fictional company created for this workshop.</footer>
@@ -119,146 +161,186 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
 <script>
 {
 var TRAINER_EMAIL="gamal.haikal@gmail.com";
-var LS_KEY="sia_act11_v1";
-var ITEMS=[
- {t:"Cut motor claim settlement time from 14 to 7 days",a:"O",x:"Doing an existing process faster. It becomes strategic only if DCI deliberately chooses claims speed as its way to win."},
- {t:"Exit retail motor and focus on fleet and SME motor",a:"S",x:"A where-to-play choice with a clear trade-off: DCI gives up a segment."},
- {t:"Become the specialist insurer for engineering and energy projects",a:"S",x:"A positioning choice: where to play and how to win."},
- {t:"Reduce printing costs by moving to e-policies",a:"O",x:"Cost efficiency in an existing activity; any rival can copy it."},
- {t:"Enter the medical TPA business through a joint venture",a:"S",x:"Entering a new business: a diversification choice."},
- {t:"Train all underwriters on the new pricing tool",a:"O",x:"Building skill to run an existing tool better."},
- {t:"Sell SME packages only through banks and online, not branches",a:"S",x:"A channel choice that says no to an option (branches)."},
- {t:"Hit 95% on-time renewal notices",a:"O",x:"A process performance target."},
- {t:"Stop bidding for large government tenders",a:"S",x:"A deliberate what-not-to-do choice."},
- {t:"Introduce a new claims call-centre script",a:"O",x:"A process improvement in an existing service."}
+var LS="sia_m1_v2";
+var A11=[
+ {t:"Cut motor claim settlement time from 14 to 7 days",k:"O",x:"Doing an existing process faster. It becomes strategic only if DCI deliberately chooses claims speed as its way to win."},
+ {t:"Exit retail motor and focus on fleet and SME motor",k:"S",x:"A where-to-play choice with a clear trade-off: DCI gives up a segment."},
+ {t:"Become the specialist insurer for engineering and energy projects",k:"S",x:"A positioning choice: where to play and how to win."},
+ {t:"Reduce printing costs by moving to e-policies",k:"O",x:"Cost efficiency in an existing activity; any rival can copy it."},
+ {t:"Enter the Medical Third-Party Administrator business through a joint venture",k:"S",x:"Entering a new business: a diversification choice."},
+ {t:"Train all underwriters on the new pricing tool",k:"O",x:"Building skill to run an existing tool better."},
+ {t:"Sell SME packages only through banks and online, not branches",k:"S",x:"A channel choice that says no to an option (branches)."},
+ {t:"Hit 95% on-time renewal notices",k:"O",x:"A process performance target."},
+ {t:"Stop bidding for large government tenders",k:"S",x:"A deliberate what-not-to-do choice."},
+ {t:"Introduce a new claims call-centre script",k:"O",x:"A process improvement in an existing service."}
 ];
-var NAMES={S:"Strategy",O:"Operations"};
-var state={company:"",team:"",place:{},result:null};
+var N11={S:"Strategy",O:"Operations"};
+var TYPES=["Trend","Event","Weak signal","Wild card"];
+var A14=[
+ {t:"Claims costs keep rising faster than premiums over the next three years",k:"Trend",x:"A broad, long-running shift already visible in the data; it continues rather than appears suddenly."},
+ {t:"A further pound devaluation raises the cost of car parts and medical supplies",k:"Event",x:"A discrete shock on a specific date with immediate impact on claims costs."},
+ {t:"More young claims handlers leave for insurtechs",k:"Weak signal",x:"An early hint that talent, and the way claims work is done, may be shifting to digital players."},
+ {t:"More banks demand SME products they can sell online",k:"Weak signal",x:"An early sign that SME distribution could move to banks and digital channels."},
+ {t:"Large corporate clients move their medical cover to OrientMed",k:"Weak signal",x:"Still a few clients, but a hint that specialists could take DCI's medical business. Watch closely; it could become a trend."},
+ {t:"A major earthquake or flood hits many clients at once",k:"Wild card",x:"Unlikely in any given year, but the impact on claims and capital would be severe."},
+ {t:"New compulsory covers, such as cyber, are introduced under Law No. 155 of 2024",k:"Event",x:"A specific regulatory decision that changes the market from a known date."},
+ {t:"Customers buy more cover inside airline and other non-insurance apps",k:"Weak signal",x:"An early hint of embedded insurance changing who owns the customer."}
+];
+
+var S={company:"",team:"",tab:"a11",place:{},ans:{},r11:null,r14:null};
 var $=function(id){return document.getElementById(id)};
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]})}
-function lsGet(){try{return JSON.parse(localStorage.getItem(LS_KEY)||"null")}catch(e){return null}}
-function lsSet(v){try{localStorage.setItem(LS_KEY,JSON.stringify(v))}catch(e){}}
-function lsClear(){try{localStorage.removeItem(LS_KEY)}catch(e){}}
-function show(id){["vStart","vBoard","vRes"].forEach(function(v){$(v).classList.toggle("hidden",v!==id)});window.scrollTo(0,0)}
-function who(){return state.company+(state.team?" · "+state.team:"")}
+function save(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
+function load(){try{return JSON.parse(localStorage.getItem(LS)||"null")}catch(e){return null}}
+function who(){return S.company+(S.team?" · "+S.team:"")}
+function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})}
 
-/* ---------- board ---------- */
-var selected=null;
-function cardHTML(i){return '<div class="item" draggable="true" tabindex="0" role="button" data-i="'+i+'" aria-label="Statement '+(i+1)+'"><b>'+(i+1)+'</b><span>'+esc(ITEMS[i].t)+'</span></div>'}
-function render(){
-  var tray=$("tray"),zS=$("zS"),zO=$("zO");
-  tray.innerHTML="";
-  zS.querySelectorAll(".item").forEach(function(e){e.remove()});
-  zO.querySelectorAll(".item").forEach(function(e){e.remove()});
-  ITEMS.forEach(function(it,i){
-    var z=state.place[i],host=z==="S"?zS:z==="O"?zO:tray;
-    host.insertAdjacentHTML("beforeend",cardHTML(i));
-  });
-  var n=Object.keys(state.place).length;
-  $("progBar").style.width=(n*10)+"%";$("progTxt").textContent=n+" / 10 placed";
-  $("cS").textContent=zS.querySelectorAll(".item").length;$("cO").textContent=zO.querySelectorAll(".item").length;
-  $("bSubmit").disabled=n<10;
-  if(selected!==null){var el=document.querySelector('.item[data-i="'+selected+'"]');if(el)el.classList.add("sel")}
-  lsSet({company:state.company,team:state.team,place:state.place});
+function showTab(a){
+  S.tab=a;save();
+  $("t11").setAttribute("aria-selected",a==="a11");$("t14").setAttribute("aria-selected",a==="a14");
+  $("p11").classList.toggle("hidden",a!=="a11");$("p14").classList.toggle("hidden",a!=="a14");
+  $("ck11").textContent=S.r11?" ✓":"";$("ck14").textContent=S.r14?" ✓":"";
+  if(a==="a11")draw11();else draw14();
 }
-function placeItem(i,z){if(z==="T")delete state.place[i];else state.place[i]=z;selected=null;render()}
+$("t11").addEventListener("click",function(){showTab("a11")});
+$("t14").addEventListener("click",function(){showTab("a14")});
 
+var selected=null;
+function draw11(){
+  if(S.r11){$("b11").classList.add("hidden");$("r11").classList.remove("hidden");report("11");return}
+  $("b11").classList.remove("hidden");$("r11").classList.add("hidden");
+  var tray=$("tray"),zS=$("zS"),zO=$("zO");
+  tray.innerHTML="";[zS,zO].forEach(function(z){z.querySelectorAll(".item").forEach(function(e){e.remove()})});
+  A11.forEach(function(it,i){
+    var z=S.place[i],host=z==="S"?zS:z==="O"?zO:tray;
+    host.insertAdjacentHTML("beforeend",'<div class="item'+(selected===i?" sel":"")+'" draggable="true" tabindex="0" role="button" data-i="'+i+'"><b>'+(i+1)+'</b><span>'+esc(it.t)+'</span></div>');
+  });
+  var n=Object.keys(S.place).length;
+  $("pb11").style.width=(n*10)+"%";$("pt11").textContent=n+" / 10 placed";
+  $("cS").textContent=zS.querySelectorAll(".item").length;$("cO").textContent=zO.querySelectorAll(".item").length;
+  $("sub11").disabled=n<10;save();
+}
+function place(i,z){if(z==="T")delete S.place[i];else S.place[i]=z;selected=null;draw11()}
 document.addEventListener("dragstart",function(e){var it=e.target.closest&&e.target.closest(".item");if(!it)return;e.dataTransfer.setData("text/plain",it.dataset.i);it.classList.add("drag")});
 document.addEventListener("dragend",function(e){var it=e.target.closest&&e.target.closest(".item");if(it)it.classList.remove("drag");document.querySelectorAll(".over").forEach(function(z){z.classList.remove("over")})});
 ["tray","zS","zO"].forEach(function(id){
   var z=$(id);
   z.addEventListener("dragover",function(e){e.preventDefault();z.classList.add("over")});
   z.addEventListener("dragleave",function(){z.classList.remove("over")});
-  z.addEventListener("drop",function(e){e.preventDefault();z.classList.remove("over");var i=e.dataTransfer.getData("text/plain");if(i!=="")placeItem(+i,z.dataset.zone)});
+  z.addEventListener("drop",function(e){e.preventDefault();z.classList.remove("over");var i=e.dataTransfer.getData("text/plain");if(i!=="")place(+i,z.dataset.zone)});
   z.addEventListener("click",function(e){
     var it=e.target.closest(".item");
-    if(it){var i=+it.dataset.i;selected=(selected===i)?null:i;render();return}
-    if(selected!==null)placeItem(selected,z.dataset.zone);
+    if(it){var i=+it.dataset.i;selected=(selected===i)?null:i;draw11();return}
+    if(selected!==null)place(selected,z.dataset.zone);
   });
 });
 document.addEventListener("keydown",function(e){
   var it=document.activeElement&&document.activeElement.closest&&document.activeElement.closest(".item");if(!it)return;
-  var i=+it.dataset.i,k=e.key.toLowerCase();
-  if(k==="s"||k==="arrowleft"){placeItem(i,"S");focusItem(i)}
-  else if(k==="o"||k==="arrowright"){placeItem(i,"O");focusItem(i)}
-  else if(k==="backspace"||k==="delete"){placeItem(i,"T");focusItem(i)}
+  var i=+it.dataset.i,k=e.key.toLowerCase(),z=k==="s"||k==="arrowleft"?"S":k==="o"||k==="arrowright"?"O":(k==="backspace"||k==="delete")?"T":null;
+  if(z){place(i,z);var el=document.querySelector('.item[data-i="'+i+'"]');if(el)el.focus()}
 });
-function focusItem(i){var el=document.querySelector('.item[data-i="'+i+'"]');if(el)el.focus()}
-
-/* ---------- start ---------- */
-function start(){
-  var c=$("co").value.trim();
-  if(!c){$("coErr").classList.remove("hidden");$("co").focus();return}
-  state.company=c;state.team=$("tm").value.trim();
-  $("whoB").textContent=who();show("vBoard");render();
-}
-$("bStart").addEventListener("click",start);
-["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
-$("bReset").addEventListener("click",function(){state.place={};selected=null;render()});
-
-/* ---------- submit + report ---------- */
-$("bSubmit").addEventListener("click",function(){
-  if(Object.keys(state.place).length<10)return;
-  var score=0;ITEMS.forEach(function(it,i){if(state.place[i]===it.a)score++});
-  var d=new Date();
-  state.result={company:state.company,team:state.team,place:JSON.parse(JSON.stringify(state.place)),score:score,
-    at:d.toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"}),sent:false,locked:true};
-  lsSet(state.result);show("vRes");renderReport();sendResult();
+$("rst11").addEventListener("click",function(){S.place={};selected=null;draw11()});
+$("sub11").addEventListener("click",function(){
+  if(Object.keys(S.place).length<10)return;
+  var sc=0;A11.forEach(function(it,i){if(S.place[i]===it.k)sc++});
+  S.r11={ans:JSON.parse(JSON.stringify(S.place)),score:sc,at:stamp(),sent:false};save();showTab("a11");send("11");
 });
-function renderReport(){
-  var r=state.result;
-  $("whoR").textContent=r.company+(r.team?" · "+r.team:"")+" · "+r.at;
-  $("sc").innerHTML=r.score+"<small> / 10</small>";
-  $("scMsg").textContent=r.score>=9?"Excellent. You separate choices from improvements clearly.":r.score>=7?"Good. Look at the items you missed: what makes them a choice or an improvement?":"Worth a second look. The test is not importance or cost, but whether it is a choice with a trade-off.";
-  $("resList").innerHTML=ITEMS.map(function(it,i){
-    var you=r.place[i],ok=you===it.a;
-    return '<li><div class="m '+(ok?"ok":"no")+'">'+(ok?"✓":"✗")+'</div><div><b>'+(i+1)+'. '+esc(it.t)+'</b><div class="tag">Your answer: '+NAMES[you]+' &middot; Model answer: <b>'+NAMES[it.a]+'</b></div><div class="ex">'+esc(it.x)+'</div></div></li>';
+
+function draw14(){
+  if(S.r14){$("b14").classList.add("hidden");$("r14").classList.remove("hidden");report("14");return}
+  $("b14").classList.remove("hidden");$("r14").classList.add("hidden");
+  $("qs14").innerHTML=A14.map(function(it,i){
+    return '<div class="q"><div class="top"><span class="n">'+(i+1)+'</span><span>'+esc(it.t)+'</span></div><div class="opts" role="group" aria-label="Type for item '+(i+1)+'">'+
+      TYPES.map(function(tp){return '<button type="button" class="opt" data-i="'+i+'" data-v="'+tp+'" aria-pressed="'+(S.ans[i]===tp)+'">'+tp+'</button>'}).join("")+'</div></div>';
   }).join("");
-  renderStatus();
+  var n=Object.keys(S.ans).length;
+  $("pb14").style.width=(n/8*100)+"%";$("pt14").textContent=n+" / 8 answered";$("sub14").disabled=n<8;save();
 }
-function plain(r){
-  var L=["Activity 1.1 Strategy or Operations? – result","Company: "+r.company,"Name/table: "+(r.team||"-"),"Score: "+r.score+"/10","Submitted: "+r.at,""];
-  ITEMS.forEach(function(it,i){L.push((r.place[i]===it.a?"[OK] ":"[X]  ")+(i+1)+". "+it.t+" | answer: "+NAMES[r.place[i]]+" | model: "+NAMES[it.a])});
+$("qs14").addEventListener("click",function(e){var b=e.target.closest(".opt");if(!b)return;S.ans[+b.dataset.i]=b.dataset.v;draw14()});
+$("rst14").addEventListener("click",function(){S.ans={};draw14()});
+$("sub14").addEventListener("click",function(){
+  if(Object.keys(S.ans).length<8)return;
+  var sc=0;A14.forEach(function(it,i){if(S.ans[i]===it.k)sc++});
+  S.r14={ans:JSON.parse(JSON.stringify(S.ans)),score:sc,at:stamp(),sent:false};save();showTab("a14");send("14");
+});
+
+var CFG={
+ "11":{title:"Activity 1.1 Strategy or Operations?",items:A11,max:10,name:function(v){return N11[v]||"-"},
+   msg:function(s){return s>=9?"Excellent. You separate choices from improvements clearly.":s>=7?"Good. Look at the items you missed: what makes them a choice or an improvement?":"Worth a second look. The test is not importance or cost, but whether it is a choice with a trade-off."}},
+ "14":{title:"Activity 1.4 Signal Spotting",items:A14,max:8,name:function(v){return v||"-"},
+   msg:function(s){return s>=7?"Excellent. You read the strength and timing of change well.":s>=5?"Good. Weak signals and trends are easy to confuse: ask how broad and how visible the change already is.":"Worth a second look. Check each item against the four definitions: how broad, how sudden, how likely?"}}
+};
+var sendState={"11":"idle","14":"idle"};
+function report(id){
+  var c=CFG[id],r=S["r"+id],el=$("r"+id);
+  el.innerHTML='<h2>'+esc(c.title)+': your result</h2><div class="who">'+esc(who())+' · '+esc(r.at)+'</div>'+
+    '<div class="score"><div class="big">'+r.score+'<small> / '+c.max+'</small></div><div class="lead" style="margin:0;max-width:560px">'+esc(c.msg(r.score))+'</div></div>'+
+    '<div class="status" id="st'+id+'"></div><h3>Model answer</h3><ul class="res">'+
+    c.items.map(function(it,i){var y=r.ans[i],ok=y===it.k;
+      return '<li><div class="m '+(ok?"ok":"no")+'">'+(ok?"✓":"✗")+'</div><div><b>'+(i+1)+'. '+esc(it.t)+'</b><div class="tag">Your answer: '+esc(c.name(y))+' · Model answer: <b>'+esc(c.name(it.k))+'</b></div><div class="ex">'+esc(it.x)+'</div></div></li>'}).join("")+
+    '</ul>'+(S.r11&&S.r14?'':'<div class="row"><button class="btn" type="button" id="go'+id+'">Go to '+(id==="11"?"Activity 1.4":"Activity 1.1")+'</button></div>');
+  var g=$("go"+id);if(g)g.onclick=function(){showTab(id==="11"?"a14":"a11")};
+  status(id);
+}
+function plain(id){
+  var c=CFG[id],r=S["r"+id],L=[c.title+" – result","Company: "+S.company,"Name/table: "+(S.team||"-"),"Score: "+r.score+"/"+c.max,"Submitted: "+r.at,""];
+  c.items.forEach(function(it,i){L.push((r.ans[i]===it.k?"[OK] ":"[X]  ")+(i+1)+". "+it.t+" | answer: "+c.name(r.ans[i])+" | model: "+c.name(it.k))});
   return L.join("\n");
 }
-var sendState="idle";
-function renderStatus(){
-  var r=state.result,el=$("sendStatus");
+function status(id){
+  var r=S["r"+id],el=$("st"+id),st=sendState[id];if(!el||!r)return;
   el.className="status";
-  if(r.sent||sendState==="ok"){el.classList.add("good");el.textContent="✔ Your result has been sent to the trainer.";return}
-  if(sendState==="sending"){el.textContent="Sending your result to the trainer…";return}
-  if(sendState==="fail"){
+  if(r.sent||st==="ok"){el.classList.add("good");el.textContent="✔ Your result has been sent to the trainer.";return}
+  if(st==="sending"){el.textContent="Sending your result to the trainer…";return}
+  if(st==="fail"){
     el.classList.add("warn");
-    el.innerHTML='Automatic sending failed (you may be offline). Retry, or copy your result and send it to the trainer.<div class="b"><button class="btn" id="bRetry" type="button">Retry</button><button class="btn sec" id="bCopy" type="button">Copy result</button><a class="btn sec" style="text-decoration:none;display:inline-block" href="mailto:'+TRAINER_EMAIL+'?subject='+encodeURIComponent("Activity 1.1 result – "+r.company)+'&body='+encodeURIComponent(plain(r))+'">Send by email</a></div><div class="mail">Trainer email: '+TRAINER_EMAIL+'</div>';
-    $("bRetry").onclick=sendResult;
-    $("bCopy").onclick=function(){
-      var done=function(){$("bCopy").textContent="Copied"};
-      function fb(){var ta=document.createElement("textarea");ta.value=plain(r);document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){}ta.remove()}
-      try{navigator.clipboard.writeText(plain(r)).then(done,fb)}catch(e){fb()}
+    el.innerHTML='Automatic sending failed (you may be offline). Retry, or copy your result and send it to the trainer.<div class="b"><button class="btn" type="button" id="rt'+id+'">Retry</button><button class="btn sec" type="button" id="cp'+id+'">Copy result</button><a class="btn sec" style="text-decoration:none;display:inline-block" href="mailto:'+TRAINER_EMAIL+'?subject='+encodeURIComponent(CFG[id].title+" – "+S.company)+'&body='+encodeURIComponent(plain(id))+'">Send by email</a></div><div class="mail">Trainer email: '+TRAINER_EMAIL+'</div>';
+    $("rt"+id).onclick=function(){send(id)};
+    $("cp"+id).onclick=function(){
+      var b=$("cp"+id),done=function(){b.textContent="Copied"};
+      function fb(){var ta=document.createElement("textarea");ta.value=plain(id);document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){}ta.remove()}
+      try{navigator.clipboard.writeText(plain(id)).then(done,fb)}catch(e){fb()}
     };
     return;
   }
   el.textContent="";
 }
-function sendResult(){
-  var r=state.result;if(!r||r.sent)return;
-  sendState="sending";renderStatus();
-  var body={_subject:"Activity 1.1 Strategy or Operations – "+r.company+" ("+r.score+"/10)",_template:"table",_captcha:"false",
-    Company:r.company,"Name / table":r.team||"-",Score:r.score+"/10",Submitted:r.at};
-  ITEMS.forEach(function(it,i){body["Q"+(i+1)+". "+it.t]=NAMES[r.place[i]]+(r.place[i]===it.a?"  ✓":"  ✗ (model: "+NAMES[it.a]+")")});
+function send(id){
+  var c=CFG[id],r=S["r"+id];if(!r||r.sent)return;
+  sendState[id]="sending";status(id);
+  var body={_subject:c.title+" – "+S.company+" ("+r.score+"/"+c.max+")",_template:"table",_captcha:"false",
+    Company:S.company,"Name / table":S.team||"-",Score:r.score+"/"+c.max,Submitted:r.at};
+  c.items.forEach(function(it,i){body["Q"+(i+1)+". "+it.t]=c.name(r.ans[i])+(r.ans[i]===it.k?"  ✓":"  ✗ (model: "+c.name(it.k)+")")});
   var ctrl=("AbortController" in window)?new AbortController():null;
   var to=setTimeout(function(){if(ctrl)ctrl.abort()},15000);
   fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body),signal:ctrl?ctrl.signal:undefined})
    .then(function(res){return res.json().catch(function(){return {}}).then(function(j){return {ok:res.ok,j:j}})})
-   .then(function(o){clearTimeout(to);if(o.ok&&(o.j.success===true||o.j.success==="true")){r.sent=true;sendState="ok";lsSet(r)}else sendState="fail";renderStatus()})
-   .catch(function(){clearTimeout(to);sendState="fail";renderStatus()});
+   .then(function(o){clearTimeout(to);if(o.ok&&(o.j.success===true||o.j.success==="true")){r.sent=true;sendState[id]="ok";save()}else sendState[id]="fail";status(id)})
+   .catch(function(){clearTimeout(to);sendState[id]="fail";status(id)});
 }
 
-/* ---------- init ---------- */
-if(location.hash==="#reset"){lsClear();history.replaceState(null,"",location.pathname)}
-var saved=lsGet();
-if(saved&&saved.locked){state.result=saved;state.company=saved.company;state.team=saved.team;sendState=saved.sent?"ok":"idle";show("vRes");renderReport();if(!saved.sent)sendResult()}
-else if(saved&&saved.company){state.company=saved.company;state.team=saved.team||"";state.place=saved.place||{};$("whoB").textContent=who();show("vBoard");render()}
+function start(){
+  var c=$("co").value.trim();
+  if(!c){$("coErr").classList.remove("hidden");$("co").focus();return}
+  S.company=c;S.team=$("tm").value.trim();enter();
+}
+function enter(){
+  $("vStart").classList.add("hidden");$("vApp").classList.remove("hidden");
+  document.querySelectorAll(".wh").forEach(function(e){e.textContent=who()});
+  showTab(S.tab||"a11");
+  ["11","14"].forEach(function(id){var r=S["r"+id];if(r&&!r.sent)send(id)});
+}
+$("bStart").addEventListener("click",start);
+["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
+
+if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
+var hashTab=location.hash==="#a14"?"a14":location.hash==="#a11"?"a11":null;
+var saved=load();
+if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
+else{
+  try{var old=JSON.parse(localStorage.getItem("sia_act11_v1")||"null");if(old&&old.company){$("co").value=old.company;$("tm").value=old.team||""}}catch(e){}
+  if(hashTab)S.tab=hashTab;
+}
 }
 </script>
 </body>
