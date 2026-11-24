@@ -81,6 +81,20 @@ input:focus-visible,button:focus-visible,.item:focus-visible{outline:3px solid v
 .status.warn{background:#fff3cd;color:#7a5600}
 .status .b{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .mail{font-size:13px;color:var(--muted);margin-top:6px}
+.ugrid{overflow-x:auto;margin-top:12px}
+.ugrid table{border-collapse:collapse;width:100%;min-width:620px}
+.ugrid th,.ugrid td{border:1px solid var(--line);padding:6px;text-align:center;vertical-align:middle}
+.ugrid th{background:var(--dk);color:#fff;font-size:14px}
+.ugrid td:first-child{text-align:left;width:34%}
+.ugrid input[type=text],.ugrid select{width:100%;font:inherit;font-size:15px;padding:8px;border:1px solid #bbb;border-radius:8px;background:#fff}
+.ugrid input[type=number]{width:64px;font:inherit;font-size:16px;padding:8px 4px;border:1px solid #bbb;border-radius:8px;text-align:center}
+.ugrid tr.win td{background:var(--ob)}
+.badge{display:inline-block;background:var(--yl);color:var(--dk);font-size:12px;font-weight:700;border-radius:999px;padding:2px 8px;margin-left:6px}
+textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px solid #bbb;border-radius:10px;min-height:80px}
+.fig{position:relative;height:300px;margin-top:14px}.fig svg{position:absolute;inset:0;width:100%;height:100%}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:6px}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
+.sugg{background:var(--sb);border-radius:12px;padding:14px 16px;margin-top:14px}
 footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
 @media(prefers-reduced-motion:reduce){.prog i{transition:none}}
 </style>
@@ -106,6 +120,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
   <div class="tabs" role="tablist">
     <button class="tab" role="tab" id="t11" type="button">1.1 Strategy or Operations?<span class="ck" id="ck11"></span></button>
     <button class="tab" role="tab" id="t14" type="button">1.4 Signal Spotting<span class="ck" id="ck14"></span></button>
+    <button class="tab" role="tab" id="t16" type="button">1.6 Unique Selling Proposition<span class="ck" id="ck16"></span></button>
   </div>
 
   <div id="p11" class="card" role="tabpanel">
@@ -154,6 +169,28 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     </div>
     <div id="r14" class="hidden"></div>
   </div>
+  <div id="p16" class="card hidden" role="tabpanel">
+    <div id="b16">
+      <h2>Activity 1.6: Unique Selling Proposition</h2>
+      <p class="lead">Identify what DCI's customers value and see where DCI stands out against its competitors. Use case sections 3 to 6.</p>
+      <div class="who wh"></div>
+      <h3>1. Criteria and competitors</h3>
+      <p class="lead" style="margin:0">Name the five criteria customers value most, choose the three competitors most relevant to your segment, and rate everyone from 1 (poor) to 10 (excellent). Rows where DCI beats all three competitors are highlighted.</p>
+      <div class="ugrid"><table id="ut"></table></div>
+      <datalist id="critList"><option>Price</option><option>Claims speed</option><option>Technical expertise for complex risks</option><option>Ease of buying online</option><option>Broker service and relationship</option><option>Financial strength</option><option>Medical provider network</option><option>Product range</option><option>Branch access</option><option>Risk advice</option></datalist>
+      <div class="fig"><svg id="uchart" role="img" aria-label="Ratings chart"></svg></div>
+      <div class="legend" id="uleg"></div>
+      <h3>2. DCI's unique selling proposition</h3>
+      <label for="usp" style="margin-top:0">Write it in one sentence</label>
+      <textarea id="usp" maxlength="300" placeholder="For [customers], DCI is the insurer that [unique benefit], because [proof]."></textarea>
+      <div id="uErr" class="err hidden"></div>
+      <div class="row">
+        <button class="btn y" id="sub16" type="button">Submit answers</button>
+        <button class="btn sec" id="rst16" type="button">Clear my answers</button>
+      </div>
+    </div>
+    <div id="r16" class="hidden"></div>
+  </div>
 </section>
 </main>
 <footer>Delta Crest Insurance is a fictional company created for this workshop.</footer>
@@ -187,7 +224,7 @@ var A14=[
  {t:"Customers buy more cover inside airline and other non-insurance apps",k:"Weak signal",x:"An early hint of embedded insurance changing who owns the customer."}
 ];
 
-var S={company:"",team:"",tab:"a11",place:{},ans:{},r11:null,r14:null};
+var S={company:"",team:"",tab:"a11",place:{},ans:{},u:null,r11:null,r14:null,r16:null};
 var $=function(id){return document.getElementById(id)};
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]})}
 function save(){try{localStorage.setItem(LS,JSON.stringify(S))}catch(e){}}
@@ -195,15 +232,20 @@ function load(){try{return JSON.parse(localStorage.getItem(LS)||"null")}catch(e)
 function who(){return S.company+(S.team?" · "+S.team:"")}
 function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})}
 
+var IDS=["11","14","16"];
 function showTab(a){
+  if(IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
-  $("t11").setAttribute("aria-selected",a==="a11");$("t14").setAttribute("aria-selected",a==="a14");
-  $("p11").classList.toggle("hidden",a!=="a11");$("p14").classList.toggle("hidden",a!=="a14");
-  $("ck11").textContent=S.r11?" ✓":"";$("ck14").textContent=S.r14?" ✓":"";
-  if(a==="a11")draw11();else draw14();
+  IDS.forEach(function(id){$("t"+id).setAttribute("aria-selected",a==="a"+id);$("p"+id).classList.toggle("hidden",a!=="a"+id);$("ck"+id).textContent=S["r"+id]?" \u2713":""});
+  ({a11:draw11,a14:draw14,a16:draw16})[a]();
 }
-$("t11").addEventListener("click",function(){showTab("a11")});
-$("t14").addEventListener("click",function(){showTab("a14")});
+IDS.forEach(function(id){$("t"+id).addEventListener("click",function(){showTab("a"+id)})});
+function nextBtn(id){
+  var nx=IDS.filter(function(x){return x!==id&&!S["r"+x]})[0];
+  if(!nx)return "";
+  return '<div class="row"><button class="btn" type="button" id="go'+id+'" data-to="'+nx+'">Next: Activity '+nx[0]+'.'+nx.slice(1)+'</button></div>';
+}
+function wireNext(id){var g=$("go"+id);if(g)g.onclick=function(){showTab("a"+g.dataset.to)}}
 
 var selected=null;
 function draw11(){
@@ -268,21 +310,24 @@ var CFG={
  "11":{title:"Activity 1.1 Strategy or Operations?",items:A11,max:10,name:function(v){return N11[v]||"-"},
    msg:function(s){return s>=9?"Excellent. You separate choices from improvements clearly.":s>=7?"Good. Look at the items you missed: what makes them a choice or an improvement?":"Worth a second look. The test is not importance or cost, but whether it is a choice with a trade-off."}},
  "14":{title:"Activity 1.4 Signal Spotting",items:A14,max:8,name:function(v){return v||"-"},
-   msg:function(s){return s>=7?"Excellent. You read the strength and timing of change well.":s>=5?"Good. Weak signals and trends are easy to confuse: ask how broad and how visible the change already is.":"Worth a second look. Check each item against the four definitions: how broad, how sudden, how likely?"}}
+   msg:function(s){return s>=7?"Excellent. You read the strength and timing of change well.":s>=5?"Good. Weak signals and trends are easy to confuse: ask how broad and how visible the change already is.":"Worth a second look. Check each item against the four definitions: how broad, how sudden, how likely?"}},
+ "16":{title:"Activity 1.6 Unique Selling Proposition"}
 };
-var sendState={"11":"idle","14":"idle"};
+var sendState={"11":"idle","14":"idle","16":"idle"};
 function report(id){
+  if(id==="16")return report16();
   var c=CFG[id],r=S["r"+id],el=$("r"+id);
   el.innerHTML='<h2>'+esc(c.title)+': your result</h2><div class="who">'+esc(who())+' · '+esc(r.at)+'</div>'+
     '<div class="score"><div class="big">'+r.score+'<small> / '+c.max+'</small></div><div class="lead" style="margin:0;max-width:560px">'+esc(c.msg(r.score))+'</div></div>'+
     '<div class="status" id="st'+id+'"></div><h3>Model answer</h3><ul class="res">'+
     c.items.map(function(it,i){var y=r.ans[i],ok=y===it.k;
       return '<li><div class="m '+(ok?"ok":"no")+'">'+(ok?"✓":"✗")+'</div><div><b>'+(i+1)+'. '+esc(it.t)+'</b><div class="tag">Your answer: '+esc(c.name(y))+' · Model answer: <b>'+esc(c.name(it.k))+'</b></div><div class="ex">'+esc(it.x)+'</div></div></li>'}).join("")+
-    '</ul>'+(S.r11&&S.r14?'':'<div class="row"><button class="btn" type="button" id="go'+id+'">Go to '+(id==="11"?"Activity 1.4":"Activity 1.1")+'</button></div>');
-  var g=$("go"+id);if(g)g.onclick=function(){showTab(id==="11"?"a14":"a11")};
+    '</ul>'+nextBtn(id);
+  wireNext(id);
   status(id);
 }
 function plain(id){
+  if(id==="16")return plain16();
   var c=CFG[id],r=S["r"+id],L=[c.title+" – result","Company: "+S.company,"Name/table: "+(S.team||"-"),"Score: "+r.score+"/"+c.max,"Submitted: "+r.at,""];
   c.items.forEach(function(it,i){L.push((r.ans[i]===it.k?"[OK] ":"[X]  ")+(i+1)+". "+it.t+" | answer: "+c.name(r.ans[i])+" | model: "+c.name(it.k))});
   return L.join("\n");
@@ -308,15 +353,118 @@ function status(id){
 function send(id){
   var c=CFG[id],r=S["r"+id];if(!r||r.sent)return;
   sendState[id]="sending";status(id);
-  var body={_subject:c.title+" – "+S.company+" ("+r.score+"/"+c.max+")",_template:"table",_captcha:"false",
+  var body;
+  if(id==="16")body=body16();
+  else{
+  body={_subject:c.title+" – "+S.company+" ("+r.score+"/"+c.max+")",_template:"table",_captcha:"false",
     Company:S.company,"Name / table":S.team||"-",Score:r.score+"/"+c.max,Submitted:r.at};
   c.items.forEach(function(it,i){body["Q"+(i+1)+". "+it.t]=c.name(r.ans[i])+(r.ans[i]===it.k?"  ✓":"  ✗ (model: "+c.name(it.k)+")")});
+  }
   var ctrl=("AbortController" in window)?new AbortController():null;
   var to=setTimeout(function(){if(ctrl)ctrl.abort()},15000);
   fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body),signal:ctrl?ctrl.signal:undefined})
    .then(function(res){return res.json().catch(function(){return {}}).then(function(j){return {ok:res.ok,j:j}})})
    .then(function(o){clearTimeout(to);if(o.ok&&(o.j.success===true||o.j.success==="true")){r.sent=true;sendState[id]="ok";save()}else sendState[id]="fail";status(id)})
    .catch(function(){clearTimeout(to);sendState[id]="fail";status(id)});
+}
+
+/* ---------- 1.6 Unique Selling Proposition ---------- */
+var COMPS=["Pyramid General","NileTech Insure","OrientMed","Atlas Takaful"];
+var UCOL=["#343432","#9a9a9a","#c9a800","#63b1db"];
+function blankU(){return {crit:["","","","",""],comp:["","",""],r:[[],[],[],[]],usp:""}}
+function u(){if(!S.u||!S.u.r)S.u=blankU();return S.u}
+function num(v){v=parseInt(v,10);return v>=1&&v<=10?v:null}
+function wins(U,i){var d=num(U.r[0][i]);if(d===null)return false;for(var k=1;k<4;k++){var o=num(U.r[k][i]);if(o===null||o>=d)return false}return true}
+function draw16(){
+  if(S.r16){$("b16").classList.add("hidden");$("r16").classList.remove("hidden");report16();return}
+  $("b16").classList.remove("hidden");$("r16").classList.add("hidden");
+  var U=u(),h='<thead><tr><th>Criterion</th><th>DCI</th>';
+  for(var k=0;k<3;k++){h+='<th><select data-c="'+k+'" aria-label="Competitor '+(k+1)+'"><option value="">Competitor '+(k+1)+'…</option>'+COMPS.map(function(c){return '<option'+(U.comp[k]===c?' selected':'')+'>'+esc(c)+'</option>'}).join("")+'</select></th>'}
+  h+='</tr></thead><tbody>';
+  for(var i=0;i<5;i++){
+    h+='<tr data-row="'+i+'"><td><input type="text" list="critList" maxlength="60" data-k="'+i+'" placeholder="Criterion '+(i+1)+'" value="'+esc(U.crit[i])+'"></td>';
+    for(var j=0;j<4;j++)h+='<td><input type="number" min="1" max="10" inputmode="numeric" data-i="'+i+'" data-j="'+j+'" aria-label="Rating row '+(i+1)+' column '+(j+1)+'" value="'+esc(U.r[j][i]==null?"":U.r[j][i])+'"></td>';
+    h+='</tr>';
+  }
+  $("ut").innerHTML=h+'</tbody>';
+  $("usp").value=U.usp||"";
+  refresh16();
+}
+function refresh16(){
+  var U=u();
+  document.querySelectorAll("#ut tr[data-row]").forEach(function(tr){
+    var i=+tr.dataset.row,w=wins(U,i);tr.classList.toggle("win",w);
+    var td=tr.firstElementChild,b=td.querySelector(".badge");
+    if(w&&!b)td.insertAdjacentHTML("beforeend",'<span class="badge">DCI stands out</span>');
+    if(!w&&b)b.remove();
+  });
+  chart16(U,$("uchart"),$("uleg"));save();
+}
+function chart16(U,svg,leg){
+  var W=svg.clientWidth||600,H=svg.clientHeight||300,pl=34,pr=12,pt=12,pb=44,n=5;
+  var names=["DCI"].concat(U.comp.map(function(c,k){return c||("Competitor "+(k+1))}));
+  var x=function(i){return pl+(W-pl-pr)*(i+0.5)/n},y=function(v){return pt+(H-pt-pb)*(1-(v-0)/10)};
+  var g='';
+  for(var t=0;t<=10;t+=2)g+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y(t)+'" y2="'+y(t)+'" stroke="#e3e3e3"/><text x="'+(pl-6)+'" y="'+(y(t)+4)+'" font-size="11" text-anchor="end" fill="#777">'+t+'</text>';
+  for(var i=0;i<n;i++){var lab=U.crit[i]||("Criterion "+(i+1));if(W<520&&lab.length>12)lab=lab.slice(0,11)+"…";g+='<text x="'+x(i)+'" y="'+(H-pb+18)+'" font-size="12" text-anchor="middle" fill="#444">'+esc(lab)+'</text>'}
+  for(var j=3;j>=0;j--){
+    var pts=[];for(var i2=0;i2<n;i2++){var v=num(U.r[j][i2]);if(v!==null)pts.push([x(i2),y(v)])}
+    if(pts.length>1)g+='<polyline fill="none" stroke="'+UCOL[j]+'" stroke-width="'+(j?2.5:4)+'" points="'+pts.map(function(p){return p.join(",")}).join(" ")+'"/>';
+    pts.forEach(function(p){g+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(j?4:6)+'" fill="'+UCOL[j]+'"/>'});
+  }
+  svg.innerHTML=g;
+  if(leg)leg.innerHTML=names.map(function(nm,j){return '<span><i style="background:'+UCOL[j]+'"></i>'+esc(nm)+'</span>'}).join("");
+}
+$("ut").addEventListener("input",function(e){
+  var t=e.target,U=u();
+  if(t.dataset.k!=null)U.crit[+t.dataset.k]=t.value;
+  else if(t.dataset.j!=null){var v=t.value===""?null:Math.max(1,Math.min(10,parseInt(t.value,10)||1));if(t.value!==""&&String(v)!==t.value)t.value=v;U.r[+t.dataset.j][+t.dataset.i]=v}
+  refresh16();
+});
+$("ut").addEventListener("change",function(e){var t=e.target;if(t.dataset.c!=null){u().comp[+t.dataset.c]=t.value;refresh16()}});
+$("usp").addEventListener("input",function(){u().usp=$("usp").value;save()});
+window.addEventListener("resize",function(){if(!$("p16").classList.contains("hidden")){if(S.r16)chart16(S.r16,$("rchart"),null);else chart16(u(),$("uchart"),$("uleg"))}});
+$("rst16").addEventListener("click",function(){S.u=blankU();draw16()});
+$("sub16").addEventListener("click",function(){
+  var U=u(),err="";
+  if(U.crit.some(function(c){return !c.trim()}))err="Name all five criteria.";
+  else if(U.comp.some(function(c){return !c}))err="Choose three competitors.";
+  else if(new Set(U.comp).size<3)err="Choose three different competitors.";
+  else if(U.r.some(function(col){for(var i=0;i<5;i++)if(num(col[i])===null)return true;return false}))err="Rate DCI and every competitor on all five criteria (1 to 10).";
+  else if((U.usp||"").trim().length<15)err="Write DCI's unique selling proposition in one sentence.";
+  $("uErr").textContent=err;$("uErr").classList.toggle("hidden",!err);if(err)return;
+  var rr=JSON.parse(JSON.stringify(U));rr.at=stamp();rr.sent=false;rr.wins=[0,1,2,3,4].filter(function(i){return wins(U,i)});
+  S.r16=rr;save();showTab("a16");send("16");
+});
+function report16(){
+  var r=S.r16,el=$("r16");
+  var head='<tr><th>Criterion</th><th>DCI</th>'+r.comp.map(function(c){return '<th>'+esc(c)+'</th>'}).join("")+'</tr>';
+  var rows=r.crit.map(function(c,i){var w=r.wins.indexOf(i)>=0;return '<tr class="'+(w?"win":"")+'"><td>'+esc(c)+(w?'<span class="badge">DCI stands out</span>':'')+'</td>'+[0,1,2,3].map(function(j){return '<td>'+r.r[j][i]+'</td>'}).join("")+'</tr>'}).join("");
+  el.innerHTML='<h2>Activity 1.6 Unique Selling Proposition: your result</h2><div class="who">'+esc(who())+' · '+esc(r.at)+'</div>'+
+    '<div class="status" id="st16"></div>'+
+    '<h3>Your comparison</h3><div class="ugrid"><table>'+head+rows+'</table></div>'+
+    '<div class="fig"><svg id="rchart" role="img" aria-label="Your ratings chart"></svg></div><div class="legend" id="rleg"></div>'+
+    '<p><b>Where DCI stands out:</b> '+(r.wins.length?esc(r.wins.map(function(i){return r.crit[i]}).join(", ")):"none of your criteria. A USP needs at least one criterion where DCI clearly beats the competitors you chose.")+'</p>'+
+    '<h3>Your USP</h3><p style="font-size:18px;font-style:italic">“'+esc(r.usp)+'”</p>'+
+    '<div class="sugg"><h3 style="margin-top:0">Suggested answer for discussion</h3>'+
+    '<p style="margin:0 0 8px">Typical criteria from the case: price, claims speed, technical expertise for complex risks, ease of buying online, and broker service. Against Pyramid General, NileTech and OrientMed, DCI usually stands out only on <b>technical expertise for large property and engineering risks</b> and <b>broker relationships</b>; it trails on price, claims speed and digital ease.</p>'+
+    '<p style="margin:0"><b>Example USP:</b> “For companies with large, complex property and engineering risks, DCI is the specialist insurer brokers trust most for expert underwriting and risk advice.”</p></div>'+nextBtn("16");
+  wireNext("16");
+  var rs={crit:r.crit,comp:r.comp,r:r.r};
+  requestAnimationFrame(function(){chart16(rs,$("rchart"),$("rleg"))});
+  status("16");
+}
+function plain16(){
+  var r=S.r16,L=["Activity 1.6 Unique Selling Proposition – result","Company: "+S.company,"Name/table: "+(S.team||"-"),"Submitted: "+r.at,"","Criterion | DCI | "+r.comp.join(" | ")];
+  r.crit.forEach(function(c,i){L.push(c+" | "+[0,1,2,3].map(function(j){return r.r[j][i]}).join(" | ")+(r.wins.indexOf(i)>=0?"  <- DCI stands out":""))});
+  L.push("","USP: "+r.usp);return L.join("\n");
+}
+function body16(){
+  var r=S.r16,b={_subject:"Activity 1.6 Unique Selling Proposition – "+S.company,_template:"table",_captcha:"false",
+    Company:S.company,"Name / table":S.team||"-",Submitted:r.at,"Competitors chosen":r.comp.join(", ")};
+  r.crit.forEach(function(c,i){b["C"+(i+1)+". "+c]="DCI "+r.r[0][i]+" | "+r.comp.map(function(cp,k){return cp+" "+r.r[k+1][i]}).join(" | ")+(r.wins.indexOf(i)>=0?"  ★ DCI stands out":"")});
+  b["Where DCI stands out"]=r.wins.length?r.wins.map(function(i){return r.crit[i]}).join(", "):"None";
+  b["USP"]=r.usp;return b;
 }
 
 function start(){
@@ -328,13 +476,13 @@ function enter(){
   $("vStart").classList.add("hidden");$("vApp").classList.remove("hidden");
   document.querySelectorAll(".wh").forEach(function(e){e.textContent=who()});
   showTab(S.tab||"a11");
-  ["11","14"].forEach(function(id){var r=S["r"+id];if(r&&!r.sent)send(id)});
+  IDS.forEach(function(id){var r=S["r"+id];if(r&&!r.sent)send(id)});
 }
 $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=location.hash==="#a14"?"a14":location.hash==="#a11"?"a11":null;
+var hashTab=/^#a(11|14|16)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
