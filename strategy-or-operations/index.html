@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Activity 1.1: Strategy or Operations?</title>
+<style>
+/* VOICE: workshop worksheet, crisp and friendly
+   IDEA: a sorting board on a training-room table
+   PICTURE: the board itself: card tray and two columns
+   COLOUR and TYPE: Beltone charcoal #343432, yellow #FFF200, white; system sans
+   LAYOUT: header, one-column steps; board 2 columns, stacks under 700px */
+:root{--ink:#222;--muted:#5d6268;--line:#dcdcdc;--bg:#f3f3f1;--card:#fff;--dk:#343432;--yl:#fff200;--s:#343432;--sb:#ecebe6;--o:#c9a800;--ob:#fff9c4;--ok:#1f9d55;--bad:#d64545}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{font:16px/1.55 "Segoe UI",Calibri,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:var(--dk);color:#fff;padding:14px 20px;border-bottom:5px solid var(--yl);display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{margin:0;font-size:19px}
+header span{font-size:13px;color:#d8d8d8}
+main{max-width:1100px;margin:0 auto;padding:20px 16px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px}
+.hidden{display:none!important}
+h2{margin:0 0 6px;font-size:24px;line-height:1.2}
+.lead{color:var(--muted);margin:0 0 16px}
+label{display:block;font-weight:600;margin:12px 0 4px}
+input[type=text]{width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid #bbb;border-radius:10px}
+input:focus-visible,button:focus-visible,.item:focus-visible{outline:3px solid var(--o);outline-offset:2px}
+.err{color:var(--bad);font-size:14px;margin-top:6px}
+.btn{font:inherit;font-weight:600;border:0;border-radius:10px;padding:11px 20px;min-height:44px;background:var(--dk);color:#fff;cursor:pointer}
+.btn.y{background:var(--yl);color:var(--dk)}
+.btn.sec{background:#fff;color:var(--dk);border:1px solid var(--dk)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.who{font-size:14px;color:var(--muted)}
+.prog{height:10px;background:#e4e4e4;border-radius:6px;overflow:hidden;flex:1 1 160px}
+.prog i{display:block;height:100%;background:var(--o);width:0;transition:width .25s}
+.tray{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:14px 0;min-height:60px;padding:12px;border:2px dashed #c8c8c8;border-radius:12px;background:#fafafa}
+.tray:empty::after{content:"All statements placed. Review, then submit.";color:var(--muted);font-size:14px}
+.item{background:#fff;border:1px solid #cfcfcf;border-radius:10px;padding:10px 12px;cursor:grab;box-shadow:0 1px 2px rgba(0,0,0,.06);display:flex;gap:10px;align-items:flex-start;touch-action:none;user-select:none}
+.item b{flex:none;width:26px;height:26px;border-radius:50%;background:var(--dk);color:#fff;font-size:13px;display:grid;place-items:center}
+.item.sel{outline:3px solid var(--o)}
+.item.drag{opacity:.4}
+.board{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px}
+.zone{border-radius:14px;padding:12px;min-height:220px;display:flex;flex-direction:column;gap:8px;border:2px solid transparent}
+.zone h3{margin:0 0 4px;font-size:18px;display:flex;justify-content:space-between;align-items:baseline}
+.zone h3 small{font-weight:400;font-size:13px;color:var(--muted)}
+.zone.S{background:var(--sb)}.zone.O{background:var(--ob)}
+.zone.over{border-color:var(--o)}
+.zone .hint{font-size:13px;color:var(--muted);margin:0 0 4px}
+.tap{display:none;font-size:14px;color:var(--muted);margin:6px 0 0}
+@media(hover:none){.tap{display:block}}
+@media(max-width:700px){.board{grid-template-columns:minmax(0,1fr)}}
+.score{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin:6px 0 16px}
+.big{font-size:56px;font-weight:800;line-height:1;color:var(--dk)}
+.big small{font-size:22px;color:var(--muted)}
+.res{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.res li{border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:28px minmax(0,1fr);gap:10px;background:#fff}
+.res .m{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700}
+.res .m.ok{background:var(--ok)}.res .m.no{background:var(--bad)}
+.res .tag{font-size:13px;color:var(--muted)}
+.res .ex{font-size:14px;margin-top:4px}
+.status{margin-top:16px;padding:12px 14px;border-radius:10px;background:#f1f1f1;font-size:15px}
+.status.good{background:#e3f4ea;color:#14663a}
+.status.warn{background:#fff3cd;color:#7a5600}
+.status .b{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.mail{font-size:13px;color:var(--muted);margin-top:6px}
+footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
+@media(prefers-reduced-motion:reduce){.prog i{transition:none}}
+</style>
+</head>
+<body>
+<header><h1>Activity 1.1: Strategy or Operations?</h1><span>Strategy in Action &middot; Beltone Academy &middot; Case: Delta Crest Insurance</span></header>
+<main>
+
+<section id="vStart" class="card">
+  <h2>Sort ten decisions at Delta Crest Insurance</h2>
+  <p class="lead">Is each statement a <b>strategic choice</b> (where to play, how to win, what not to do) or an <b>operational improvement</b> (doing current activities better)? Work with your partner, place every statement, then submit. Your result goes to the trainer.</p>
+  <form id="fStart" novalidate>
+    <label for="co">Company / organisation (required)</label>
+    <input type="text" id="co" autocomplete="organization" maxlength="80">
+    <label for="tm">Your name or table (optional)</label>
+    <input type="text" id="tm" maxlength="80">
+    <div id="coErr" class="err hidden">Please enter your company name to continue.</div>
+    <div class="row"><button class="btn y" type="submit">Start the activity</button></div>
+  </form>
+</section>
+
+<section id="vBoard" class="hidden">
+  <div class="card">
+    <div class="row" style="margin-top:0">
+      <div class="who" id="whoB"></div>
+      <div class="prog" aria-hidden="true"><i id="progBar"></i></div>
+      <div class="who" id="progTxt">0 / 10 placed</div>
+    </div>
+    <p class="tap">On a phone or tablet: tap a statement, then tap the column it belongs to.</p>
+    <div class="tray" id="tray" data-zone="T" aria-label="Statements to sort"></div>
+    <div class="board">
+      <div class="zone S" id="zS" data-zone="S" tabindex="-1"><h3>Strategy <small id="cS">0</small></h3><p class="hint">Choices about where to play, how to win, what not to do</p></div>
+      <div class="zone O" id="zO" data-zone="O" tabindex="-1"><h3>Operations <small id="cO">0</small></h3><p class="hint">Doing today's activities faster, cheaper, better</p></div>
+    </div>
+    <div class="row">
+      <button class="btn y" id="bSubmit" type="button" disabled>Submit answers</button>
+      <button class="btn sec" id="bReset" type="button">Start sorting again</button>
+    </div>
+  </div>
+</section>
+
+<section id="vRes" class="card hidden">
+  <h2>Your result</h2>
+  <div class="who" id="whoR"></div>
+  <div class="score"><div class="big" id="sc"></div><div id="scMsg" class="lead" style="margin:0;max-width:560px"></div></div>
+  <div id="sendStatus" class="status"></div>
+  <h3>Model answer</h3>
+  <ul class="res" id="resList"></ul>
+</section>
+</main>
+<footer>Delta Crest Insurance is a fictional company created for this workshop.</footer>
+
+<script>
+{
+var TRAINER_EMAIL="gamal.haikal@gmail.com";
+var LS_KEY="sia_act11_v1";
+var ITEMS=[
+ {t:"Cut motor claim settlement time from 14 to 7 days",a:"O",x:"Doing an existing process faster. It becomes strategic only if DCI deliberately chooses claims speed as its way to win."},
+ {t:"Exit retail motor and focus on fleet and SME motor",a:"S",x:"A where-to-play choice with a clear trade-off: DCI gives up a segment."},
+ {t:"Become the specialist insurer for engineering and energy projects",a:"S",x:"A positioning choice: where to play and how to win."},
+ {t:"Reduce printing costs by moving to e-policies",a:"O",x:"Cost efficiency in an existing activity; any rival can copy it."},
+ {t:"Enter the medical TPA business through a joint venture",a:"S",x:"Entering a new business: a diversification choice."},
+ {t:"Train all underwriters on the new pricing tool",a:"O",x:"Building skill to run an existing tool better."},
+ {t:"Sell SME packages only through banks and online, not branches",a:"S",x:"A channel choice that says no to an option (branches)."},
+ {t:"Hit 95% on-time renewal notices",a:"O",x:"A process performance target."},
+ {t:"Stop bidding for large government tenders",a:"S",x:"A deliberate what-not-to-do choice."},
+ {t:"Introduce a new claims call-centre script",a:"O",x:"A process improvement in an existing service."}
+];
+var NAMES={S:"Strategy",O:"Operations"};
+var state={company:"",team:"",place:{},result:null};
+var $=function(id){return document.getElementById(id)};
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]})}
+function lsGet(){try{return JSON.parse(localStorage.getItem(LS_KEY)||"null")}catch(e){return null}}
+function lsSet(v){try{localStorage.setItem(LS_KEY,JSON.stringify(v))}catch(e){}}
+function lsClear(){try{localStorage.removeItem(LS_KEY)}catch(e){}}
+function show(id){["vStart","vBoard","vRes"].forEach(function(v){$(v).classList.toggle("hidden",v!==id)});window.scrollTo(0,0)}
+function who(){return state.company+(state.team?" · "+state.team:"")}
+
+/* ---------- board ---------- */
+var selected=null;
+function cardHTML(i){return '<div class="item" draggable="true" tabindex="0" role="button" data-i="'+i+'" aria-label="Statement '+(i+1)+'"><b>'+(i+1)+'</b><span>'+esc(ITEMS[i].t)+'</span></div>'}
+function render(){
+  var tray=$("tray"),zS=$("zS"),zO=$("zO");
+  tray.innerHTML="";
+  zS.querySelectorAll(".item").forEach(function(e){e.remove()});
+  zO.querySelectorAll(".item").forEach(function(e){e.remove()});
+  ITEMS.forEach(function(it,i){
+    var z=state.place[i],host=z==="S"?zS:z==="O"?zO:tray;
+    host.insertAdjacentHTML("beforeend",cardHTML(i));
+  });
+  var n=Object.keys(state.place).length;
+  $("progBar").style.width=(n*10)+"%";$("progTxt").textContent=n+" / 10 placed";
+  $("cS").textContent=zS.querySelectorAll(".item").length;$("cO").textContent=zO.querySelectorAll(".item").length;
+  $("bSubmit").disabled=n<10;
+  if(selected!==null){var el=document.querySelector('.item[data-i="'+selected+'"]');if(el)el.classList.add("sel")}
+  lsSet({company:state.company,team:state.team,place:state.place});
+}
+function placeItem(i,z){if(z==="T")delete state.place[i];else state.place[i]=z;selected=null;render()}
+
+document.addEventListener("dragstart",function(e){var it=e.target.closest&&e.target.closest(".item");if(!it)return;e.dataTransfer.setData("text/plain",it.dataset.i);it.classList.add("drag")});
+document.addEventListener("dragend",function(e){var it=e.target.closest&&e.target.closest(".item");if(it)it.classList.remove("drag");document.querySelectorAll(".over").forEach(function(z){z.classList.remove("over")})});
+["tray","zS","zO"].forEach(function(id){
+  var z=$(id);
+  z.addEventListener("dragover",function(e){e.preventDefault();z.classList.add("over")});
+  z.addEventListener("dragleave",function(){z.classList.remove("over")});
+  z.addEventListener("drop",function(e){e.preventDefault();z.classList.remove("over");var i=e.dataTransfer.getData("text/plain");if(i!=="")placeItem(+i,z.dataset.zone)});
+  z.addEventListener("click",function(e){
+    var it=e.target.closest(".item");
+    if(it){var i=+it.dataset.i;selected=(selected===i)?null:i;render();return}
+    if(selected!==null)placeItem(selected,z.dataset.zone);
+  });
+});
+document.addEventListener("keydown",function(e){
+  var it=document.activeElement&&document.activeElement.closest&&document.activeElement.closest(".item");if(!it)return;
+  var i=+it.dataset.i,k=e.key.toLowerCase();
+  if(k==="s"||k==="arrowleft"){placeItem(i,"S");focusItem(i)}
+  else if(k==="o"||k==="arrowright"){placeItem(i,"O");focusItem(i)}
+  else if(k==="backspace"||k==="delete"){placeItem(i,"T");focusItem(i)}
+});
+function focusItem(i){var el=document.querySelector('.item[data-i="'+i+'"]');if(el)el.focus()}
+
+/* ---------- start ---------- */
+$("fStart").addEventListener("submit",function(e){
+  e.preventDefault();
+  var c=$("co").value.trim();
+  if(!c){$("coErr").classList.remove("hidden");$("co").focus();return}
+  state.company=c;state.team=$("tm").value.trim();
+  $("whoB").textContent=who();show("vBoard");render();
+});
+$("bReset").addEventListener("click",function(){state.place={};selected=null;render()});
+
+/* ---------- submit + report ---------- */
+$("bSubmit").addEventListener("click",function(){
+  if(Object.keys(state.place).length<10)return;
+  var score=0;ITEMS.forEach(function(it,i){if(state.place[i]===it.a)score++});
+  var d=new Date();
+  state.result={company:state.company,team:state.team,place:JSON.parse(JSON.stringify(state.place)),score:score,
+    at:d.toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"}),sent:false,locked:true};
+  lsSet(state.result);show("vRes");renderReport();sendResult();
+});
+function renderReport(){
+  var r=state.result;
+  $("whoR").textContent=r.company+(r.team?" · "+r.team:"")+" · "+r.at;
+  $("sc").innerHTML=r.score+"<small> / 10</small>";
+  $("scMsg").textContent=r.score>=9?"Excellent. You separate choices from improvements clearly.":r.score>=7?"Good. Look at the items you missed: what makes them a choice or an improvement?":"Worth a second look. The test is not importance or cost, but whether it is a choice with a trade-off.";
+  $("resList").innerHTML=ITEMS.map(function(it,i){
+    var you=r.place[i],ok=you===it.a;
+    return '<li><div class="m '+(ok?"ok":"no")+'">'+(ok?"✓":"✗")+'</div><div><b>'+(i+1)+'. '+esc(it.t)+'</b><div class="tag">Your answer: '+NAMES[you]+' &middot; Model answer: <b>'+NAMES[it.a]+'</b></div><div class="ex">'+esc(it.x)+'</div></div></li>';
+  }).join("");
+  renderStatus();
+}
+function plain(r){
+  var L=["Activity 1.1 Strategy or Operations? – result","Company: "+r.company,"Name/table: "+(r.team||"-"),"Score: "+r.score+"/10","Submitted: "+r.at,""];
+  ITEMS.forEach(function(it,i){L.push((r.place[i]===it.a?"[OK] ":"[X]  ")+(i+1)+". "+it.t+" | answer: "+NAMES[r.place[i]]+" | model: "+NAMES[it.a])});
+  return L.join("\n");
+}
+var sendState="idle";
+function renderStatus(){
+  var r=state.result,el=$("sendStatus");
+  el.className="status";
+  if(r.sent||sendState==="ok"){el.classList.add("good");el.textContent="✔ Your result has been sent to the trainer.";return}
+  if(sendState==="sending"){el.textContent="Sending your result to the trainer…";return}
+  if(sendState==="fail"){
+    el.classList.add("warn");
+    el.innerHTML='Automatic sending failed (you may be offline). Retry, or copy your result and send it to the trainer.<div class="b"><button class="btn" id="bRetry" type="button">Retry</button><button class="btn sec" id="bCopy" type="button">Copy result</button><a class="btn sec" style="text-decoration:none;display:inline-block" href="mailto:'+TRAINER_EMAIL+'?subject='+encodeURIComponent("Activity 1.1 result – "+r.company)+'&body='+encodeURIComponent(plain(r))+'">Send by email</a></div><div class="mail">Trainer email: '+TRAINER_EMAIL+'</div>';
+    $("bRetry").onclick=sendResult;
+    $("bCopy").onclick=function(){
+      var done=function(){$("bCopy").textContent="Copied"};
+      function fb(){var ta=document.createElement("textarea");ta.value=plain(r);document.body.appendChild(ta);ta.select();try{document.execCommand("copy");done()}catch(e){}ta.remove()}
+      try{navigator.clipboard.writeText(plain(r)).then(done,fb)}catch(e){fb()}
+    };
+    return;
+  }
+  el.textContent="";
+}
+function sendResult(){
+  var r=state.result;if(!r||r.sent)return;
+  sendState="sending";renderStatus();
+  var body={_subject:"Activity 1.1 Strategy or Operations – "+r.company+" ("+r.score+"/10)",_template:"table",_captcha:"false",
+    Company:r.company,"Name / table":r.team||"-",Score:r.score+"/10",Submitted:r.at};
+  ITEMS.forEach(function(it,i){body["Q"+(i+1)+". "+it.t]=NAMES[r.place[i]]+(r.place[i]===it.a?"  ✓":"  ✗ (model: "+NAMES[it.a]+")")});
+  var ctrl=("AbortController" in window)?new AbortController():null;
+  var to=setTimeout(function(){if(ctrl)ctrl.abort()},15000);
+  fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body),signal:ctrl?ctrl.signal:undefined})
+   .then(function(res){return res.json().catch(function(){return {}}).then(function(j){return {ok:res.ok,j:j}})})
+   .then(function(o){clearTimeout(to);if(o.ok&&(o.j.success===true||o.j.success==="true")){r.sent=true;sendState="ok";lsSet(r)}else sendState="fail";renderStatus()})
+   .catch(function(){clearTimeout(to);sendState="fail";renderStatus()});
+}
+
+/* ---------- init ---------- */
+if(location.hash==="#reset"){lsClear();history.replaceState(null,"",location.pathname)}
+var saved=lsGet();
+if(saved&&saved.locked){state.result=saved;state.company=saved.company;state.team=saved.team;sendState=saved.sent?"ok":"idle";show("vRes");renderReport();if(!saved.sent)sendResult()}
+else if(saved&&saved.company){state.company=saved.company;state.team=saved.team||"";state.place=saved.place||{};$("whoB").textContent=who();show("vBoard");render()}
+}
+</script>
+</body>
+</html>
