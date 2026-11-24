@@ -95,6 +95,45 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:6px}
 .legend i{display:inline-block;width:14px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle}
 .sugg{background:var(--sb);border-radius:12px;padding:14px 16px;margin-top:14px}
+.sl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.25fr);gap:18px;margin-top:10px}
+@media(max-width:860px){.sl{grid-template-columns:minmax(0,1fr)}}
+.inp{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:6px 10px;align-items:center}
+.inp label{margin:0;font-weight:500;font-size:14px}
+.inp input{width:100%;font:inherit;font-size:16px;padding:8px;border:1px solid #bbb;border-radius:8px;text-align:right}
+.inp .sec{grid-column:1/-1;font-weight:700;margin-top:10px;font-size:15px}
+.sld{margin:10px 0 4px}
+.sld .top{display:flex;justify-content:space-between;font-size:15px;font-weight:600}
+.sld .top output{background:var(--yl);border-radius:6px;padding:1px 8px}
+.sld input[type=range]{width:100%;accent-color:#343432;height:32px}
+.sld small{color:var(--muted);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.kpi span{font-size:13px;color:var(--muted)}
+.kpi b{display:block;font-size:clamp(20px,2.4vw,26px);line-height:1.2;white-space:nowrap}
+.kpi em{font-style:normal;font-size:13px;font-weight:700;white-space:nowrap}
+.up{color:var(--ok)}.dn{color:var(--bad)}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:right;white-space:nowrap}
+.tbl th:first-child,.tbl td:first-child{text-align:left;white-space:normal}
+.tbl thead th{background:var(--dk);color:#fff}
+.torn{display:grid;gap:6px;margin-top:6px}
+.torn .r{display:grid;grid-template-columns:140px minmax(0,1fr) 90px;gap:8px;align-items:center;font-size:14px}
+.torn .bar{position:relative;height:18px;background:#f0f0f0;border-radius:4px}
+.torn .bar i{position:absolute;top:0;height:100%;border-radius:4px}
+.torn .bar:after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;border-left:1px solid #888}
+.note{font-size:13px;color:var(--muted)}
+#report{display:none}
+@media print{
+  body{background:#fff}
+  header,main,footer{display:none!important}
+  #report{display:block!important;font:12px/1.45 "Segoe UI",Calibri,Arial,sans-serif;color:#111}
+  #report h1{font-size:22px;margin:0 0 4px}#report h2{font-size:15px;margin:16px 0 6px;border-bottom:2px solid #fff200;padding-bottom:3px}
+  #report table{width:100%;border-collapse:collapse;margin-top:4px}#report th,#report td{border:1px solid #ccc;padding:4px 6px;text-align:right}
+  #report th:first-child,#report td:first-child{text-align:left}#report thead th{background:#343432;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #report .torn .bar i{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #report .avoid{break-inside:avoid}
+  @page{margin:14mm}
+}
 footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
 @media(prefers-reduced-motion:reduce){.prog i{transition:none}}
 </style>
@@ -121,6 +160,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <button class="tab" role="tab" id="t11" type="button">1.1 Strategy or Operations?<span class="ck" id="ck11"></span></button>
     <button class="tab" role="tab" id="t14" type="button">1.4 Signal Spotting<span class="ck" id="ck14"></span></button>
     <button class="tab" role="tab" id="t16" type="button">1.6 Unique Selling Proposition<span class="ck" id="ck16"></span></button>
+    <button class="tab" role="tab" id="tSL" type="button">Sensitivity Lab</button>
   </div>
 
   <div id="p11" class="card" role="tabpanel">
@@ -191,8 +231,45 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     </div>
     <div id="r16" class="hidden"></div>
   </div>
+
+  <div id="pSL" class="card hidden" role="tabpanel">
+    <h2>Sensitivity Lab: how economic factors move an insurer's profit</h2>
+    <p class="lead">Enter your own base-year numbers (or load the DCI example), then move the sliders to see how market size and profit react. Export the full report as a PDF at any time.</p>
+    <div class="who wh"></div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn sec" id="slDCI" type="button">Load DCI example</button>
+      <button class="btn sec" id="slClear" type="button">Clear all inputs</button>
+      <button class="btn y" id="slPDF" type="button">Export full report (PDF)</button>
+    </div>
+    <div id="slMsg" class="note" style="margin-top:6px"></div>
+    <div class="sl">
+      <div>
+        <h3>1. Base year (EGP millions unless stated)</h3>
+        <div class="inp" id="slIn"></div>
+        <h3>2. Economic scenario</h3>
+        <div id="slSl"></div>
+        <div class="row" style="margin-top:6px"><button class="btn sec" id="slReset" type="button">Reset sliders to base</button></div>
+      </div>
+      <div>
+        <h3>3. Results: scenario vs base</h3>
+        <div id="slOut"><p class="note">Fill in the base-year inputs to see results.</p></div>
+      </div>
+    </div>
+    <details style="margin-top:16px"><summary><b>How the model works</b></summary>
+      <ul class="note" style="margin-top:8px">
+        <li>Market size = base market × (1 + real growth) × (1 + inflation × price pass-through).</li>
+        <li>Company premium = market size × your market share (share held constant).</li>
+        <li>Claims costs rise with inflation, plus the depreciation on the import-linked share of claims. Premium rates rise only by inflation × pass-through, so the gap moves the loss ratio.</li>
+        <li>Expenses rise with inflation and with half of the volume growth.</li>
+        <li>Investable assets grow with premium; investment income = assets × (base yield + interest rate change).</li>
+        <li>The tornado chart shows each factor's effect on profit before tax when it moves alone.</li>
+      </ul>
+      <p class="note">A teaching model with simplified, transparent assumptions; not a forecast.</p>
+    </details>
+  </div>
 </section>
 </main>
+<div id="report"></div>
 <footer>Delta Crest Insurance is a fictional company created for this workshop.</footer>
 
 <script>
@@ -234,11 +311,13 @@ function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",ti
 
 var IDS=["11","14","16"];
 function showTab(a){
-  if(IDS.indexOf(a.slice(1))<0)a="a11";
+  if(a!=="aSL"&&IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
   IDS.forEach(function(id){$("t"+id).setAttribute("aria-selected",a==="a"+id);$("p"+id).classList.toggle("hidden",a!=="a"+id);$("ck"+id).textContent=S["r"+id]?" \u2713":""});
-  ({a11:draw11,a14:draw14,a16:draw16})[a]();
+  var sl=a==="aSL";$("tSL").setAttribute("aria-selected",sl);$("pSL").classList.toggle("hidden",!sl);
+  ({a11:draw11,a14:draw14,a16:draw16,aSL:drawSL})[a]();
 }
+$("tSL").addEventListener("click",function(){showTab("aSL")});
 IDS.forEach(function(id){$("t"+id).addEventListener("click",function(){showTab("a"+id)})});
 function nextBtn(id){
   var nx=IDS.filter(function(x){return x!==id&&!S["r"+x]})[0];
@@ -368,6 +447,103 @@ function send(id){
    .catch(function(){clearTimeout(to);sendState[id]="fail";status(id)});
 }
 
+/* ---------- Sensitivity Lab ---------- */
+var SLIN=[
+ {sec:"Market and company"},
+ {k:"M0",l:"Market gross written premium (GWP)",u:""},
+ {k:"G0",l:"Company GWP",u:""},
+ {sec:"Underwriting"},
+ {k:"LR",l:"Loss ratio (%)",u:"%"},
+ {k:"ER",l:"Expense ratio (%)",u:"%"},
+ {k:"FX",l:"Share of claims costs linked to imports (%)",u:"%"},
+ {k:"PT",l:"Inflation passed into premium rates (%)",u:"%"},
+ {sec:"Investments"},
+ {k:"A0",l:"Investable assets (reserves + capital)",u:""},
+ {k:"Y0",l:"Base investment yield (%)",u:"%"}
+];
+var SLDCI={M0:80000,G0:3300,LR:68.9,ER:29.9,FX:40,PT:70,A0:2050,Y0:20};
+var SLS=[
+ {k:"di",l:"Interest rate change",min:-10,max:10,step:0.5,f:function(v){return (v>0?"+":"")+v+" pts"},h:"Change in the yield earned on investments"},
+ {k:"pi",l:"Inflation",min:0,max:50,step:1,f:function(v){return v+"%"},h:"General price rise over the year"},
+ {k:"fx",l:"Pound depreciation",min:0,max:100,step:1,f:function(v){return v+"%"},h:"Fall in the EGP against the USD over the year"},
+ {k:"g",l:"Market growth (real volume)",min:-10,max:20,step:1,f:function(v){return (v>0?"+":"")+v+"%"},h:"Growth in insured volume, before inflation"}
+];
+function slState(){if(!S.sl)S.sl={inp:{},sc:{di:0,pi:0,fx:0,g:0}};return S.sl}
+function drawSL(){
+  var st=slState();
+  $("slIn").innerHTML=SLIN.map(function(f){
+    if(f.sec)return '<div class="sec">'+f.sec+'</div>';
+    return '<label for="in_'+f.k+'">'+f.l+'</label><input id="in_'+f.k+'" data-k="'+f.k+'" type="number" step="any" inputmode="decimal" value="'+esc(st.inp[f.k]==null?"":st.inp[f.k])+'">';
+  }).join("");
+  $("slSl").innerHTML=SLS.map(function(x){var v=st.sc[x.k];
+    return '<div class="sld"><div class="top"><label for="sl_'+x.k+'" style="margin:0">'+x.l+'</label><output id="o_'+x.k+'">'+x.f(v)+'</output></div><input type="range" id="sl_'+x.k+'" data-k="'+x.k+'" min="'+x.min+'" max="'+x.max+'" step="'+x.step+'" value="'+v+'"><small>'+x.h+'</small></div>'}).join("");
+  calcSL();
+}
+$("slIn").addEventListener("input",function(e){var k=e.target.dataset.k;if(!k)return;var v=e.target.value;slState().inp[k]=v===""?null:parseFloat(v);calcSL()});
+$("slSl").addEventListener("input",function(e){var k=e.target.dataset.k;if(!k)return;var v=parseFloat(e.target.value);slState().sc[k]=v;$("o_"+k).textContent=SLS.filter(function(x){return x.k===k})[0].f(v);calcSL()});
+$("slDCI").addEventListener("click",function(){slState().inp=JSON.parse(JSON.stringify(SLDCI));drawSL();$("slMsg").textContent="DCI example loaded (from the case data). Replace any number with your own."});
+$("slClear").addEventListener("click",function(){slState().inp={};drawSL();$("slMsg").textContent=""});
+$("slReset").addEventListener("click",function(){slState().sc={di:0,pi:0,fx:0,g:0};drawSL()});
+
+function model(I,c){
+  var g=c.g/100,pi=c.pi/100,fx=c.fx/100,di=c.di/100,lr=I.LR/100,er=I.ER/100,f=I.FX/100,pt=I.PT/100,y=I.Y0/100;
+  var price=1+pi*pt, M=I.M0*(1+g)*price, G=I.G0*(1+g)*price;
+  var claims=I.G0*lr*(1+g)*(1+pi+f*fx);
+  var exp=I.G0*er*(1+pi)*(1+0.5*g);
+  var A=I.A0*G/I.G0, inv=A*Math.max(0,y+di);
+  var uw=G-claims-exp;
+  return {M:M,G:G,LR:claims/G,ER:exp/G,CR:(claims+exp)/G,UW:uw,INV:inv,PBT:uw+inv,A:A};
+}
+function slReady(I){return SLIN.every(function(f){return f.sec||(I[f.k]!=null&&!isNaN(I[f.k]))})&&I.G0>0&&I.M0>0}
+function n0(v){return (v<0?"(":"")+Math.round(Math.abs(v)).toLocaleString("en-US")+(v<0?")":"")}
+function pc(v){return (v*100).toFixed(1)+"%"}
+function dlt(a,b,isPct,inv){var d=b-a;if(Math.abs(d)<1e-9)return '<em>no change</em>';var good=inv?d<0:d>0;var s=isPct?((d>0?"+":"−")+Math.abs(d*100).toFixed(1)+" pts"):((d>0?"+":"−")+n0(Math.abs(d))+(a?" ("+(d>0?"+":"−")+Math.abs(d/Math.abs(a)*100).toFixed(0)+"%)":""));return '<em class="'+(good?"up":"dn")+'">'+s+'</em>'}
+var SLRES=null;
+function calcSL(){
+  var st=slState(),I=st.inp;save();
+  if(!slReady(I)){$("slOut").innerHTML='<p class="note">Fill in all base-year inputs to see results, or press “Load DCI example”.</p>';SLRES=null;return}
+  var b=model(I,{di:0,pi:0,fx:0,g:0}),s=model(I,st.sc);
+  var torn=SLS.map(function(x){var c={di:0,pi:0,fx:0,g:0};c[x.k]=st.sc[x.k];return {l:x.l,v:x.f(st.sc[x.k]),d:model(I,c).PBT-b.PBT}});
+  var mx=Math.max.apply(null,torn.map(function(t){return Math.abs(t.d)}).concat([1]));
+  SLRES={b:b,s:s,torn:torn,mx:mx};
+  var k=function(lbl,bv,sv,fmt,isPct,inv){return '<div class="kpi"><span>'+lbl+'</span><b>'+fmt(sv)+'</b>'+dlt(bv,sv,isPct,inv)+'</div>'};
+  $("slOut").innerHTML='<div class="kpis">'+
+    k("Market size",b.M,s.M,n0)+k("Company GWP",b.G,s.G,n0)+k("Combined ratio",b.CR,s.CR,pc,true,true)+
+    k("Underwriting result",b.UW,s.UW,n0)+k("Investment income",b.INV,s.INV,n0)+k("Profit before tax",b.PBT,s.PBT,n0)+'</div>'+
+    '<h3>Profit bridge</h3>'+tableSL(b,s)+
+    '<h3>What moves profit most (tornado)</h3><p class="note" style="margin:0">Effect of each slider on profit before tax when it moves alone (EGP m).</p>'+tornHTML(torn,mx)+
+    '<p class="note" style="margin-top:12px">'+insight(b,s,torn)+'</p>';
+}
+function tableSL(b,s){
+  var rows=[["Market size",b.M,s.M,0],["Company GWP",b.G,s.G,0],["Loss ratio",b.LR,s.LR,1],["Expense ratio",b.ER,s.ER,1],["Combined ratio",b.CR,s.CR,1],["Underwriting result",b.UW,s.UW,0],["Investment income",b.INV,s.INV,0],["Profit before tax",b.PBT,s.PBT,0]];
+  return '<div style="overflow-x:auto"><table class="tbl"><thead><tr><th>EGP m</th><th>Base</th><th>Scenario</th><th>Change</th></tr></thead><tbody>'+
+   rows.map(function(r){var f=r[3]?pc:n0,d=r[2]-r[1];return '<tr><td>'+r[0]+'</td><td>'+f(r[1])+'</td><td>'+f(r[2])+'</td><td>'+(r[3]?((d>=0?"+":"−")+Math.abs(d*100).toFixed(1)+" pts"):((d>=0?"+":"−")+n0(Math.abs(d))))+'</td></tr>'}).join("")+'</tbody></table></div>';
+}
+function tornHTML(torn,mx){
+  return '<div class="torn">'+torn.map(function(t){var w=Math.abs(t.d)/mx*50,left=t.d<0?50-w:50;
+    return '<div class="r"><span>'+t.l+' <span class="note">('+t.v+')</span></span><div class="bar"><i style="left:'+left+'%;width:'+w+'%;background:'+(t.d<0?"#d64545":"#1f9d55")+'"></i></div><span style="text-align:right">'+(t.d>=0?"+":"−")+n0(Math.abs(t.d))+'</span></div>'}).join("")+'</div>';
+}
+function insight(b,s,torn){
+  var top=torn.slice().sort(function(x,y){return Math.abs(y.d)-Math.abs(x.d)})[0];
+  if(Math.abs(top.d)<0.5)return "Move the sliders to build a scenario.";
+  var share=s.PBT!==0?s.INV/s.PBT:0;
+  return "In this scenario profit before tax moves from "+n0(b.PBT)+" to "+n0(s.PBT)+" (EGP m). The biggest single driver is "+top.l.toLowerCase()+" ("+(top.d>=0?"+":"−")+n0(Math.abs(top.d))+"). The combined ratio is "+pc(s.CR)+(s.CR>1?", so underwriting loses money and profit depends on investment income":", so underwriting is profitable")+(s.PBT>0?"; investment income makes up "+Math.round(share*100)+"% of profit.":".");
+}
+$("slPDF").addEventListener("click",function(){
+  var st=slState();
+  if(!SLRES){$("slMsg").textContent="Enter the base-year inputs (or load the DCI example) before exporting.";return}
+  var I=st.inp,R=SLRES;
+  $("report").innerHTML='<h1>Sensitivity Lab report</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · '+esc(stamp())+'</div>'+
+   '<h2>Summary</h2><p>'+esc(insight(R.b,R.s,R.torn))+'</p>'+
+   '<div class="avoid"><h2>Base-year inputs</h2><table><thead><tr><th>Input</th><th>Value</th></tr></thead><tbody>'+SLIN.filter(function(f){return !f.sec}).map(function(f){return '<tr><td>'+f.l+'</td><td>'+Number(I[f.k]).toLocaleString("en-US")+'</td></tr>'}).join("")+'</tbody></table></div>'+
+   '<div class="avoid"><h2>Economic scenario</h2><table><thead><tr><th>Factor</th><th>Setting</th></tr></thead><tbody>'+SLS.map(function(x){return '<tr><td>'+x.l+'</td><td>'+x.f(st.sc[x.k])+'</td></tr>'}).join("")+'</tbody></table></div>'+
+   '<div class="avoid"><h2>Results: base vs scenario</h2>'+tableSL(R.b,R.s)+'</div>'+
+   '<div class="avoid"><h2>What moves profit most</h2>'+tornHTML(R.torn,R.mx)+'</div>'+
+   '<div class="avoid"><h2>Model assumptions</h2><ul><li>Market size = base market × (1 + real growth) × (1 + inflation × price pass-through); company market share held constant.</li><li>Claims rise with inflation plus depreciation on the import-linked share; premium rates rise by inflation × pass-through.</li><li>Expenses rise with inflation and half of volume growth.</li><li>Investable assets grow with premium; investment income = assets × (base yield + rate change).</li><li>A teaching model, not a forecast.</li></ul></div>';
+  try{window.print()}catch(e){$("slMsg").textContent="Printing is blocked here. Open the online link in Chrome or Edge, then choose “Save as PDF”."}
+  $("slMsg").textContent="In the print window, choose “Save as PDF” as the destination.";
+});
+
 /* ---------- 1.6 Unique Selling Proposition ---------- */
 var COMPS=["Pyramid General","NileTech Insure","OrientMed","Atlas Takaful"];
 var UCOL=["#343432","#9a9a9a","#c9a800","#63b1db"];
@@ -482,7 +658,7 @@ $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=/^#a(11|14|16)$/.test(location.hash)?location.hash.slice(1):null;
+var hashTab=/^#a(11|14|16|SL)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
