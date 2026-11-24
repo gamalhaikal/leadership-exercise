@@ -497,7 +497,7 @@ function model(I,c){
 function slReady(I){return SLIN.every(function(f){return f.sec||(I[f.k]!=null&&!isNaN(I[f.k]))})&&I.G0>0&&I.M0>0}
 function n0(v){return (v<0?"(":"")+Math.round(Math.abs(v)).toLocaleString("en-US")+(v<0?")":"")}
 function pc(v){return (v*100).toFixed(1)+"%"}
-function dlt(a,b,isPct,inv){var d=b-a;if(Math.abs(d)<1e-9)return '<em>no change</em>';var good=inv?d<0:d>0;var s=isPct?((d>0?"+":"−")+Math.abs(d*100).toFixed(1)+" pts"):((d>0?"+":"−")+n0(Math.abs(d))+(a?" ("+(d>0?"+":"−")+Math.abs(d/Math.abs(a)*100).toFixed(0)+"%)":""));return '<em class="'+(good?"up":"dn")+'">'+s+'</em>'}
+function dlt(a,b,isPct,inv){var d=b-a;if(Math.abs(d)<1e-9)return '<em>no change</em>';var good=inv?d<0:d>0;var s=isPct?((d>0?"+":"−")+Math.abs(d*100).toFixed(1)+" pts"):((d>0?"+":"−")+n0(Math.abs(d))+(a&&Math.abs(d/a)<=9.99?" ("+(d>0?"+":"−")+Math.abs(d/Math.abs(a)*100).toFixed(0)+"%)":""));return '<em class="'+(good?"up":"dn")+'">'+s+'</em>'}
 var SLRES=null;
 function calcSL(){
   var st=slState(),I=st.inp;save();
