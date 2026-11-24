@@ -260,7 +260,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
         <li>Start from this year's sales.</li>
         <li>Market growth: sales × (1 + growth). More customers and more policies.</li>
         <li>Inflation: × (1 + inflation). Higher values insured mean higher premiums.</li>
-        <li>Pound depreciation: only the import-linked part of sales (cars, machinery, cargo) rises with the exchange rate.</li>
+        <li>Pound depreciation: motor, marine cargo, engineering and property sales rise with the exchange rate, because the cars, cargo and machinery they insure are priced in dollars. Other lines (medical, liability) do not.</li>
         <li>Interest rates: each 1-point rise cuts sales by the sensitivity you set (fewer car loans and new projects); a cut adds to sales.</li>
       </ol>
       <p class="note">A simple teaching model, not a forecast. Market share is assumed unchanged.</p>
@@ -447,58 +447,80 @@ function send(id){
 }
 
 /* ---------- Sensitivity Lab (sales) ---------- */
+var CATS=[
+ {k:"MO",l:"Motor (cars)",fx:true},
+ {k:"MA",l:"Marine cargo",fx:true},
+ {k:"EP",l:"Engineering and property",fx:true},
+ {k:"OT",l:"Other lines (medical, liability, etc.)",fx:false}
+];
 var SLIN=[
- {k:"S0",l:"Your sales this year (gross written premium)"},
+ {sec:"Your sales this year by line"},
+ {k:"MO",l:"Motor (cars)"},{k:"MA",l:"Marine cargo"},{k:"EP",l:"Engineering and property"},{k:"OT",l:"Other lines (medical, liability, etc.)"},
+ {tot:true},
+ {sec:"Other settings"},
  {k:"M0",l:"Total market size this year (optional)"},
- {k:"IMP",l:"Share of your sales linked to imported values (%)"},
  {k:"IE",l:"Sales change for each 1-point interest rise (%)"}
 ];
-var SLDCI={S0:3300,M0:80000,IMP:40,IE:2};
+var SLDCI={MO:1150,MA:260,EP:720,OT:1170,M0:80000,IE:2};
 var SLS=[
  {k:"g",l:"Market growth (real)",min:-10,max:20,step:1,f:function(v){return (v>0?"+":"")+v+"%"},h:"More or fewer customers and policies"},
  {k:"pi",l:"Inflation",min:0,max:50,step:1,f:function(v){return v+"%"},h:"Rise in prices and insured values"},
  {k:"fx",l:"Pound depreciation",min:0,max:100,step:1,f:function(v){return v+"%"},h:"Fall in the EGP against the USD"},
  {k:"di",l:"Interest rate change",min:-10,max:10,step:0.5,f:function(v){return (v>0?"+":"")+v+" pts"},h:"Change in central bank interest rates"}
 ];
-function slState(){if(!S.sl||!S.sl.sc||S.sl.v!==2)S.sl={v:2,inp:{IMP:40,IE:2},sc:{g:0,pi:0,fx:0,di:0}};return S.sl}
+function slState(){if(!S.sl||!S.sl.sc||S.sl.v!==3)S.sl={v:3,inp:{IE:2},sc:{g:0,pi:0,fx:0,di:0}};return S.sl}
+function cv(I,k){var v=I[k];return v==null||isNaN(v)?0:v}
+function tot(I){return CATS.reduce(function(a,c){return a+cv(I,c.k)},0)}
 function drawSL(){
   var st=slState();
-  $("slIn").innerHTML=SLIN.map(function(f){return '<label for="in_'+f.k+'">'+f.l+'</label><input id="in_'+f.k+'" data-k="'+f.k+'" type="number" step="any" inputmode="decimal" value="'+esc(st.inp[f.k]==null?"":st.inp[f.k])+'">'}).join("");
+  $("slIn").innerHTML=SLIN.map(function(f){
+    if(f.sec)return '<div class="sec">'+f.sec+'</div>';
+    if(f.tot)return '<label style="font-weight:700">Total sales this year</label><div id="slTot" style="text-align:right;font-weight:700;padding:8px">'+n0(tot(st.inp))+'</div>';
+    return '<label for="in_'+f.k+'">'+f.l+'</label><input id="in_'+f.k+'" data-k="'+f.k+'" type="number" step="any" inputmode="decimal" value="'+esc(st.inp[f.k]==null?"":st.inp[f.k])+'">'}).join("");
   $("slSl").innerHTML=SLS.map(function(x){var v=st.sc[x.k];
     return '<div class="sld"><div class="top"><label for="sl_'+x.k+'" style="margin:0">'+x.l+'</label><output id="o_'+x.k+'">'+x.f(v)+'</output></div><input type="range" id="sl_'+x.k+'" data-k="'+x.k+'" min="'+x.min+'" max="'+x.max+'" step="'+x.step+'" value="'+v+'"><small>'+x.h+'</small></div>'}).join("");
   calcSL();
 }
-$("slIn").addEventListener("input",function(e){var k=e.target.dataset.k;if(!k)return;var v=e.target.value;slState().inp[k]=v===""?null:parseFloat(v);calcSL()});
+$("slIn").addEventListener("input",function(e){var k=e.target.dataset.k;if(!k)return;var v=e.target.value;slState().inp[k]=v===""?null:parseFloat(v);var t=$("slTot");if(t)t.textContent=n0(tot(slState().inp));calcSL()});
 $("slSl").addEventListener("input",function(e){var k=e.target.dataset.k;if(!k)return;var v=parseFloat(e.target.value);slState().sc[k]=v;$("o_"+k).textContent=SLS.filter(function(x){return x.k===k})[0].f(v);calcSL()});
 $("slDCI").addEventListener("click",function(){slState().inp=JSON.parse(JSON.stringify(SLDCI));drawSL();$("slMsg").textContent="DCI example loaded. Replace any number with your own."});
-$("slClear").addEventListener("click",function(){slState().inp={IMP:40,IE:2};drawSL();$("slMsg").textContent=""});
+$("slClear").addEventListener("click",function(){slState().inp={IE:2};drawSL();$("slMsg").textContent=""});
 $("slReset").addEventListener("click",function(){slState().sc={g:0,pi:0,fx:0,di:0};drawSL()});
 function n0(v){return (v<0?"(":"")+Math.round(Math.abs(v)).toLocaleString("en-US")+(v<0?")":"")}
 function sg(v){return (v>=0?"+":"\u2212")+Math.round(Math.abs(v)).toLocaleString("en-US")}
 function steps(S0,c,imp,ie){
   var a=S0, s1=a*(1+c.g/100), s2=s1*(1+c.pi/100), s3=s2*(1+imp/100*c.fx/100), s4=s3*Math.max(0,1-ie/100*c.di);
+  var fxl="Pound depreciation ("+SLS[2].f(c.fx)+" on motor, marine cargo, engineering and property)";
   return [
    {l:"This year's sales",v:a,base:true},
    {l:"Market growth ("+SLS[0].f(c.g)+")",d:s1-a},
    {l:"Inflation ("+SLS[1].f(c.pi)+")",d:s2-s1},
-   {l:"Pound depreciation ("+SLS[2].f(c.fx)+" on "+imp+"% of sales)",d:s3-s2},
+   {l:fxl,d:s3-s2},
    {l:"Interest rates ("+SLS[3].f(c.di)+")",d:s4-s3},
    {l:"Expected sales next year",v:s4,total:true}];
 }
 var SLRES=null;
 function calcSL(){
   var st=slState(),I=st.inp;save();
-  if(!(I.S0>0)){$("slOut").innerHTML='<p class="note">Enter this year\u2019s sales to see the result, or press \u201cLoad DCI example\u201d.</p>';SLRES=null;return}
-  var imp=I.IMP==null||isNaN(I.IMP)?0:I.IMP, ie=I.IE==null||isNaN(I.IE)?0:I.IE;
-  var st5=steps(I.S0,st.sc,imp,ie), S1=st5[5].v, ch=S1/I.S0-1;
-  var share=I.M0>0?I.S0/I.M0:null;
-  SLRES={st:st5,S0:I.S0,S1:S1,ch:ch,M0:I.M0,M1:share?S1/share:null,share:share,imp:imp,ie:ie};
+  var S0=tot(I);
+  if(!(S0>0)){$("slOut").innerHTML='<p class="note">Enter this year\u2019s sales by line to see the result, or press \u201cLoad DCI example\u201d.</p>';SLRES=null;return}
+  var linked=CATS.filter(function(c){return c.fx}).reduce(function(a,c){return a+cv(I,c.k)},0), imp=linked/S0*100, ie=cv(I,"IE");
+  var st5=steps(S0,st.sc,imp,ie), S1=st5[5].v, ch=S1/S0-1;
+  var share=I.M0>0?S0/I.M0:null, c=st.sc;
+  var lines=CATS.map(function(ct){var v0=cv(I,ct.k),v1=v0*(1+c.g/100)*(1+c.pi/100)*(ct.fx?1+c.fx/100:1)*Math.max(0,1-ie/100*c.di);return {l:ct.l,v0:v0,v1:v1,fx:ct.fx}});
+  SLRES={st:st5,S0:S0,S1:S1,ch:ch,M0:I.M0,M1:share?S1/share:null,share:share,imp:imp,ie:ie,lines:lines};
   var html='<div class="kpis"><div class="kpi"><span>Expected sales next year</span><b>'+n0(S1)+'</b><em class="'+(ch>=0?"up":"dn")+'">'+(ch>=0?"+":"\u2212")+Math.abs(ch*100).toFixed(1)+'% vs this year</em></div>'+
-    '<div class="kpi"><span>Change in sales</span><b>'+sg(S1-I.S0)+'</b><em>EGP m</em></div>'+
+    '<div class="kpi"><span>Change in sales</span><b>'+sg(S1-S0)+'</b><em>EGP m</em></div>'+
     (share?'<div class="kpi"><span>Expected market size</span><b>'+n0(SLRES.M1)+'</b><em>at your '+(share*100).toFixed(1)+'% share</em></div>':'')+'</div>'+
     '<h3>How we get there</h3>'+waterfall(st5)+
+    '<h3>By line of business</h3>'+linesTbl(SLRES)+
     '<p class="note" style="margin-top:12px">'+esc(sayIt(SLRES))+'</p>';
   $("slOut").innerHTML=html;
+}
+function linesTbl(R){
+  return '<div style="overflow-x:auto"><table class="tbl"><thead><tr><th>Line</th><th>This year</th><th>Next year</th><th>Change</th></tr></thead><tbody>'+
+   R.lines.map(function(x){var d=x.v1-x.v0;return '<tr><td>'+esc(x.l)+(x.fx?' <span class="note">(moves with the pound)</span>':'')+'</td><td>'+n0(x.v0)+'</td><td>'+n0(x.v1)+'</td><td>'+(x.v0?((d>=0?"+":"\u2212")+Math.abs(d/x.v0*100).toFixed(0)+"%"):"\u2013")+'</td></tr>'}).join("")+
+   '<tr style="font-weight:700"><td>Total</td><td>'+n0(R.S0)+'</td><td>'+n0(R.S1)+'</td><td>'+(R.ch>=0?"+":"\u2212")+Math.abs(R.ch*100).toFixed(0)+'%</td></tr></tbody></table></div>';
 }
 function waterfall(st5){
   var mx=Math.max.apply(null,st5.map(function(s){return s.v!=null?s.v:0}).concat(st5.filter(function(s){return s.d!=null}).map(function(s){return Math.abs(s.d)})));
@@ -517,13 +539,14 @@ $("slPDF").addEventListener("click",function(){
   var R=SLRES,I=st.inp;
   $("report").innerHTML='<h1>Sensitivity Lab: sales forecast</h1><div>Strategy in Action \u00b7 Beltone Academy</div><div>'+esc(who())+' \u00b7 '+esc(stamp())+'</div>'+
    '<h2>Summary</h2><p>'+esc(sayIt(R))+'</p>'+
-   '<div class="avoid"><h2>Inputs</h2><table><thead><tr><th>Input</th><th>Value</th></tr></thead><tbody>'+SLIN.filter(function(f){return I[f.k]!=null&&!isNaN(I[f.k])}).map(function(f){return '<tr><td>'+f.l+'</td><td>'+Number(I[f.k]).toLocaleString("en-US")+'</td></tr>'}).join("")+'</tbody></table></div>'+
+   '<div class="avoid"><h2>Inputs</h2><table><thead><tr><th>Input</th><th>Value</th></tr></thead><tbody>'+SLIN.filter(function(f){return f.k&&I[f.k]!=null&&!isNaN(I[f.k])}).map(function(f){return '<tr><td>'+f.l+'</td><td>'+Number(I[f.k]).toLocaleString("en-US")+'</td></tr>'}).join("")+'<tr style="font-weight:700"><td>Total sales this year</td><td>'+n0(R.S0)+'</td></tr></tbody></table></div>'+
    '<div class="avoid"><h2>Expectations for next year</h2><table><thead><tr><th>Factor</th><th>Setting</th></tr></thead><tbody>'+SLS.map(function(x){return '<tr><td>'+x.l+'</td><td>'+x.f(st.sc[x.k])+'</td></tr>'}).join("")+'</tbody></table></div>'+
    '<div class="avoid"><h2>From this year to next year (EGP m)</h2><table><thead><tr><th>Step</th><th>Effect</th><th>Running total</th></tr></thead><tbody>'+
    (function(){var run=0;return R.st.map(function(s){if(s.v!=null&&s.base)run=s.v;else if(s.d!=null)run+=s.d;return '<tr'+(s.total?' style="font-weight:700"':'')+'><td>'+esc(s.l)+'</td><td>'+(s.d!=null?sg(s.d):'')+'</td><td>'+n0(s.v!=null?s.v:run)+'</td></tr>'}).join("")})()+'</tbody></table>'+
    (R.M1?'<p>Expected market size: '+n0(R.M1)+' EGP m (at an unchanged '+(R.share*100).toFixed(1)+'% share).</p>':'')+'</div>'+
+   '<div class="avoid"><h2>By line of business</h2>'+linesTbl(R)+'</div>'+
    '<div class="avoid"><h2>Chart</h2>'+waterfall(R.st)+'</div>'+
-   '<div class="avoid"><h2>How it is calculated</h2><ul><li>Market growth: sales \u00d7 (1 + growth).</li><li>Inflation: \u00d7 (1 + inflation).</li><li>Pound depreciation: the import-linked share of sales rises with the exchange rate.</li><li>Interest rates: each 1-point rise cuts sales by '+R.ie+'%; a cut adds the same.</li><li>A simple teaching model, not a forecast.</li></ul></div>';
+   '<div class="avoid"><h2>How it is calculated</h2><ul><li>Market growth: sales \u00d7 (1 + growth).</li><li>Inflation: \u00d7 (1 + inflation).</li><li>Pound depreciation: motor, marine cargo, engineering and property sales rise with the exchange rate, because the cars, cargo and machinery they insure are priced in dollars. Other lines do not.</li><li>Interest rates: each 1-point rise cuts sales by '+R.ie+'%; a cut adds the same.</li><li>A simple teaching model, not a forecast.</li></ul></div>';
   $("slMsg").textContent="In the print window, choose \u201cSave as PDF\u201d as the destination.";
   try{window.print()}catch(e){$("slMsg").textContent="Printing is blocked here. Open the online link in Chrome or Edge, then choose \u201cSave as PDF\u201d."}
 });
