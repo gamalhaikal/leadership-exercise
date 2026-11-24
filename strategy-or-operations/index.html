@@ -75,14 +75,14 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
 <section id="vStart" class="card">
   <h2>Sort ten decisions at Delta Crest Insurance</h2>
   <p class="lead">Is each statement a <b>strategic choice</b> (where to play, how to win, what not to do) or an <b>operational improvement</b> (doing current activities better)? Work with your partner, place every statement, then submit. Your result goes to the trainer.</p>
-  <form id="fStart" novalidate>
+  <div id="fStart">
     <label for="co">Company / organisation (required)</label>
     <input type="text" id="co" autocomplete="organization" maxlength="80">
     <label for="tm">Your name or table (optional)</label>
     <input type="text" id="tm" maxlength="80">
     <div id="coErr" class="err hidden">Please enter your company name to continue.</div>
-    <div class="row"><button class="btn y" type="submit">Start the activity</button></div>
-  </form>
+    <div class="row"><button class="btn y" id="bStart" type="button">Start the activity</button></div>
+  </div>
 </section>
 
 <section id="vBoard" class="hidden">
@@ -186,13 +186,14 @@ document.addEventListener("keydown",function(e){
 function focusItem(i){var el=document.querySelector('.item[data-i="'+i+'"]');if(el)el.focus()}
 
 /* ---------- start ---------- */
-$("fStart").addEventListener("submit",function(e){
-  e.preventDefault();
+function start(){
   var c=$("co").value.trim();
   if(!c){$("coErr").classList.remove("hidden");$("co").focus();return}
   state.company=c;state.team=$("tm").value.trim();
   $("whoB").textContent=who();show("vBoard");render();
-});
+}
+$("bStart").addEventListener("click",start);
+["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 $("bReset").addEventListener("click",function(){state.place={};selected=null;render()});
 
 /* ---------- submit + report ---------- */
