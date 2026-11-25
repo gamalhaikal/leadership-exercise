@@ -355,11 +355,11 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
   <div id="p21" class="card hidden" role="tabpanel">
     <div id="b21">
       <h2>Warm-up 2.1: Whose Vision Is It?</h2>
-      <p class="lead">Eight well-known international companies and the statements they use to describe where they are heading. Drag each statement onto the company it belongs to. Some call it a vision, some a mission or purpose; that difference is part of the discussion.</p>
+      <p class="lead">Nine companies (eight international names plus GIG) and the statements they use to describe where they are heading. Drag each statement onto the company it belongs to. Some call it a vision, some a mission or purpose; that difference is part of the discussion.</p>
       <div class="row" style="margin-top:0">
         <div class="who wh"></div>
         <div class="prog" aria-hidden="true"><i id="pb21"></i></div>
-        <div class="who" id="pt21">0 / 8 placed</div>
+        <div class="who" id="pt21">0 / 9 placed</div>
       </div>
       <p class="tap">On a phone or tablet: tap a statement, then tap the company.</p>
       <div class="vmtray" id="vmtray" aria-label="Statements to match"></div>
@@ -738,9 +738,10 @@ var A21=[
  {t:"Microsoft",sec:"Software and cloud · USA",s:"To empower every person and every organization on the planet to achieve more.",ty:"Mission",x:"Microsoft's mission: it focuses on what customers achieve, not on the products."},
  {t:"Nike",sec:"Sportswear · USA",s:"To bring inspiration and innovation to every athlete* in the world. (*If you have a body, you are an athlete.)",ty:"Mission",x:"Nike's mission. The footnote widens the market from sports people to everyone."},
  {t:"AXA",sec:"Insurance · France",s:"Act for human progress by protecting what matters.",ty:"Purpose",x:"AXA's purpose since 2020. It ties insurance to a wider social role."},
- {t:"Allianz",sec:"Insurance and asset management · Germany",s:"We secure your future.",ty:"Purpose",x:"Allianz's purpose since 2019: four words that any employee can remember."}
+ {t:"Allianz",sec:"Insurance and asset management · Germany",s:"We secure your future.",ty:"Purpose",x:"Allianz's purpose since 2019: four words that any employee can remember."},
+ {t:"GIG (Gulf Insurance Group)",sec:"Insurance · Kuwait, with GIG Egypt",s:"We are shaping a valuable insurance ecosystem for the MENA region.",ty:"Vision",x:"The vision of GIG's parent group. \u201cMENA\u201d and \u201cecosystem\u201d are the clues: a regional insurer building more than single policies. Discuss: what does it mean for GIG Egypt?"}
 ];
-var ORD21=[5,2,7,0,4,6,1,3];
+var ORD21=[5,2,8,7,0,4,6,1,3];
 var sel21=null;
 function vm(){if(!S.vm)S.vm={};return S.vm}
 function vmCard(si){return '<div class="vmi'+(sel21===si?" sel":"")+'" draggable="true" tabindex="0" role="button" data-s="'+si+'">“'+esc(A21[si].s)+'”</div>'}
@@ -752,7 +753,7 @@ function draw21(){
   $("vmg").innerHTML=A21.map(function(c,ti){var si=M[ti];
     return '<div class="vmt" data-t="'+ti+'"><div class="lg"><i aria-hidden="true">'+esc(c.t[0])+'</i><div><b>'+esc(c.t)+'</b><small>'+esc(c.sec)+'</small></div></div><div class="slot">'+(si!=null?vmCard(si):"Drop the statement here")+'</div></div>'}).join("");
   var n=Object.keys(M).length;
-  $("pb21").style.width=(n/8*100)+"%";$("pt21").textContent=n+" / 8 placed";$("sub21").disabled=n<8;save();
+  var N=A21.length;$("pb21").style.width=(n/N*100)+"%";$("pt21").textContent=n+" / "+N+" placed";$("sub21").disabled=n<N;save();
 }
 function put21(si,ti){var M=vm();Object.keys(M).forEach(function(k){if(M[k]===si)delete M[k]});if(ti!=null)M[ti]=si;sel21=null;draw21()}
 (function(){
@@ -772,7 +773,7 @@ function put21(si,ti){var M=vm();Object.keys(M).forEach(function(k){if(M[k]===si
 })();
 $("rst21").addEventListener("click",function(){S.vm={};sel21=null;draw21()});
 $("sub21").addEventListener("click",function(){
-  var M=vm();if(Object.keys(M).length<8)return;
+  var M=vm();if(Object.keys(M).length<A21.length)return;
   var ans=A21.map(function(c,ti){return M[ti]});var sc=0;ans.forEach(function(si,ti){if(si===ti)sc++});
   S.r21={ans:ans,score:sc,at:stamp(),sent:false};save();showTab("a21");send("21");
 });
@@ -813,9 +814,9 @@ var CFG={
  "14":{title:"Activity 1.4 Signal Spotting",items:A14,max:8,name:function(v){return v||"-"},
    msg:function(s){return s>=7?"Excellent. You read the strength and timing of change well.":s>=5?"Good. Weak signals and trends are easy to confuse: ask how broad and how visible the change already is.":"Worth a second look. Check each item against the four definitions: how broad, how sudden, how likely?"}},
  "16":{title:"Activity 1.6 Unique Selling Proposition"},
- "21":{title:"Warm-up 2.1 Whose Vision Is It",col:"Company",max:8,name:function(v){return v!=null&&A21[v]?"“"+A21[v].s+"”":"-"},
+ "21":{title:"Warm-up 2.1 Whose Vision Is It",col:"Company",max:9,name:function(v){return v!=null&&A21[v]?"“"+A21[v].s+"”":"-"},
    items:A21.map(function(c,i){return {t:c.t+" ("+c.sec+")",k:i,x:c.x+" Label used by the company: "+c.ty+"."}}),
-   msg:function(s){return s>=7?"Excellent. You read the strategic direction behind each statement.":s>=4?"Good. Look at the ones you mixed up: which words tie each statement to that company's business?":"Worth a second look. Generic words could fit any company; a strong statement contains a clue that points to one business."}},
+   msg:function(s){return s>=8?"Excellent. You read the strategic direction behind each statement.":s>=5?"Good. Look at the ones you mixed up: which words tie each statement to that company's business?":"Worth a second look. Generic words could fit any company; a strong statement contains a clue that points to one business."}},
  "17":{title:"Activity 1.7 VRIO Test",items:A17,max:6,name:function(v){return v||"-"},
    msg:function(s){return s>=6?"Excellent. You separate real advantages from things every insurer has.":s>=4?"Good. Check the resources you missed: is it really rare, and could a rival copy it quickly?":"Worth a second look. Most resources are valuable; very few are rare, hard to copy and well organized."}}
 };
