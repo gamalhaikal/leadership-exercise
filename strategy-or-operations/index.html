@@ -193,6 +193,27 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
 .gal svg{width:100%;height:200px;display:block}
 .chk{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:6px}
 .chk li{padding:8px 12px;border-radius:10px;font-size:14px}.chk .ok{background:#e3f4ea}.chk .warn{background:#fff3cd}
+/* prioritization */
+.pkey{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin:10px 0 4px}
+.pkey div{background:var(--sb);border-radius:10px;padding:8px 10px;font-size:13px}
+.pkey b{display:block;font-size:14px;margin-bottom:2px}
+.pkey ol{margin:0;padding-left:0;list-style:none}.pkey li{margin:1px 0}.pkey li span{display:inline-block;width:18px;font-weight:700}
+.pw{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:6px}
+.pw label{margin:0;font-size:14px;font-weight:600}
+.pw input{width:100%;font:inherit;font-size:16px;padding:8px;border:1px solid #bbb;border-radius:8px;text-align:center}
+.pt{overflow-x:auto;margin-top:12px}
+.pt table{border-collapse:collapse;width:100%;min-width:1000px;font-size:14px}
+.pt th,.pt td{border:1px solid var(--line);padding:5px;text-align:center;vertical-align:middle}
+.pt th{background:var(--dk);color:#fff;font-size:13px;line-height:1.25}
+.pt input[type=text],.pt textarea{width:100%;font:inherit;font-size:14px;padding:7px;border:1px solid #bbb;border-radius:8px}
+.pt textarea{min-height:40px;resize:vertical}
+.pt input[type=number]{width:58px;font:inherit;font-size:15px;padding:7px 3px;border:1px solid #bbb;border-radius:8px;text-align:center}
+.pt input[type=checkbox]{width:22px;height:22px}
+.pt tr.fund td{background:#fffbd0}
+.pt td.ws{font-weight:800;font-size:16px}
+.meter{height:16px;background:#e4e4e4;border-radius:8px;overflow:hidden;margin-top:6px}
+.meter i{display:block;height:100%;background:var(--ok)}
+.meter.over i{background:var(--bad)}
 /* vision match */
 .vmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
 .vmt{border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;flex-direction:column;overflow:hidden}
@@ -238,6 +259,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <button class="tab" role="tab" id="tSW" type="button">A. SWOT Team Board<span class="ck" id="ckSW"></span></button>
     <button class="tab" role="tab" id="t21" type="button">2.1 Warm-up: Whose Vision?<span class="ck" id="ck21"></span></button>
     <button class="tab" role="tab" id="tSC" type="button">B. Strategy Canvas<span class="ck" id="ckSC"></span></button>
+    <button class="tab" role="tab" id="tPC" type="button">C. Prioritization<span class="ck" id="ckPC"></span></button>
     <button class="tab" role="tab" id="tSL" type="button">Sensitivity Lab</button>
   </div>
 
@@ -462,6 +484,54 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <div class="gal" id="scGal"></div>
   </div>
 
+  <div id="pPC" class="card hidden" role="tabpanel">
+    <h2>Major Activity C: Prioritization Challenge (your company)</h2>
+    <p class="lead">Suggest the initiatives your company could invest in, score each one against the criteria using the key below, then choose what to fund within the budget. The app calculates the weighted scores, ranks them and checks your choices.</p>
+    <div class="who wh"></div>
+    <h3>1. Setup</h3>
+    <div class="swg" style="margin-top:0">
+      <div><label for="pcCo">Company</label><input type="text" id="pcCo" maxlength="80"></div>
+      <div><label for="pcTeam">Team name (required)</label><input type="text" id="pcTeam" maxlength="60" placeholder="e.g. Kemet"></div>
+      <div><label for="pcBud">Investment budget (EGP m)</label><input type="text" id="pcBud" inputmode="decimal" maxlength="10"></div>
+    </div>
+    <label style="margin-top:14px">Criteria weights (%)</label>
+    <div class="pw" id="pcW"></div>
+    <div class="note" id="pcWt" style="margin-top:4px"></div>
+    <h3>Scoring key</h3>
+    <div class="pkey">
+      <div><b>Strategic fit</b><ol><li><span>5</span>Closes a key gap or builds on a real strength</li><li><span>3</span>Helpful but not central</li><li><span>1</span>Works against the strategy</li></ol></div>
+      <div><b>Value</b><ol><li><span>5</span>Large impact on profit, retention or growth</li><li><span>3</span>Moderate impact on one line or segment</li><li><span>1</span>Little or no impact</li></ol></div>
+      <div><b>Feasibility</b><ol><li><span>5</span>We can deliver it with what we have today</li><li><span>3</span>Possible with some new capability</li><li><span>1</span>We lack the skills, systems or time</li></ol></div>
+      <div><b>Risk (5 = low)</b><ol><li><span>5</span>Low risk, easy to stop if it fails</li><li><span>3</span>Some risk, manageable</li><li><span>1</span>High chance of failure or serious downside</li></ol></div>
+      <div><b>Speed to impact</b><ol><li><span>5</span>Results in less than 6 months</li><li><span>4</span>6 to 12 months</li><li><span>3</span>1 to 2 years</li><li><span>2</span>2 to 3 years</li><li><span>1</span>More than 3 years</li></ol></div>
+    </div>
+    <p class="note">Speed to impact means how soon results show (premium, claims cost, customer satisfaction), not how fast you can launch. Feasibility asks “can we do it?”; speed asks “how soon will we see the benefit?”</p>
+    <h3>2. Initiatives and evaluation</h3>
+    <div class="pt"><table id="pcT"></table></div>
+    <div class="row" style="margin-top:8px"><button class="btn sec" id="pcAdd" type="button">+ Add initiative</button><span class="note">Up to 10. Tick “Fund?” for the initiatives you choose.</span></div>
+    <div id="pcBudget" style="margin-top:12px"></div>
+    <h3>3. From choice to action</h3>
+    <div id="pcAct"><p class="note">Tick “Fund?” for at least one initiative.</p></div>
+    <h3>4. Conclusion</h3>
+    <div class="fig" style="height:300px"><svg id="pcChart" role="img" aria-label="Weighted score against cost"></svg></div>
+    <div class="legend"><span><i style="background:#c9a800;height:10px;width:10px;border-radius:50%"></i>Funded</span><span><i style="background:#9a9a9a;height:10px;width:10px;border-radius:50%"></i>Not funded</span><span>Higher and further left = better value for money</span></div>
+    <ul class="chk" id="pcChk"></ul>
+    <div id="pcErr" class="err hidden"></div>
+    <div class="row">
+      <button class="btn y" id="pcSub" type="button">Submit our portfolio</button>
+      <button class="btn sec" id="pcPDF" type="button">Export report (PDF)</button>
+      <button class="btn sec" id="pcClr" type="button">Clear all</button>
+      <span class="note" id="pcMsg"></span>
+    </div>
+    <h3 style="margin-top:22px">All teams</h3>
+    <div class="row" style="margin-top:0">
+      <button class="btn sec" id="pcRef" type="button">Refresh</button>
+      <button class="btn sec" id="pcGPDF" type="button">Export all teams (PDF)</button>
+      <span class="note" id="pcStat"></span>
+    </div>
+    <div class="board2" id="pcGal"></div>
+  </div>
+
   <div id="pSW" class="card hidden" role="tabpanel">
     <h2>Activity A: SWOT Team Board</h2>
     <p class="lead">Build DCI's SWOT as a team: three sharp points per box, one point per line. Submit, then see every team's SWOT side by side.</p>
@@ -533,7 +603,7 @@ function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",ti
 
 var IDS=["11","14","16","17","21"];
 function showTab(a){
-  if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&a!=="aSC"&&IDS.indexOf(a.slice(1))<0)a="a11";
+  if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&a!=="aSC"&&a!=="aPC"&&IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
   IDS.forEach(function(id){$("t"+id).setAttribute("aria-selected",a==="a"+id);$("p"+id).classList.toggle("hidden",a!=="a"+id);$("ck"+id).textContent=S["r"+id]?" \u2713":""});
   var sl=a==="aSL";$("tSL").setAttribute("aria-selected",sl);$("pSL").classList.toggle("hidden",!sl);
@@ -542,12 +612,15 @@ function showTab(a){
   if(!sw)stopSW();
   var scv=a==="aSC";$("tSC").setAttribute("aria-selected",scv);$("pSC").classList.toggle("hidden",!scv);$("ckSC").textContent=S.scSent?" \u2713":"";
   if(!scv)stopSC();
-  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,aSC:drawSC,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
+  var pcv=a==="aPC";$("tPC").setAttribute("aria-selected",pcv);$("pPC").classList.toggle("hidden",!pcv);$("ckPC").textContent=S.pcSent?" \u2713":"";
+  if(!pcv)stopPC();
+  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,aSC:drawSC,aPC:drawPC,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
 }
 $("tSL").addEventListener("click",function(){showTab("aSL")});
 $("tSW").addEventListener("click",function(){showTab("aSW")});
 $("tVY").addEventListener("click",function(){showTab("aVY")});
 $("tSC").addEventListener("click",function(){showTab("aSC")});
+$("tPC").addEventListener("click",function(){showTab("aPC")});
 IDS.forEach(function(id){$("t"+id).addEventListener("click",function(){showTab("a"+id)})});
 function nextBtn(id){
   var nx=IDS.filter(function(x){return x!==id&&!S["r"+x]})[0];
@@ -896,6 +969,149 @@ $("scGPDF").addEventListener("click",function(){
   $("report").innerHTML='<h1>Major Activity B: Gallery of strategy canvases</h1><div>Strategy in Action · '+esc(SESSION)+' · '+esc(stamp())+'</div>'+
     scRows.map(function(r){var d=r.data||{};return d.rows?'<div class="avoid" style="margin-top:10px"><h2>'+esc(r.team)+' · '+esc(d.seg||"")+'</h2>'+(d.tag?'<p><i>“'+esc(d.tag)+'”</i></p>':'')+scReportHTML(d,d.rows)+'</div>':""}).join("");
   try{window.print()}catch(e){$("scStat").textContent="Printing is blocked here."}
+});
+
+/* ---------- C. Prioritization (own company) ---------- */
+var PCC=["Strategic fit","Value","Feasibility","Risk (5 = low)","Speed to impact"];
+var PCS=["Fit","Value","Feasi­bility","Risk (5 = low)","Speed to impact"];
+function pcRow(){return {n:"",c:null,s:[null,null,null,null,null],why:"",f:false,obj:"",lag:"",lead:"",nn:""}}
+function pc(){if(!S.pc)S.pc={co:"",team:S.team||"",bud:60,w:[30,25,20,15,10],rows:[pcRow(),pcRow(),pcRow(),pcRow(),pcRow()]};if(!S.pc.co)S.pc.co=S.company||"";return S.pc}
+function pcWsum(P){return P.w.reduce(function(a,b){return a+(nv(b)||0)},0)}
+function pcScore(P,r){if(Math.round(pcWsum(P))!==100)return null;for(var j=0;j<5;j++)if(nv(r.s[j])===null)return null;var t=0;for(var k=0;k<5;k++)t+=r.s[k]*P.w[k];return t/100}
+function pcNamed(P){return P.rows.filter(function(r){return r.n.trim()})}
+function pcRanks(P){var L=P.rows.map(function(r,i){return {i:i,v:pcScore(P,r)}}).filter(function(o){return o.v!==null&&P.rows[o.i].n.trim()}).sort(function(a,b){return b.v-a.v});var R={};L.forEach(function(o,k){R[o.i]=k+1});return R}
+function pcCost(P){return P.rows.reduce(function(a,r){return a+(r.f&&r.n.trim()?(nv(r.c)||0):0)},0)}
+function fm(v){return v===null||v===undefined?"–":(Math.round(v*10)/10).toLocaleString("en-US")}
+function drawPC(){
+  var P=pc();$("pcCo").value=P.co;$("pcTeam").value=P.team||"";$("pcBud").value=P.bud==null?"":P.bud;
+  $("pcW").innerHTML=PCC.map(function(c,j){return '<div><label for="pcw'+j+'">'+c+'</label><input type="number" id="pcw'+j+'" data-w="'+j+'" min="0" max="100" value="'+(P.w[j]==null?"":P.w[j])+'"></div>'}).join("");
+  var nb=function(i,j,v){return '<input type="number" min="1" max="5" step="1" data-r="'+i+'" data-s="'+j+'" value="'+(v==null?"":v)+'" aria-label="'+PCC[j]+'">'};
+  $("pcT").innerHTML='<thead><tr><th>#</th><th style="min-width:200px">Initiative (your suggestion)</th><th>Cost<br>(EGP m)</th>'+PCS.map(function(c){return '<th>'+c+'<br>1–5</th>'}).join("")+'<th style="min-width:170px">Why? (key evidence)</th><th>Weighted<br>score</th><th>Rank</th><th>Fund?</th><th aria-label="Remove"></th></tr></thead><tbody>'+
+    P.rows.map(function(r,i){return '<tr id="pcr'+i+'"'+(r.f?' class="fund"':'')+'><td>'+(i+1)+'</td><td><input type="text" data-r="'+i+'" data-k="n" maxlength="80" value="'+esc(r.n)+'" placeholder="Initiative '+(i+1)+'"></td>'+
+      '<td><input type="number" min="0" step="0.5" data-r="'+i+'" data-k="c" value="'+(r.c==null?"":r.c)+'" aria-label="Cost"></td>'+[0,1,2,3,4].map(function(j){return '<td>'+nb(i,j,r.s[j])+'</td>'}).join("")+
+      '<td><textarea data-r="'+i+'" data-k="why" maxlength="200" rows="1">'+esc(r.why)+'</textarea></td><td class="ws" id="pcs'+i+'"></td><td id="pck'+i+'"></td><td><input type="checkbox" data-r="'+i+'" data-k="f"'+(r.f?' checked':'')+' aria-label="Fund"></td>'+
+      '<td><button type="button" style="border:0;background:none;font-size:20px;color:#5d6268;cursor:pointer;min-width:36px;min-height:36px" data-del="'+i+'" aria-label="Remove initiative">×</button></td></tr>'}).join("")+'</tbody>';
+  pcAct();pcRefresh();
+  if(BOARD_URL){loadPC();stopPC();pcTimer=setInterval(loadPC,20000)}else{$("pcStat").textContent="The team board is not connected yet; portfolios are emailed to the trainer.";renderPCG([])}
+}
+function pcAct(){
+  var P=pc(),F=[],N=[];P.rows.forEach(function(r,i){if(!r.n.trim())return;(r.f?F:N).push(i)});
+  var inp=function(i,k,ph){return '<input type="text" data-r="'+i+'" data-k="'+k+'" maxlength="140" value="'+esc(P.rows[i][k]||"")+'" placeholder="'+ph+'">'};
+  $("pcAct").innerHTML=(F.length?'<div class="pt"><table style="min-width:720px"><thead><tr><th style="min-width:180px">Funded initiative</th><th>Objective</th><th>Lagging KPI (result)</th><th>Leading KPI (early signal)</th></tr></thead><tbody>'+
+    F.map(function(i){return '<tr><td style="text-align:left;font-weight:600">'+esc(P.rows[i].n)+'</td><td>'+inp(i,"obj","What will it achieve?")+'</td><td>'+inp(i,"lag","e.g. retention rate")+'</td><td>'+inp(i,"lead","e.g. approval time")+'</td></tr>'}).join("")+'</tbody></table></div>':'<p class="note">Tick “Fund?” for at least one initiative.</p>')+
+    (N.length?'<h4 style="margin:14px 0 4px">Not now, and why</h4><div class="pt"><table style="min-width:560px"><tbody>'+N.map(function(i){return '<tr><td style="text-align:left;font-weight:600;width:34%">'+esc(P.rows[i].n)+'</td><td>'+inp(i,"nn","Why not now?")+'</td></tr>'}).join("")+'</tbody></table></div>':'');
+}
+function pcChecks(P){
+  var L=[],R=pcRanks(P),ws=Math.round(pcWsum(P)),bud=nv(P.bud),cost=pcCost(P),named=pcNamed(P);
+  if(ws!==100)return [["warn","Weights total "+ws+"%. Adjust them to total 100% to see the scores."]];
+  var scored=named.filter(function(r){return pcScore(P,r)!==null}),F=P.rows.filter(function(r){return r.f&&r.n.trim()});
+  if(scored.length<3)L.push(["warn","Score at least three initiatives on all five criteria."]);
+  if(bud===null)L.push(["warn","Enter the investment budget."]);
+  else if(cost>bud)L.push(["warn","Over budget by EGP "+fm(cost-bud)+"m. Drop or phase an initiative."]);
+  else if(F.length)L.push(["ok","Within budget: EGP "+fm(cost)+"m of "+fm(bud)+"m used, EGP "+fm(bud-cost)+"m left."]);
+  if(!F.length){L.push(["warn","Choose at least one initiative to fund."]);return L}
+  var unf=P.rows.map(function(r,i){return i}).filter(function(i){var r=P.rows[i];return !r.f&&r.n.trim()&&R[i]});
+  var worstFunded=Math.max.apply(null,P.rows.map(function(r,i){return r.f&&R[i]?R[i]:0}));
+  var skipped=unf.filter(function(i){return R[i]<worstFunded});
+  skipped.forEach(function(i){var r=P.rows[i];L.push([r.nn.trim()?"ok":"warn","“"+r.n+"” ranks #"+R[i]+" but is not funded"+(r.nn.trim()?". Your reason: "+r.nn.trim():". Explain why under “Not now” (cost, dependency, timing?).")])});
+  if(!skipped.length)L.push(["ok","You funded the highest-ranked initiatives in order."]);
+  if(bud!==null&&cost<=bud){var fit=unf.filter(function(i){var c=nv(P.rows[i].c);return c!==null&&c<=bud-cost}).sort(function(a,b){return R[a]-R[b]});if(fit.length)L.push(["warn","EGP "+fm(bud-cost)+"m is unused and could fund “"+P.rows[fit[0]].n+"”. Fund it, or keep the money as a reserve on purpose."])}
+  var noK=F.filter(function(r){return !(r.obj.trim()&&r.lag.trim()&&r.lead.trim())});
+  L.push(noK.length?["warn",noK.length+" funded initiative"+(noK.length>1?"s need":" needs")+" an objective, a lagging KPI and a leading KPI."]:["ok","Every funded initiative has an objective and both KPIs."]);
+  return L;
+}
+function pcChartSVG(P,W,H){
+  var R=pcRanks(P),pts=P.rows.map(function(r,i){return {i:i,r:r,v:pcScore(P,r),c:nv(r.c)}}).filter(function(o){return o.v!==null&&o.c!==null&&o.r.n.trim()});
+  var pl=40,pr=18,pt=20,pb=40,mx=Math.max(10,Math.ceil(Math.max.apply(null,pts.map(function(o){return o.c}).concat([0]))*1.1/5)*5);
+  var x=function(c){return pl+(W-pl-pr)*c/mx},y=function(v){return pt+(H-pt-pb)*(1-(v-1)/4)},g='';
+  for(var t=1;t<=5;t++)g+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y(t)+'" y2="'+y(t)+'" stroke="#e3e3e3"/><text x="'+(pl-6)+'" y="'+(y(t)+4)+'" font-size="11" text-anchor="end" fill="#777">'+t+'</text>';
+  for(var k=0;k<=5;k++){var cv=mx*k/5;g+='<text x="'+x(cv)+'" y="'+(H-pb+16)+'" font-size="11" text-anchor="middle" fill="#777">'+fm(cv)+'</text>'}
+  g+='<text x="'+((W+pl)/2)+'" y="'+(H-6)+'" font-size="12" text-anchor="middle" fill="#444">Cost (EGP m)</text><text x="12" y="'+(H/2)+'" font-size="12" text-anchor="middle" fill="#444" transform="rotate(-90 12 '+(H/2)+')">Weighted score</text>';
+  pts.forEach(function(o){var cx=x(o.c),cy=y(o.v);g+='<circle cx="'+cx+'" cy="'+cy+'" r="13" fill="'+(o.r.f?"#c9a800":"#b5b5b5")+'" stroke="#fff" stroke-width="2"/><text x="'+cx+'" y="'+(cy+4)+'" font-size="12" font-weight="700" text-anchor="middle" fill="#222">'+(o.i+1)+'</text>'});
+  if(!pts.length)g+='<text x="'+(W/2)+'" y="'+(H/2)+'" font-size="13" text-anchor="middle" fill="#888">Enter costs and scores to see the chart</text>';
+  return g;
+}
+function pcRefresh(){
+  var P=pc(),R=pcRanks(P),ws=Math.round(pcWsum(P));
+  $("pcWt").innerHTML='Total: <b style="color:'+(ws===100?"var(--ok)":"var(--bad)")+'">'+ws+'%</b>'+(ws===100?" ✔":" (must total 100%)");
+  P.rows.forEach(function(r,i){var c=$("pcs"+i);if(!c)return;var v=r.n.trim()?pcScore(P,r):null;c.textContent=v===null?"–":v.toFixed(2);$("pck"+i).textContent=R[i]?"#"+R[i]:"";$("pcr"+i).classList.toggle("fund",!!r.f)});
+  var bud=nv(P.bud),cost=pcCost(P),over=bud!==null&&cost>bud,pct=bud?Math.min(100,cost/bud*100):0;
+  $("pcBudget").innerHTML='<b>Budget:</b> funded EGP '+fm(cost)+'m of '+(bud===null?"–":fm(bud)+"m")+' · '+(bud===null?"enter a budget":over?'<span class="dn">over budget by EGP '+fm(cost-bud)+'m</span>':'<span class="up">EGP '+fm(bud-cost)+'m left</span>')+'<div class="meter'+(over?" over":"")+'"><i style="width:'+(over?100:pct)+'%"></i></div>';
+  var el=$("pcChart"),W=el.clientWidth||700,H=el.clientHeight||300;el.setAttribute("viewBox","0 0 "+W+" "+H);el.innerHTML=pcChartSVG(P,W,H);
+  $("pcChk").innerHTML=pcChecks(P).map(function(c){return '<li class="'+c[0]+'">'+(c[0]==="ok"?"✔ ":"⚠ ")+esc(c[1])+'</li>'}).join("");save();
+}
+$("pcW").addEventListener("input",function(e){var t=e.target;if(t.dataset.w==null)return;pc().w[+t.dataset.w]=t.value===""?null:Math.max(0,Math.min(100,+t.value));pcRefresh()});
+["pcCo","pcTeam","pcBud"].forEach(function(id){$(id).addEventListener("input",function(){var P=pc(),v=$(id).value;if(id==="pcBud"){var n=parseFloat(v.replace(/,/g,""));P.bud=isNaN(n)?null:n}else P[id==="pcCo"?"co":"team"]=v;pcRefresh()})});
+function pcIn(e){var t=e.target;if(t.dataset.r==null)return;var r=pc().rows[+t.dataset.r];
+  if(t.dataset.s!=null){var v=t.value===""?null:Math.max(1,Math.min(5,Math.round(+t.value)));if(v!==null&&String(v)!==t.value)t.value=v;r.s[+t.dataset.s]=v}
+  else if(t.dataset.k==="f"){r.f=t.checked;pcAct()}
+  else if(t.dataset.k==="c"){r.c=t.value===""?null:Math.max(0,+t.value)}
+  else{r[t.dataset.k]=t.value;if(t.dataset.k==="n")pcAct()}
+  pcRefresh()}
+$("pcT").addEventListener("input",pcIn);$("pcT").addEventListener("change",function(e){if(e.target.dataset.k==="f")pcIn(e)});
+$("pcAct").addEventListener("input",function(e){var t=e.target;if(t.dataset.r==null)return;pc().rows[+t.dataset.r][t.dataset.k]=t.value;pcRefresh()});
+$("pcT").addEventListener("click",function(e){var d=e.target.closest("[data-del]");if(!d)return;var P=pc();P.rows.splice(+d.dataset.del,1);if(!P.rows.length)P.rows.push(pcRow());drawPC()});
+$("pcAdd").addEventListener("click",function(){var P=pc();if(P.rows.length>=10){$("pcMsg").textContent="Up to 10 initiatives.";return}P.rows.push(pcRow());drawPC()});
+$("pcClr").addEventListener("click",function(){S.pc=null;S.pcSent=false;$("pcMsg").textContent="";$("ckPC").textContent="";$("pcSub").textContent="Submit our portfolio";drawPC()});
+window.addEventListener("resize",function(){if(!$("pPC").classList.contains("hidden"))pcRefresh()});
+var pcTimer=null,pcRows=[];
+function stopPC(){if(pcTimer){clearInterval(pcTimer);pcTimer=null}}
+function pcData(P){var R=pcRanks(P);return {co:P.co,bud:P.bud,w:P.w,cost:pcCost(P),rows:pcNamed(P).map(function(r){var i=P.rows.indexOf(r);return {n:r.n,c:nv(r.c),s:r.s,why:r.why,v:pcScore(P,r),rk:R[i]||null,f:!!r.f,obj:r.obj,lag:r.lag,lead:r.lead,nn:r.nn}})}}
+function pcBoardTable(rows,mine){
+  return '<table><thead><tr><th>Team</th><th>Funded (rank, cost)</th><th>Not now</th><th>Budget used</th></tr></thead><tbody>'+rows.map(function(r){var d=r.data||{},L=d.rows||[];
+    return '<tr'+(mine&&String(r.team).trim().toLowerCase()===mine?' class="mine"':'')+'><td>'+esc(r.team)+'<div class="note" style="font-weight:400">'+esc(d.co||r.company||"")+'</div></td><td><ul>'+L.filter(function(x){return x.f}).map(function(x){return '<li>'+esc(x.n)+' <span class="note">(#'+(x.rk||"–")+', EGP '+fm(x.c)+'m)</span>'+(x.lead?'<div class="note">Leading KPI: '+esc(x.lead)+'</div>':'')+'</li>'}).join("")+'</ul></td><td><ul>'+L.filter(function(x){return !x.f}).map(function(x){return '<li>'+esc(x.n)+(x.nn?' <span class="note">– '+esc(x.nn)+'</span>':'')+'</li>'}).join("")+'</ul></td><td>EGP '+fm(d.cost)+'m of '+fm(d.bud)+'m</td></tr>'}).join("")+'</tbody></table>'}
+function renderPCG(rows){$("pcGal").innerHTML=rows.length?pcBoardTable(rows,String(pc().team||"").trim().toLowerCase()):'<p class="note">No team has submitted yet.</p>'}
+function loadPC(){if(!BOARD_URL)return;$("pcStat").textContent="Loading…";
+  fetch(BOARD_URL+"?activity=PRIORITIZATION&session="+encodeURIComponent(SESSION)).then(function(r){return r.json()}).then(function(j){
+    var latest={};(j.rows||[]).forEach(function(r){var k=String(r.team||"").trim().toLowerCase();if(k)latest[k]=r});
+    pcRows=Object.keys(latest).map(function(k){return latest[k]}).sort(function(a,b){return String(a.team).localeCompare(String(b.team))});
+    renderPCG(pcRows);$("pcStat").textContent=pcRows.length+" team"+(pcRows.length===1?"":"s")+" · updated "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})+" · refreshes every 20 seconds"})
+   .catch(function(){$("pcStat").textContent="Could not load the board. Check the connection and press Refresh."})}
+$("pcRef").addEventListener("click",loadPC);
+$("pcSub").addEventListener("click",function(){
+  var P=pc(),err="",named=pcNamed(P),bud=nv(P.bud),F=named.filter(function(r){return r.f});
+  P.team=$("pcTeam").value.trim();
+  if(!P.team)err="Enter your team name.";
+  else if(Math.round(pcWsum(P))!==100)err="The criteria weights must total 100%.";
+  else if(bud===null)err="Enter the investment budget.";
+  else if(named.length<3)err="Suggest at least three initiatives.";
+  else if(named.some(function(r){return nv(r.c)===null||pcScore(P,r)===null}))err="Enter a cost and all five scores (1 to 5) for every named initiative.";
+  else if(!F.length)err="Tick “Fund?” for at least one initiative.";
+  else if(pcCost(P)>bud)err="Your funded initiatives are over budget. Drop or phase one before submitting.";
+  $("pcErr").textContent=err;$("pcErr").classList.toggle("hidden",!err);if(err)return;
+  $("pcSub").disabled=true;$("pcMsg").textContent="Submitting…";
+  var D=pcData(P),R=D.rows.slice().sort(function(a,b){return (a.rk||99)-(b.rk||99)});
+  var body={_subject:"Activity C Prioritization – "+P.team+" ("+P.co+")",_template:"table",_captcha:"false","Participant company":S.company,"Company analysed":P.co,Team:P.team,
+    Weights:PCC.map(function(c,j){return c+" "+P.w[j]+"%"}).join(", "),Budget:"EGP "+fm(bud)+"m","Funded cost":"EGP "+fm(D.cost)+"m",Submitted:stamp()};
+  R.forEach(function(x){body["#"+(x.rk||"-")+" "+x.n]=(x.f?"FUND":"Not now")+" | EGP "+fm(x.c)+"m | score "+(x.v!==null?x.v.toFixed(2):"-")+" | "+PCC.map(function(c,j){return c.split(" ")[0]+" "+x.s[j]}).join(", ")+(x.why?" | why: "+x.why:"")+(x.f?" | objective: "+(x.obj||"-")+" | lagging: "+(x.lag||"-")+" | leading: "+(x.lead||"-"):(x.nn?" | not now: "+x.nn:""))});
+  var mail=fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)}).then(function(r){return r.json()});
+  var post=BOARD_URL?fetch(BOARD_URL,{method:"POST",body:JSON.stringify({session:SESSION,activity:"PRIORITIZATION",company:S.company,team:P.team,data:D,summary:"Funded: "+F.map(function(r){return r.n}).join("; ")+" | EGP "+fm(D.cost)+"m of "+fm(bud)+"m"})}).then(function(r){return r.json()}).catch(function(){return null}):Promise.resolve(null);
+  Promise.all([mail.catch(function(){return null}),post]).then(function(o){
+    var ok=o[0]&&(o[0].success===true||o[0].success==="true");$("pcSub").disabled=false;
+    if(ok||o[1]){S.pcSent=true;save();$("ckPC").textContent=" ✓";$("pcSub").textContent="Send updated portfolio";$("pcMsg").textContent="✔ Sent to the trainer"+(BOARD_URL?" and added to the team board":"")+". You can edit and send again.";loadPC()}
+    else $("pcMsg").textContent="Sending failed (you may be offline). Try again, or export the PDF.";
+  });
+});
+function pcReport(P){
+  var D=pcData(P),R=D.rows.slice().sort(function(a,b){return (a.rk||99)-(b.rk||99)}),F=R.filter(function(x){return x.f}),N=R.filter(function(x){return !x.f});
+  return '<div>Budget EGP '+fm(D.bud)+'m · funded EGP '+fm(D.cost)+'m · weights: '+PCC.map(function(c,j){return c+' '+D.w[j]+'%'}).join(", ")+'</div>'+
+   '<h2>Initiatives ranked</h2><table><thead><tr><th>Rank</th><th>Initiative</th><th>Cost</th>'+PCS.map(function(c){return '<th>'+c+'</th>'}).join("")+'<th>Score</th><th>Fund</th></tr></thead><tbody>'+
+   R.map(function(x){return '<tr class="avoid"><td>'+(x.rk||"–")+'</td><td>'+esc(x.n)+(x.why?'<br><span style="font-size:10px">'+esc(x.why)+'</span>':'')+'</td><td>'+fm(x.c)+'</td>'+x.s.map(function(v){return '<td>'+(v==null?"–":v)+'</td>'}).join("")+'<td><b>'+(x.v!==null?x.v.toFixed(2):"–")+'</b></td><td>'+(x.f?"Yes":"")+'</td></tr>'}).join("")+'</tbody></table>'+
+   '<div class="avoid"><h2>Score against cost</h2><svg viewBox="0 0 700 280" style="width:100%;height:260px">'+pcChartSVG(P,700,280)+'</svg></div>'+
+   '<div class="avoid"><h2>From choice to action</h2><table><thead><tr><th>Funded initiative</th><th>Objective</th><th>Lagging KPI</th><th>Leading KPI</th></tr></thead><tbody>'+F.map(function(x){return '<tr><td>'+esc(x.n)+'</td><td style="text-align:left">'+esc(x.obj||"–")+'</td><td style="text-align:left">'+esc(x.lag||"–")+'</td><td style="text-align:left">'+esc(x.lead||"–")+'</td></tr>'}).join("")+'</tbody></table></div>'+
+   (N.length?'<div class="avoid"><h2>Not now, and why</h2><table><tbody>'+N.map(function(x){return '<tr><td>'+esc(x.n)+'</td><td style="text-align:left">'+esc(x.nn||"–")+'</td></tr>'}).join("")+'</tbody></table></div>':'')+
+   '<div class="avoid"><h2>Checks</h2><ul>'+pcChecks(P).map(function(c){return '<li>'+esc(c[1])+'</li>'}).join("")+'</ul></div>';
+}
+$("pcPDF").addEventListener("click",function(){
+  var P=pc();if(!pcNamed(P).length){$("pcMsg").textContent="Add at least one initiative before exporting.";return}
+  $("report").innerHTML='<h1>Major Activity C: Prioritization – '+esc(P.co||"Your company")+'</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · Team: '+esc($("pcTeam").value||"-")+' · '+esc(stamp())+'</div>'+pcReport(P);
+  $("pcMsg").textContent="In the print window, choose “Save as PDF”.";
+  try{window.print()}catch(e){$("pcMsg").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}
+});
+$("pcGPDF").addEventListener("click",function(){
+  if(!pcRows.length){$("pcStat").textContent="No submissions to export yet.";return}
+  $("report").innerHTML='<h1>Major Activity C: All teams’ portfolios</h1><div>Strategy in Action · '+esc(SESSION)+' · '+esc(stamp())+'</div><h2>All teams</h2>'+pcBoardTable(pcRows,null);
+  try{window.print()}catch(e){$("pcStat").textContent="Printing is blocked here."}
 });
 
 /* ---------- 2.1 Whose vision? ---------- */
@@ -1286,7 +1502,7 @@ $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=/^#a(11|14|16|17|21|SL|SW|VY|SC)$/.test(location.hash)?location.hash.slice(1):null;
+var hashTab=/^#a(11|14|16|17|21|SL|SW|VY|SC|PC)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
