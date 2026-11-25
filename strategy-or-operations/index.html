@@ -228,6 +228,10 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
 .wc{font-size:13px;margin-top:4px}
 .reveal{background:var(--dk);color:#fff;border-radius:14px;padding:16px 18px;margin:8px 0 14px}
 .reveal b{color:var(--yl)}
+/* spot the trap */
+.q select{width:100%;max-width:360px;font:inherit;font-size:16px;padding:10px 12px;border:1px solid #bbb;border-radius:10px;background:#fff;margin-top:10px;min-height:44px}
+.q select.set{background:var(--ob);border-color:var(--dk);font-weight:600}
+.q .quote{font-style:italic}
 /* vision match */
 .vmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
 .vmt{border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;flex-direction:column;overflow:hidden}
@@ -274,6 +278,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <button class="tab" role="tab" id="t21" type="button">2.1 Warm-up: Whose Vision?<span class="ck" id="ck21"></span></button>
     <button class="tab" role="tab" id="tMC" type="button">2.1 Mission Check<span class="ck" id="ckMC"></span></button>
     <button class="tab" role="tab" id="tSC" type="button">B. Strategy Canvas<span class="ck" id="ckSC"></span></button>
+    <button class="tab" role="tab" id="t32" type="button">3.2 Spot the Trap<span class="ck" id="ck32"></span></button>
     <button class="tab" role="tab" id="tPC" type="button">C. Prioritization<span class="ck" id="ckPC"></span></button>
     <button class="tab" role="tab" id="tSL" type="button">Sensitivity Lab</button>
   </div>
@@ -531,6 +536,32 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <div class="gal" id="scGal"></div>
   </div>
 
+  <div id="p32" class="card hidden" role="tabpanel">
+    <div id="b32">
+      <h2>Activity 3.2: Spot the Trap</h2>
+      <p class="lead">Six statements from DCI's executive meeting. For each one, choose the decision trap it shows. A trap can appear more than once.</p>
+      <div class="defs">
+        <div><b>Anchoring</b>Over-relying on the first number, such as last year's budget</div>
+        <div><b>Sunk cost</b>Continuing because of what was already spent</div>
+        <div><b>Groupthink</b>Harmony valued above honest debate</div>
+        <div><b>Overconfidence</b>Forecasts that are too narrow and too optimistic</div>
+        <div><b>Confirmation</b>Seeking evidence that supports what we already believe</div>
+        <div><b>Status quo</b>Preferring the current path by default</div>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <div class="who wh"></div>
+        <div class="prog" aria-hidden="true"><i id="pb32"></i></div>
+        <div class="who" id="pt32">0 / 6 answered</div>
+      </div>
+      <div class="qs" id="qs32"></div>
+      <div class="row">
+        <button class="btn y" id="sub32" type="button" disabled>Submit answers</button>
+        <button class="btn sec" id="rst32" type="button">Clear my answers</button>
+      </div>
+    </div>
+    <div id="r32" class="hidden"></div>
+  </div>
+
   <div id="pPC" class="card hidden" role="tabpanel">
     <h2>Major Activity C: Prioritization Challenge (your company)</h2>
     <p class="lead">Suggest the initiatives your company could invest in, score each one against the criteria using the key below, then choose what to fund within the budget. The app calculates the weighted scores, ranks them and checks your choices.</p>
@@ -648,7 +679,7 @@ function load(){try{return JSON.parse(localStorage.getItem(LS)||"null")}catch(e)
 function who(){return S.company+(S.team?" · "+S.team:"")}
 function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})}
 
-var IDS=["11","14","16","17","21"];
+var IDS=["11","14","16","17","21","32"];
 function showTab(a){
   if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&a!=="aSC"&&a!=="aPC"&&a!=="aMC"&&IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
@@ -662,7 +693,7 @@ function showTab(a){
   var mcv=a==="aMC";$("tMC").setAttribute("aria-selected",mcv);$("pMC").classList.toggle("hidden",!mcv);$("ckMC").textContent=S.rMC?" \u2713":"";
   var pcv=a==="aPC";$("tPC").setAttribute("aria-selected",pcv);$("pPC").classList.toggle("hidden",!pcv);$("ckPC").textContent=S.pcSent?" \u2713":"";
   if(!pcv)stopPC();
-  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,aSC:drawSC,aMC:drawMC,aPC:drawPC,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
+  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,a32:draw32,aSC:drawSC,aMC:drawMC,aPC:drawPC,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
 }
 $("tSL").addEventListener("click",function(){showTab("aSL")});
 $("tSW").addEventListener("click",function(){showTab("aSW")});
@@ -1236,6 +1267,33 @@ function pdfMC(){var r=S.rMC;
   try{window.print()}catch(e){$("pdfmMC").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}
 }
 
+/* ---------- 3.2 Spot the Trap ---------- */
+var TRAPS=["Anchoring","Sunk cost","Groupthink","Overconfidence","Confirmation","Status quo"];
+var A32=[
+ {t:"“Last year we budgeted 5% IT growth, so let’s start from 5% again.”",k:"Anchoring",x:"Last year’s number sets the starting point. Counter: build the plan bottom-up from the strategy first. Ask: “If we started from zero, what would the strategy need?”"},
+ {t:"“We have spent EGP 12m on the old system upgrade; we cannot stop now.”",k:"Sunk cost",x:"The EGP 12m is gone whatever we decide. Counter: judge only future costs and benefits. Ask: “If we had not spent anything yet, would we start this today?”"},
+ {t:"“Everyone here agrees, so let’s not waste time on alternatives.”",k:"Groupthink",x:"Quick agreement can hide doubts. Counter: ask the most junior person to speak first, or name a devil’s advocate. Ask: “What would have to be true for this to fail?”"},
+ {t:"“I’m sure the motor price cut will win back 30% volume.”",k:"Overconfidence",x:"A single, precise, optimistic forecast. Counter: use ranges and a pre-mortem. Ask: “What is the worst realistic case, and what if competitors match the cut?”"},
+ {t:"“The data I found supports our plan, so we’re fine.”",k:"Confirmation",x:"Looking only for supporting evidence. Counter: assign a devil’s advocate. Ask: “What data would prove us wrong, and have we looked for it?”"},
+ {t:"“Let’s keep the branch plan as it is; changing it is risky.”",k:"Status quo",x:"Treating the current path as safe by default. Counter: treat “do nothing” as an option to test. Ask: “What is the risk of not changing?”"}
+];
+function a32(){if(!S.a32)S.a32={};return S.a32}
+function draw32(){
+  if(S.r32){$("b32").classList.add("hidden");$("r32").classList.remove("hidden");report("32");return}
+  $("b32").classList.remove("hidden");$("r32").classList.add("hidden");
+  var A=a32();
+  $("qs32").innerHTML=A32.map(function(it,i){return '<div class="q"><div class="top"><span class="n">'+(i+1)+'</span><span class="quote">'+esc(it.t)+'</span></div>'+
+    '<select data-i="'+i+'" aria-label="Trap for statement '+(i+1)+'"'+(A[i]?' class="set"':'')+'><option value="">Choose the trap…</option>'+TRAPS.map(function(tp){return '<option'+(A[i]===tp?' selected':'')+'>'+tp+'</option>'}).join("")+'</select></div>'}).join("");
+  var n=Object.keys(A).length;$("pb32").style.width=(n/6*100)+"%";$("pt32").textContent=n+" / 6 answered";$("sub32").disabled=n<6;save();
+}
+$("qs32").addEventListener("change",function(e){var t=e.target;if(t.dataset.i==null)return;var A=a32();if(t.value)A[+t.dataset.i]=t.value;else delete A[+t.dataset.i];draw32()});
+$("rst32").addEventListener("click",function(){S.a32={};draw32()});
+$("sub32").addEventListener("click",function(){
+  var A=a32();if(Object.keys(A).length<6)return;
+  var sc=0;A32.forEach(function(it,i){if(A[i]===it.k)sc++});
+  S.r32={ans:A32.map(function(it,i){return A[i]}),score:sc,at:stamp(),sent:false};save();showTab("a32");send("32");
+});
+
 /* ---------- 2.1 Whose vision? ---------- */
 var A21=[
  {t:"IKEA",sec:"Home furnishing · Sweden",s:"To create a better everyday life for the many people.",ty:"Vision",x:"IKEA's vision. “The many people” drives its business idea: well-designed products at prices most people can afford."},
@@ -1321,13 +1379,15 @@ var CFG={
  "14":{title:"Activity 1.4 Signal Spotting",items:A14,max:8,name:function(v){return v||"-"},
    msg:function(s){return s>=7?"Excellent. You read the strength and timing of change well.":s>=5?"Good. Weak signals and trends are easy to confuse: ask how broad and how visible the change already is.":"Worth a second look. Check each item against the four definitions: how broad, how sudden, how likely?"}},
  "16":{title:"Activity 1.6 Unique Selling Proposition"},
+ "32":{title:"Activity 3.2 Spot the Trap",col:"Statement",items:A32,max:6,name:function(v){return v||"-"},
+   msg:function(s){return s>=6?"Excellent. You can name the trap behind each argument.":s>=4?"Good. Look at the ones you missed: what in the wording gives the trap away?":"Worth a second look. Check each statement against the six definitions: what is the speaker relying on?"}},
  "21":{title:"Warm-up 2.1 Whose Vision Is It",col:"Company",max:9,name:function(v){return v!=null&&A21[v]?"“"+A21[v].s+"”":"-"},
    items:A21.map(function(c,i){return {t:c.t+" ("+c.sec+")",k:i,x:c.x+" Label used by the company: "+c.ty+"."}}),
    msg:function(s){return s>=8?"Excellent. You read the strategic direction behind each statement.":s>=5?"Good. Look at the ones you mixed up: which words tie each statement to that company's business?":"Worth a second look. Generic words could fit any company; a strong statement contains a clue that points to one business."}},
  "17":{title:"Activity 1.7 VRIO Test",items:A17,max:6,name:function(v){return v||"-"},
    msg:function(s){return s>=6?"Excellent. You separate real advantages from things every insurer has.":s>=4?"Good. Check the resources you missed: is it really rare, and could a rival copy it quickly?":"Worth a second look. Most resources are valuable; very few are rare, hard to copy and well organized."}}
 };
-var sendState={"11":"idle","14":"idle","16":"idle","17":"idle","21":"idle"};
+var sendState={"11":"idle","14":"idle","16":"idle","17":"idle","21":"idle","32":"idle"};
 function report(id){
   if(id==="16")return report16();
   var c=CFG[id],r=S["r"+id],el=$("r"+id);
@@ -1625,7 +1685,7 @@ $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=/^#a(11|14|16|17|21|SL|SW|VY|SC|PC|MC)$/.test(location.hash)?location.hash.slice(1):null;
+var hashTab=/^#a(11|14|16|17|21|32|SL|SW|VY|SC|PC|MC)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
