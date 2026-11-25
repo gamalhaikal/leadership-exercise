@@ -132,10 +132,25 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
   #report th:first-child,#report td:first-child{text-align:left}#report thead th{background:#343432;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report .torn .bar i{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report .avoid{break-inside:avoid}
+  #report td ul{margin:0;padding-left:14px}#report .sw td,#report .sw th{vertical-align:top;text-align:left}
   #report .legend{display:flex;gap:12px;font-size:11px}#report .legend i{display:inline-block;width:12px;height:4px;margin-right:4px;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report svg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   @page{margin:14mm}
 }
+.swg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:10px}
+@media(max-width:700px){.swg{grid-template-columns:minmax(0,1fr)}}
+.swq{border-radius:12px;padding:12px}
+.swq h3{margin:0 0 2px;font-size:17px}
+.swq small{display:block;color:var(--muted);font-size:13px;margin-bottom:6px}
+.swq textarea{min-height:120px;background:#fff}
+.q-S{background:#fff9c4}.q-W{background:#f2f2f2}.q-O{background:#e8f3ea}.q-T{background:#fbe9e7}
+.board2{overflow-x:auto;margin-top:12px}
+.board2 table{border-collapse:collapse;width:100%;min-width:760px;font-size:14px}
+.board2 th,.board2 td{border:1px solid var(--line);padding:8px;vertical-align:top;text-align:left}
+.board2 thead th{background:var(--dk);color:#fff}
+.board2 td ul{margin:0;padding-left:18px}
+.board2 tr.mine td{background:#fffde0}
+.board2 td:first-child{font-weight:700;width:14%}
 footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
 @media(prefers-reduced-motion:reduce){.prog i{transition:none}}
 </style>
@@ -162,6 +177,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <button class="tab" role="tab" id="t11" type="button">1.1 Strategy or Operations?<span class="ck" id="ck11"></span></button>
     <button class="tab" role="tab" id="t14" type="button">1.4 Signal Spotting<span class="ck" id="ck14"></span></button>
     <button class="tab" role="tab" id="t16" type="button">1.6 Unique Selling Proposition<span class="ck" id="ck16"></span></button>
+    <button class="tab" role="tab" id="tSW" type="button">A. SWOT Team Board<span class="ck" id="ckSW"></span></button>
     <button class="tab" role="tab" id="tSL" type="button">Sensitivity Lab</button>
   </div>
 
@@ -269,6 +285,34 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     </details>
     <details style="margin-top:8px"><summary><b>Sources for the rules of thumb</b></summary><div id="slSrc"></div></details>
   </div>
+
+  <div id="pSW" class="card hidden" role="tabpanel">
+    <h2>Activity A: SWOT Team Board</h2>
+    <p class="lead">Build DCI's SWOT as a team: three sharp points per box, one point per line. Submit, then see every team's SWOT side by side.</p>
+    <div class="who wh"></div>
+    <div id="swForm">
+      <label for="swTeam">Team name (required)</label>
+      <input type="text" id="swTeam" maxlength="60" placeholder="e.g. Kemet">
+      <div class="swg">
+        <div class="swq q-S"><h3>Strengths</h3><small>Internal, helpful</small><textarea id="swS" maxlength="600"></textarea></div>
+        <div class="swq q-W"><h3>Weaknesses</h3><small>Internal, harmful</small><textarea id="swW" maxlength="600"></textarea></div>
+        <div class="swq q-O"><h3>Opportunities</h3><small>External, helpful</small><textarea id="swO" maxlength="600"></textarea></div>
+        <div class="swq q-T"><h3>Threats</h3><small>External, harmful</small><textarea id="swT" maxlength="600"></textarea></div>
+      </div>
+      <div id="swErr" class="err hidden"></div>
+      <div class="row">
+        <button class="btn y" id="swSub" type="button">Submit our SWOT</button>
+        <span class="note" id="swMsg"></span>
+      </div>
+    </div>
+    <h3 style="margin-top:22px">All teams</h3>
+    <div class="row" style="margin-top:0">
+      <button class="btn sec" id="swRef" type="button">Refresh</button>
+      <button class="btn sec" id="swPDF" type="button">Export board (PDF)</button>
+      <span class="note" id="swStat"></span>
+    </div>
+    <div class="board2" id="swBoard"><p class="note">No team has submitted yet.</p></div>
+  </div>
 </section>
 </main>
 <div id="report"></div>
@@ -313,13 +357,16 @@ function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",ti
 
 var IDS=["11","14","16"];
 function showTab(a){
-  if(a!=="aSL"&&IDS.indexOf(a.slice(1))<0)a="a11";
+  if(a!=="aSL"&&a!=="aSW"&&IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
   IDS.forEach(function(id){$("t"+id).setAttribute("aria-selected",a==="a"+id);$("p"+id).classList.toggle("hidden",a!=="a"+id);$("ck"+id).textContent=S["r"+id]?" \u2713":""});
   var sl=a==="aSL";$("tSL").setAttribute("aria-selected",sl);$("pSL").classList.toggle("hidden",!sl);
-  ({a11:draw11,a14:draw14,a16:draw16,aSL:drawSL})[a]();
+  var sw=a==="aSW";$("tSW").setAttribute("aria-selected",sw);$("pSW").classList.toggle("hidden",!sw);$("ckSW").textContent=S.swSent?" \u2713":"";
+  if(!sw)stopSW();
+  ({a11:draw11,a14:draw14,a16:draw16,aSL:drawSL,aSW:drawSW})[a]();
 }
 $("tSL").addEventListener("click",function(){showTab("aSL")});
+$("tSW").addEventListener("click",function(){showTab("aSW")});
 IDS.forEach(function(id){$("t"+id).addEventListener("click",function(){showTab("a"+id)})});
 function nextBtn(id){
   var nx=IDS.filter(function(x){return x!==id&&!S["r"+x]})[0];
@@ -385,6 +432,67 @@ $("sub14").addEventListener("click",function(){
   if(Object.keys(S.ans).length<8)return;
   var sc=0;A14.forEach(function(it,i){if(S.ans[i]===it.k)sc++});
   S.r14={ans:JSON.parse(JSON.stringify(S.ans)),score:sc,at:stamp(),sent:false};save();showTab("a14");send("14");
+});
+
+/* ---------- Team board (Google Sheet) ---------- */
+var BOARD_URL="";            /* Google Apps Script web app URL goes here */
+var SESSION="GIG Strategy in Action";
+var swTimer=null,swRows=[];
+function lines(t){return String(t||"").split(/\n+/).map(function(x){return x.replace(/^[\s\-•*]+/,"").trim()}).filter(Boolean)}
+function drawSW(){
+  var d=S.sw||{};
+  $("swTeam").value=d.team!=null?d.team:(S.team||"");
+  ["S","W","O","T"].forEach(function(k){$("sw"+k).value=d[k]||""});
+  if(!BOARD_URL){$("swStat").textContent="The team board is not connected yet; submissions are emailed to the trainer only.";renderBoard([]);return}
+  loadBoard();stopSW();swTimer=setInterval(loadBoard,20000);
+}
+function stopSW(){if(swTimer){clearInterval(swTimer);swTimer=null}}
+["swTeam","swS","swW","swO","swT"].forEach(function(id){$(id).addEventListener("input",function(){S.sw=S.sw||{};S.sw[id==="swTeam"?"team":id.slice(2)]=$(id).value;save()})});
+function loadBoard(){
+  if(!BOARD_URL)return;
+  $("swStat").textContent="Loading…";
+  fetch(BOARD_URL+"?activity=SWOT&session="+encodeURIComponent(SESSION),{method:"GET"})
+   .then(function(r){return r.json()})
+   .then(function(j){
+     var latest={};(j.rows||[]).forEach(function(r){var k=String(r.team||"").trim().toLowerCase();if(k)latest[k]=r});
+     swRows=Object.keys(latest).map(function(k){return latest[k]}).sort(function(a,b){return String(a.team).localeCompare(String(b.team))});
+     renderBoard(swRows);$("swStat").textContent=swRows.length+" team"+(swRows.length===1?"":"s")+" · updated "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})+" · refreshes every 20 seconds";
+   })
+   .catch(function(){$("swStat").textContent="Could not load the board. Check the internet connection and press Refresh."});
+}
+function ul(t){var L=lines(t);return L.length?'<ul>'+L.map(function(x){return '<li>'+esc(x)+'</li>'}).join("")+'</ul>':'<span class="note">–</span>'}
+function boardTable(rows,mine){
+  return '<table><thead><tr><th>Team</th><th>Strengths</th><th>Weaknesses</th><th>Opportunities</th><th>Threats</th></tr></thead><tbody>'+
+    rows.map(function(r){var d=r.data||r;return '<tr'+(mine&&String(r.team).trim().toLowerCase()===mine?' class="mine"':'')+'><td>'+esc(r.team)+(r.company?'<div class="note" style="font-weight:400">'+esc(r.company)+'</div>':'')+'</td><td>'+ul(d.S)+'</td><td>'+ul(d.W)+'</td><td>'+ul(d.O)+'</td><td>'+ul(d.T)+'</td></tr>'}).join("")+'</tbody></table>';
+}
+function renderBoard(rows){
+  if(!rows.length){$("swBoard").innerHTML='<p class="note">No team has submitted yet.</p>';return}
+  var mine=String((S.sw&&S.sw.team)||"").trim().toLowerCase();
+  $("swBoard").innerHTML=boardTable(rows,mine);
+}
+$("swRef").addEventListener("click",loadBoard);
+$("swSub").addEventListener("click",function(){
+  var d={team:$("swTeam").value.trim(),S:$("swS").value,W:$("swW").value,O:$("swO").value,T:$("swT").value},err="";
+  if(!d.team)err="Enter your team name.";
+  else if(["S","W","O","T"].some(function(k){return lines(d[k]).length===0}))err="Write at least one point in each of the four boxes.";
+  $("swErr").textContent=err;$("swErr").classList.toggle("hidden",!err);if(err)return;
+  S.sw=d;save();
+  $("swSub").disabled=true;$("swMsg").textContent="Submitting…";
+  var payload={session:SESSION,activity:"SWOT",company:S.company,team:d.team,data:{S:d.S,W:d.W,O:d.O,T:d.T},
+    summary:"S: "+lines(d.S).join("; ")+" | W: "+lines(d.W).join("; ")+" | O: "+lines(d.O).join("; ")+" | T: "+lines(d.T).join("; ")};
+  var mail=fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},
+    body:JSON.stringify({_subject:"Activity A SWOT – "+d.team+" ("+S.company+")",_template:"table",_captcha:"false",Company:S.company,Team:d.team,Strengths:lines(d.S).join("\n"),Weaknesses:lines(d.W).join("\n"),Opportunities:lines(d.O).join("\n"),Threats:lines(d.T).join("\n")})}).catch(function(){});
+  var post=BOARD_URL?fetch(BOARD_URL,{method:"POST",body:JSON.stringify(payload)}).then(function(r){return r.json()}):Promise.resolve({ok:"mail"});
+  post.then(function(j){
+    S.swSent=true;save();$("ckSW").textContent=" ✓";
+    $("swMsg").textContent=BOARD_URL?"✔ Submitted. Your row is highlighted below. You can edit and submit again; the board shows your latest version.":"✔ Sent to the trainer.";
+    $("swSub").disabled=false;$("swSub").textContent="Update our SWOT";loadBoard();
+  }).catch(function(){$("swSub").disabled=false;$("swMsg").textContent="Could not reach the team board. Check the connection and try again."});
+});
+$("swPDF").addEventListener("click",function(){
+  if(!swRows.length){$("swStat").textContent="No submissions to export yet.";return}
+  $("report").innerHTML='<h1>Activity A: SWOT Team Board</h1><div>Strategy in Action · Beltone Academy · '+esc(SESSION)+'</div><div>'+esc(stamp())+' · '+swRows.length+' teams</div><h2>All teams</h2>'+boardTable(swRows,null);
+  try{window.print()}catch(e){$("swStat").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}
 });
 
 /* ---------- PDF export for activity results ---------- */
@@ -718,7 +826,7 @@ $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=/^#a(11|14|16|SL)$/.test(location.hash)?location.hash.slice(1):null;
+var hashTab=/^#a(11|14|16|SL|SW)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
