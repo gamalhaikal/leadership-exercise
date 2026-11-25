@@ -1166,14 +1166,13 @@ $("pcGPDF").addEventListener("click",function(){
 /* ---------- 2.1 Mission Check (blind: GIG) ---------- */
 var MCQ="We are invested in providing rewarding experiences to customers, building loyalty with employees, creating value for stakeholders, and serving the community as a committed citizen.";
 var MCT=[
- {t:"What we do",h:"Says clearly what business the company is in",m:1,x:"The word insurance never appears. You cannot tell what the company sells."},
- {t:"Who we serve",h:"Names the customers or markets it focuses on",m:2,x:"It lists every stakeholder (customers, employees, stakeholders, community) but names no customer group or market. Serving everyone is not a choice."},
- {t:"How we are different",h:"Shows what is distinctive about how it serves them",m:2,x:"Rewarding experiences and loyalty are generic. “Invested” echoes GIG’s brand line “Invested in you”, the one distinctive touch."},
- {t:"Why it matters",h:"Gives employees a purpose that energises them",m:3,x:"The intent is positive (rewarding, loyalty, committed citizen), but there is no clear outcome for customers’ lives or businesses."},
- {t:"Clear and memorable",h:"One idea, easy to repeat",m:2,x:"Exactly 25 words with four parallel goals. Hard for an employee to repeat from memory."}
+ {t:"What we do",h:"Says clearly what business the company is in"},
+ {t:"Who we serve",h:"Names the customers or markets it focuses on"},
+ {t:"How we are different",h:"Shows what is distinctive about how it serves them"},
+ {t:"Why it matters",h:"Gives employees a purpose that energises them"},
+ {t:"Clear and memorable",h:"One idea, easy to repeat"}
 ];
 var MCG=["Banking","Telecom","Insurance","Healthcare","Real estate","Retail","Investment","Other"];
-var MCMODEL="We protect people and businesses across Egypt with insurance that is simple to buy and fast to claim, backed by GIG’s regional strength.";
 function mc(){if(!S.mc)S.mc={sc:[null,null,null,null,null],g:"",cp:"",rw:"",why:""};return S.mc}
 function wcount(t){return String(t||"").trim().split(/\s+/).filter(Boolean).length}
 function drawMC(){
@@ -1205,22 +1204,12 @@ $("mcSub").addEventListener("click",function(){
 });
 function mcAvg(a){return a.reduce(function(x,y){return x+y},0)/a.length}
 function reportMC(){
-  var r=S.rMC,near=MCT.filter(function(t,i){return Math.abs(r.sc[i]-t.m)<=1}).length,avg=mcAvg(r.sc);
-  $("rMC").innerHTML='<h2>Activity 2.1 Mission Check: the reveal</h2><div class="who">'+esc(who())+' · '+esc(r.at)+'</div>'+
-    '<div class="reveal">Company X is <b>Gulf Insurance Group (GIG)</b>, the parent group of GIG Egypt. This is the group mission published in its 2025 annual report.<br><span style="font-size:14px;color:#d8d8d8">You guessed: '+esc(r.g)+(r.g==="Insurance"?" ✔":" – and the mission itself never mentions insurance.")+'</span></div>'+
+  var r=S.rMC;
+  $("rMC").innerHTML='<h2>Activity 2.1 Mission Check</h2><div class="who">'+esc(who())+' · '+esc(r.at)+'</div>'+
+    '<div class="reveal" style="font-size:18px">Company X is <b>Gulf Insurance Group (GIG)</b>, the parent group of GIG Egypt.</div>'+
     '<div class="status" id="stMC"></div>'+
-    '<h3>Your scores and the facilitator’s view</h3><div class="mt"><table><thead><tr><th>Test</th><th>Your score</th><th>Facilitator</th></tr></thead><tbody>'+
-    MCT.map(function(t,i){var ok=Math.abs(r.sc[i]-t.m)<=1;return '<tr><td><b>'+t.t+'</b><small>'+esc(t.x)+'</small></td><td>'+r.sc[i]+'</td><td style="white-space:nowrap"><b>'+t.m+'</b> '+(ok?'<span class="up">✔ close</span>':'<span class="dn">discuss</span>')+'</td></tr>'}).join("")+
-    '<tr><td><b>Average</b></td><td><b>'+avg.toFixed(1)+'</b></td><td><b>'+mcAvg(MCT.map(function(t){return t.m})).toFixed(1)+'</b></td></tr></tbody></table></div>'+
-    '<p class="note">Your scores are within one point of the facilitator on '+near+' of 5 tests. These are judgements for discussion, not right answers.</p>'+
-    '<h3>Could a competitor use it unchanged?</h3><p>You said <b>'+esc(r.cp)+'</b>. Facilitator view: <b>Yes</b>. Replace the name and almost any company, in any industry, could publish it.</p>'+
-    '<h3>Your rewrite ('+wcount(r.rw)+' words)</h3><div class="mq" style="font-size:17px">“'+esc(r.rw)+'”</div>'+(r.why?'<p class="note">What you changed: '+esc(r.why)+'</p>':'')+
-    '<h3>One possible rewrite for GIG Egypt ('+wcount(MCMODEL)+' words)</h3><div class="mq" style="font-size:17px;background:#f2f2f2">“'+esc(MCMODEL)+'”</div>'+
-    '<p class="note">It says what (insurance), for whom (people and businesses in Egypt) and how (simple to buy, fast to claim, regional strength). Does yours?</p>'+
-    '<div class="sugg"><b>For the debrief</b><ul style="margin:6px 0 0;padding-left:20px"><li>Is a stakeholder list a mission, or a set of values?</li><li>Would a GIG Egypt employee know what to do differently tomorrow?</li><li>Which promise in your rewrite can GIG Egypt actually keep today?</li></ul></div>'+
-    '<div class="row"><button class="btn y" type="button" id="pdfMC">Export report (PDF)</button><span class="note" id="pdfmMC"></span></div>'+
-    '<div class="row"><button class="btn sec" type="button" id="mcAgain">Edit our answers</button></div>';
-  $("pdfMC").onclick=pdfMC;$("mcAgain").onclick=function(){S.rMC=null;save();drawMC()};
+    '<div class="row"><button class="btn y" type="button" id="pdfMC">Export our answers (PDF)</button><span class="note" id="pdfmMC"></span></div>';
+  $("pdfMC").onclick=pdfMC;
   statusMC();
 }
 var mcState="idle";
@@ -1231,7 +1220,7 @@ function statusMC(){var el=$("stMC"),r=S.rMC;if(!el||!r)return;el.className="sta
   el.textContent=""}
 function sendMC(){var r=S.rMC;if(!r||r.sent)return;mcState="sending";statusMC();
   var body={_subject:"Activity 2.1 Mission Check – "+S.company+(S.team?" ("+S.team+")":""),_template:"table",_captcha:"false",Company:S.company,"Name / table":S.team||"-",Submitted:r.at};
-  MCT.forEach(function(t,i){body[t.t]=r.sc[i]+" (facilitator "+t.m+")"});
+  MCT.forEach(function(t,i){body[t.t]=r.sc[i]});
   body["Industry guess"]=r.g;body["Competitor could use it?"]=r.cp;body["Rewrite ("+wcount(r.rw)+" words)"]=r.rw;body["What changed"]=r.why||"-";
   fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)})
    .then(function(res){return res.json()}).then(function(j){if(j.success===true||j.success==="true"){r.sent=true;mcState="ok";save()}else mcState="fail";statusMC()})
@@ -1239,11 +1228,10 @@ function sendMC(){var r=S.rMC;if(!r||r.sent)return;mcState="sending";statusMC();
 }
 function pdfMC(){var r=S.rMC;
   $("report").innerHTML='<h1>Activity 2.1 Mission Check</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · '+esc(r.at)+'</div>'+
-    '<h2>The mission evaluated</h2><p style="font-size:14px;font-style:italic">“'+esc(MCQ)+'”</p><p>Company: Gulf Insurance Group (GIG), parent of GIG Egypt (2025 annual report). Our industry guess: '+esc(r.g)+'.</p>'+
-    '<h2>Scores</h2><table><thead><tr><th>Test</th><th>Our score</th><th>Facilitator</th><th>Comment</th></tr></thead><tbody>'+MCT.map(function(t,i){return '<tr class="avoid"><td>'+t.t+'</td><td>'+r.sc[i]+'</td><td>'+t.m+'</td><td style="text-align:left">'+esc(t.x)+'</td></tr>'}).join("")+'</tbody></table>'+
-    '<p>Could a competitor use it unchanged? Our answer: '+esc(r.cp)+'. Facilitator: Yes.</p>'+
-    '<div class="avoid"><h2>Our rewrite ('+wcount(r.rw)+' words)</h2><p style="font-size:14px;font-style:italic">“'+esc(r.rw)+'”</p>'+(r.why?'<p>What we changed: '+esc(r.why)+'</p>':'')+
-    '<h2>One possible rewrite</h2><p style="font-style:italic">“'+esc(MCMODEL)+'”</p></div>';
+    '<h2>The mission evaluated</h2><p style="font-size:14px;font-style:italic">“'+esc(MCQ)+'”</p><p>Company: Gulf Insurance Group (GIG), parent group of GIG Egypt.</p>'+
+    '<h2>Our evaluation</h2><table><thead><tr><th>Test</th><th>Our score (1–5)</th></tr></thead><tbody>'+MCT.map(function(t,i){return '<tr><td>'+t.t+'</td><td>'+r.sc[i]+'</td></tr>'}).join("")+'</tbody></table>'+
+    '<p>Our industry guess: '+esc(r.g)+'. Could a competitor use it unchanged? '+esc(r.cp)+'.</p>'+
+    '<h2>Our rewrite ('+wcount(r.rw)+' words)</h2><p style="font-size:14px;font-style:italic">“'+esc(r.rw)+'”</p>'+(r.why?'<p>What we changed: '+esc(r.why)+'</p>':'');
   $("pdfmMC").textContent="In the print window, choose “Save as PDF”.";
   try{window.print()}catch(e){$("pdfmMC").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}
 }
