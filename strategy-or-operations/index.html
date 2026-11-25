@@ -173,6 +173,20 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
 .cbox h4{margin:0 0 2px;font-size:16px}
 .cbox p{margin:0 0 6px;font-size:14px;color:#333}
 .cbox ul{margin:0;padding-left:20px}
+/* vision match */
+.vmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
+.vmt{border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;flex-direction:column;overflow:hidden}
+.vmt .lg{display:flex;align-items:center;gap:10px;padding:12px;background:var(--dk);color:#fff;min-height:70px}
+.vmt .lg i{flex:none;width:44px;height:44px;border-radius:10px;background:var(--yl);color:var(--dk);font-style:normal;font-weight:800;font-size:20px;display:grid;place-items:center}
+.vmt .lg b{display:block;font-size:17px;line-height:1.2}.vmt .lg small{font-size:12px;color:#d8d8d8}
+.vmt .slot{flex:1;min-height:96px;margin:10px;border:2px dashed #c8c8c8;border-radius:10px;padding:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;text-align:center}
+.vmt.over .slot{border-color:var(--o);background:var(--ob)}
+.vmt .slot .vmi{width:100%}
+.vmtray{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:14px 0;min-height:60px;padding:12px;border:2px dashed #c8c8c8;border-radius:12px;background:#fafafa}
+.vmtray.over{border-color:var(--o)}
+.vmtray:empty::after{content:"All statements placed. Review, then submit.";color:var(--muted);font-size:14px}
+.vmi{background:#fff;border:1px solid #cfcfcf;border-left:5px solid var(--yl);border-radius:10px;padding:10px 12px;cursor:grab;box-shadow:0 1px 2px rgba(0,0,0,.06);font-style:italic;touch-action:none;user-select:none;text-align:left;color:var(--ink);font-size:15px}
+.vmi.sel{outline:3px solid var(--o)}.vmi.drag{opacity:.4}
 footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
 @media(prefers-reduced-motion:reduce){.prog i{transition:none}}
 </style>
@@ -202,6 +216,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <button class="tab" role="tab" id="t17" type="button">1.7 VRIO Test<span class="ck" id="ck17"></span></button>
     <button class="tab" role="tab" id="tVY" type="button">VRIO: Your Company<span class="ck" id="ckVY"></span></button>
     <button class="tab" role="tab" id="tSW" type="button">A. SWOT Team Board<span class="ck" id="ckSW"></span></button>
+    <button class="tab" role="tab" id="t21" type="button">2.1 Warm-up: Whose Vision?<span class="ck" id="ck21"></span></button>
     <button class="tab" role="tab" id="tSL" type="button">Sensitivity Lab</button>
   </div>
 
@@ -337,6 +352,26 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <div id="r17" class="hidden"></div>
   </div>
 
+  <div id="p21" class="card hidden" role="tabpanel">
+    <div id="b21">
+      <h2>Warm-up 2.1: Whose Vision Is It?</h2>
+      <p class="lead">Eight well-known international companies and the statements they use to describe where they are heading. Drag each statement onto the company it belongs to. Some call it a vision, some a mission or purpose; that difference is part of the discussion.</p>
+      <div class="row" style="margin-top:0">
+        <div class="who wh"></div>
+        <div class="prog" aria-hidden="true"><i id="pb21"></i></div>
+        <div class="who" id="pt21">0 / 8 placed</div>
+      </div>
+      <p class="tap">On a phone or tablet: tap a statement, then tap the company.</p>
+      <div class="vmtray" id="vmtray" aria-label="Statements to match"></div>
+      <div class="vmg" id="vmg"></div>
+      <div class="row">
+        <button class="btn y" id="sub21" type="button" disabled>Submit answers</button>
+        <button class="btn sec" id="rst21" type="button">Start again</button>
+      </div>
+    </div>
+    <div id="r21" class="hidden"></div>
+  </div>
+
   <div id="pVY" class="card hidden" role="tabpanel">
     <h2>VRIO: Your Company</h2>
     <p class="lead">Now apply the VRIO test to your own company. List its key resources and capabilities, answer each test in order, and the app concludes which ones the company can build its strategy on.</p>
@@ -434,7 +469,7 @@ function load(){try{return JSON.parse(localStorage.getItem(LS)||"null")}catch(e)
 function who(){return S.company+(S.team?" · "+S.team:"")}
 function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})}
 
-var IDS=["11","14","16","17"];
+var IDS=["11","14","16","17","21"];
 function showTab(a){
   if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
@@ -443,7 +478,7 @@ function showTab(a){
   var vy=a==="aVY";$("tVY").setAttribute("aria-selected",vy);$("pVY").classList.toggle("hidden",!vy);$("ckVY").textContent=S.vySent?" \u2713":"";
   var sw=a==="aSW";$("tSW").setAttribute("aria-selected",sw);$("pSW").classList.toggle("hidden",!sw);$("ckSW").textContent=S.swSent?" \u2713":"";
   if(!sw)stopSW();
-  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
+  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
 }
 $("tSL").addEventListener("click",function(){showTab("aSL")});
 $("tSW").addEventListener("click",function(){showTab("aSW")});
@@ -694,6 +729,54 @@ $("swPDF").addEventListener("click",function(){
   try{window.print()}catch(e){$("swStat").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}
 });
 
+/* ---------- 2.1 Whose vision? ---------- */
+var A21=[
+ {t:"IKEA",sec:"Home furnishing · Sweden",s:"To create a better everyday life for the many people.",ty:"Vision",x:"IKEA's vision. “The many people” drives its business idea: well-designed products at prices most people can afford."},
+ {t:"LinkedIn",sec:"Professional network · USA",s:"Create economic opportunity for every member of the global workforce.",ty:"Vision",x:"LinkedIn's vision since 2003. Its leaders stress that the key word is “every”."},
+ {t:"Amazon",sec:"Retail and cloud · USA",s:"To be Earth's most customer-centric company.",ty:"Mission",x:"Amazon calls this its mission, but it is written like a vision: a position it wants to reach."},
+ {t:"Tesla",sec:"Electric vehicles and energy · USA",s:"To accelerate the world's transition to sustainable energy.",ty:"Mission",x:"Tesla's mission. Cars, solar and batteries all serve the same direction."},
+ {t:"Microsoft",sec:"Software and cloud · USA",s:"To empower every person and every organization on the planet to achieve more.",ty:"Mission",x:"Microsoft's mission: it focuses on what customers achieve, not on the products."},
+ {t:"Nike",sec:"Sportswear · USA",s:"To bring inspiration and innovation to every athlete* in the world. (*If you have a body, you are an athlete.)",ty:"Mission",x:"Nike's mission. The footnote widens the market from sports people to everyone."},
+ {t:"AXA",sec:"Insurance · France",s:"Act for human progress by protecting what matters.",ty:"Purpose",x:"AXA's purpose since 2020. It ties insurance to a wider social role."},
+ {t:"Allianz",sec:"Insurance and asset management · Germany",s:"We secure your future.",ty:"Purpose",x:"Allianz's purpose since 2019: four words that any employee can remember."}
+];
+var ORD21=[5,2,7,0,4,6,1,3];
+var sel21=null;
+function vm(){if(!S.vm)S.vm={};return S.vm}
+function vmCard(si){return '<div class="vmi'+(sel21===si?" sel":"")+'" draggable="true" tabindex="0" role="button" data-s="'+si+'">“'+esc(A21[si].s)+'”</div>'}
+function draw21(){
+  if(S.r21){$("b21").classList.add("hidden");$("r21").classList.remove("hidden");report("21");return}
+  $("b21").classList.remove("hidden");$("r21").classList.add("hidden");
+  var M=vm(),used={};Object.keys(M).forEach(function(k){used[M[k]]=1});
+  $("vmtray").innerHTML=ORD21.filter(function(si){return !used[si]}).map(vmCard).join("");
+  $("vmg").innerHTML=A21.map(function(c,ti){var si=M[ti];
+    return '<div class="vmt" data-t="'+ti+'"><div class="lg"><i aria-hidden="true">'+esc(c.t[0])+'</i><div><b>'+esc(c.t)+'</b><small>'+esc(c.sec)+'</small></div></div><div class="slot">'+(si!=null?vmCard(si):"Drop the statement here")+'</div></div>'}).join("");
+  var n=Object.keys(M).length;
+  $("pb21").style.width=(n/8*100)+"%";$("pt21").textContent=n+" / 8 placed";$("sub21").disabled=n<8;save();
+}
+function put21(si,ti){var M=vm();Object.keys(M).forEach(function(k){if(M[k]===si)delete M[k]});if(ti!=null)M[ti]=si;sel21=null;draw21()}
+(function(){
+  var root=$("p21");
+  root.addEventListener("dragstart",function(e){var c=e.target.closest&&e.target.closest(".vmi");if(!c)return;e.stopPropagation();e.dataTransfer.setData("text/plain","vm"+c.dataset.s);c.classList.add("drag")});
+  root.addEventListener("dragend",function(){root.querySelectorAll(".over,.drag").forEach(function(z){z.classList.remove("over");z.classList.remove("drag")})});
+  root.addEventListener("dragover",function(e){var z=e.target.closest(".vmt,.vmtray");if(!z)return;e.preventDefault();root.querySelectorAll(".over").forEach(function(o){if(o!==z)o.classList.remove("over")});z.classList.add("over")});
+  root.addEventListener("drop",function(e){var z=e.target.closest(".vmt,.vmtray");if(!z)return;e.preventDefault();e.stopPropagation();
+    var d=e.dataTransfer.getData("text/plain");if(d.indexOf("vm")!==0)return;var si=+d.slice(2);
+    put21(si,z.classList.contains("vmt")?+z.dataset.t:null)});
+  root.addEventListener("click",function(e){
+    var c=e.target.closest(".vmi");if(c){var si=+c.dataset.s;sel21=(sel21===si)?null:si;draw21();return}
+    var z=e.target.closest(".vmt,.vmtray");if(z&&sel21!==null)put21(sel21,z.classList.contains("vmt")?+z.dataset.t:null);
+  });
+  root.addEventListener("keydown",function(e){var c=e.target.closest&&e.target.closest(".vmi");if(!c)return;
+    if(e.key==="Enter"||e.key===" "){e.preventDefault();c.click()}else if(e.key==="Backspace"||e.key==="Delete"){put21(+c.dataset.s,null)}});
+})();
+$("rst21").addEventListener("click",function(){S.vm={};sel21=null;draw21()});
+$("sub21").addEventListener("click",function(){
+  var M=vm();if(Object.keys(M).length<8)return;
+  var ans=A21.map(function(c,ti){return M[ti]});var sc=0;ans.forEach(function(si,ti){if(si===ti)sc++});
+  S.r21={ans:ans,score:sc,at:stamp(),sent:false};save();showTab("a21");send("21");
+});
+
 /* ---------- PDF export for activity results ---------- */
 function pdfBtn(id){return '<div class="row"><button class="btn y" type="button" id="pdf'+id+'">Export report (PDF)</button><span class="note" id="pdfm'+id+'"></span></div>'}
 function wirePdf(id){var b=$("pdf"+id);if(b)b.onclick=function(){exportPdf(id)}}
@@ -715,7 +798,7 @@ function exportPdf(id){
     var c=CFG[id],r2=S["r"+id];
     html='<h1>'+esc(c.title)+'</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · submitted '+esc(r2.at)+'</div>'+
       '<h2>Score: '+r2.score+' / '+c.max+'</h2><p>'+esc(c.msg(r2.score))+'</p>'+
-      '<h2>Answers and model answer</h2><table><thead><tr><th>#</th><th>Statement</th><th>Our answer</th><th>Model answer</th><th>Why</th></tr></thead><tbody>'+
+      '<h2>Answers and model answer</h2><table><thead><tr><th>#</th><th>'+(c.col||'Statement')+'</th><th>Our answer</th><th>Model answer</th><th>Why</th></tr></thead><tbody>'+
       c.items.map(function(it,i){var y=r2.ans[i],ok=y===it.k;return '<tr class="avoid"><td>'+(i+1)+'</td><td style="text-align:left">'+esc(it.t)+(id==="17"&&r2.yn?'<br><span style="font-size:10px">V/R/I/O: '+(r2.yn[i].filter(Boolean).join(" · "))+'</span>':'')+'</td><td>'+esc(c.name(y))+(ok?" ✓":" ✗")+'</td><td>'+esc(c.name(it.k))+'</td><td style="text-align:left">'+esc(it.x)+'</td></tr>'}).join("")+'</tbody></table>'+
       (id==="17"?'<h2>Resource to build the strategy around</h2><p>Our choice: <b>'+esc(r2.pick!=null?A17[r2.pick].t:"-")+'</b>'+(r2.why?' — '+esc(r2.why):'')+'</p><p>Suggested: <b>'+esc(A17[0].t)+'</b>. It is the only resource that passes all four tests. The medical claims data could join it once DCI is organized to use it.</p>':'');
   }
@@ -730,10 +813,13 @@ var CFG={
  "14":{title:"Activity 1.4 Signal Spotting",items:A14,max:8,name:function(v){return v||"-"},
    msg:function(s){return s>=7?"Excellent. You read the strength and timing of change well.":s>=5?"Good. Weak signals and trends are easy to confuse: ask how broad and how visible the change already is.":"Worth a second look. Check each item against the four definitions: how broad, how sudden, how likely?"}},
  "16":{title:"Activity 1.6 Unique Selling Proposition"},
+ "21":{title:"Warm-up 2.1 Whose Vision Is It",col:"Company",max:8,name:function(v){return v!=null&&A21[v]?"“"+A21[v].s+"”":"-"},
+   items:A21.map(function(c,i){return {t:c.t+" ("+c.sec+")",k:i,x:c.x+" Label used by the company: "+c.ty+"."}}),
+   msg:function(s){return s>=7?"Excellent. You read the strategic direction behind each statement.":s>=4?"Good. Look at the ones you mixed up: which words tie each statement to that company's business?":"Worth a second look. Generic words could fit any company; a strong statement contains a clue that points to one business."}},
  "17":{title:"Activity 1.7 VRIO Test",items:A17,max:6,name:function(v){return v||"-"},
    msg:function(s){return s>=6?"Excellent. You separate real advantages from things every insurer has.":s>=4?"Good. Check the resources you missed: is it really rare, and could a rival copy it quickly?":"Worth a second look. Most resources are valuable; very few are rare, hard to copy and well organized."}}
 };
-var sendState={"11":"idle","14":"idle","16":"idle","17":"idle"};
+var sendState={"11":"idle","14":"idle","16":"idle","17":"idle","21":"idle"};
 function report(id){
   if(id==="16")return report16();
   var c=CFG[id],r=S["r"+id],el=$("r"+id);
@@ -1030,7 +1116,7 @@ $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=/^#a(11|14|16|17|SL|SW|VY)$/.test(location.hash)?location.hash.slice(1):null;
+var hashTab=/^#a(11|14|16|17|21|SL|SW|VY)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
