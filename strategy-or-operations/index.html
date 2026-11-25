@@ -132,6 +132,7 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
   #report th:first-child,#report td:first-child{text-align:left}#report thead th{background:#343432;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report .torn .bar i{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report .avoid{break-inside:avoid}
+  #report .cbox{border-radius:8px;padding:8px 10px;margin-bottom:6px}#report .cbox h4{margin:0 0 2px}#report .cbox p{margin:0 0 4px}#report .imp{border-radius:10px;padding:1px 6px;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report td ul{margin:0;padding-left:14px}#report .sw td,#report .sw th{vertical-align:top;text-align:left}
   #report .legend{display:flex;gap:12px;font-size:11px}#report .legend i{display:inline-block;width:12px;height:4px;margin-right:4px;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report svg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -165,6 +166,13 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
 .pick{display:grid;gap:6px;margin-top:8px}
 .pick label{display:flex;gap:10px;align-items:center;font-weight:500;margin:0;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}
 .pick input[type=radio]{width:20px;height:20px}
+.vt td input[type=text]{width:100%;font:inherit;font-size:15px;padding:8px;border:1px solid #bbb;border-radius:8px}
+.vt .del{border:0;background:none;font-size:20px;color:var(--muted);cursor:pointer;min-width:36px;min-height:36px}
+.concl{display:grid;gap:10px;margin-top:10px}
+.cbox{border-radius:12px;padding:12px 14px}
+.cbox h4{margin:0 0 2px;font-size:16px}
+.cbox p{margin:0 0 6px;font-size:14px;color:#333}
+.cbox ul{margin:0;padding-left:20px}
 footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
 @media(prefers-reduced-motion:reduce){.prog i{transition:none}}
 </style>
@@ -192,6 +200,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <button class="tab" role="tab" id="t14" type="button">1.4 Signal Spotting<span class="ck" id="ck14"></span></button>
     <button class="tab" role="tab" id="t16" type="button">1.6 Unique Selling Proposition<span class="ck" id="ck16"></span></button>
     <button class="tab" role="tab" id="t17" type="button">1.7 VRIO Test<span class="ck" id="ck17"></span></button>
+    <button class="tab" role="tab" id="tVY" type="button">VRIO: Your Company<span class="ck" id="ckVY"></span></button>
     <button class="tab" role="tab" id="tSW" type="button">A. SWOT Team Board<span class="ck" id="ckSW"></span></button>
     <button class="tab" role="tab" id="tSL" type="button">Sensitivity Lab</button>
   </div>
@@ -328,6 +337,34 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <div id="r17" class="hidden"></div>
   </div>
 
+  <div id="pVY" class="card hidden" role="tabpanel">
+    <h2>VRIO: Your Company</h2>
+    <p class="lead">Now apply the VRIO test to your own company. List its key resources and capabilities, answer each test in order, and the app concludes which ones the company can build its strategy on.</p>
+    <div class="who wh"></div>
+    <label for="vyCo">Company analysed</label>
+    <input type="text" id="vyCo" maxlength="80">
+    <div class="defs">
+      <div><b>V · Valuable</b>Helps win customers or cut costs</div>
+      <div><b>R · Rare</b>Few competitors have it</div>
+      <div><b>I · Inimitable</b>Hard or slow for rivals to copy</div>
+      <div><b>O · Organized</b>Systems and processes actually use it</div>
+    </div>
+    <div class="vt"><table id="vyT"></table></div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn sec" id="vyAdd" type="button">+ Add a resource</button>
+      <span class="note">Ideas: brand, distribution, people, technology, data, capital, partnerships, licences, claims service, group backing.</span>
+    </div>
+    <h3>Conclusion: what can the company rely on?</h3>
+    <div id="vyOut"><p class="note">Complete the tests for at least one resource to see the conclusion.</p></div>
+    <div id="vyErr" class="err hidden"></div>
+    <div class="row">
+      <button class="btn y" id="vySub" type="button">Submit to trainer</button>
+      <button class="btn sec" id="vyPDF" type="button">Export report (PDF)</button>
+      <button class="btn sec" id="vyClr" type="button">Clear all</button>
+      <span class="note" id="vyMsg"></span>
+    </div>
+  </div>
+
   <div id="pSW" class="card hidden" role="tabpanel">
     <h2>Activity A: SWOT Team Board</h2>
     <p class="lead">Build DCI's SWOT as a team: three sharp points per box, one point per line. Submit, then see every team's SWOT side by side.</p>
@@ -399,16 +436,18 @@ function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",ti
 
 var IDS=["11","14","16","17"];
 function showTab(a){
-  if(a!=="aSL"&&a!=="aSW"&&IDS.indexOf(a.slice(1))<0)a="a11";
+  if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
   IDS.forEach(function(id){$("t"+id).setAttribute("aria-selected",a==="a"+id);$("p"+id).classList.toggle("hidden",a!=="a"+id);$("ck"+id).textContent=S["r"+id]?" \u2713":""});
   var sl=a==="aSL";$("tSL").setAttribute("aria-selected",sl);$("pSL").classList.toggle("hidden",!sl);
+  var vy=a==="aVY";$("tVY").setAttribute("aria-selected",vy);$("pVY").classList.toggle("hidden",!vy);$("ckVY").textContent=S.vySent?" \u2713":"";
   var sw=a==="aSW";$("tSW").setAttribute("aria-selected",sw);$("pSW").classList.toggle("hidden",!sw);$("ckSW").textContent=S.swSent?" \u2713":"";
   if(!sw)stopSW();
-  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,aSL:drawSL,aSW:drawSW})[a]();
+  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
 }
 $("tSL").addEventListener("click",function(){showTab("aSL")});
 $("tSW").addEventListener("click",function(){showTab("aSW")});
+$("tVY").addEventListener("click",function(){showTab("aVY")});
 IDS.forEach(function(id){$("t"+id).addEventListener("click",function(){showTab("a"+id)})});
 function nextBtn(id){
   var nx=IDS.filter(function(x){return x!==id&&!S["r"+x]})[0];
@@ -522,6 +561,77 @@ function pick17HTML(r){
   return '<h3>Resource to build the strategy around</h3><div class="res"><li style="list-style:none"><div class="m '+(ok?"ok":"no")+'">'+(ok?"✓":"✗")+'</div><div><b>Your choice: '+esc(r.pick!=null?A17[r.pick].t:"-")+'</b>'+(r.why?'<div class="tag">'+esc(r.why)+'</div>':'')+
     '<div class="ex">Suggested: <b>'+esc(A17[0].t)+'</b>. It is the only resource that passes all four tests. The medical claims data could join it once DCI is organized to use it.</div></div></li></div>';
 }
+
+/* ---------- VRIO: your company ---------- */
+var VYG=[
+ {k:"Sustained advantage",h:"Build the strategy on these",p:"Valuable, rare, hard to copy and well used. These are the company's real foundations: invest in them and make them central to how it competes.",c:"#e3f4ea"},
+ {k:"Unused advantage",h:"Unlock these",p:"Strong resources the company is not organized to use. Fix the systems, processes or incentives and they become sustained advantages.",c:"#fff1e0"},
+ {k:"Temporary advantage",h:"Exploit quickly, then renew",p:"An edge today that rivals can copy. Use it now and keep improving, but don't build the long-term strategy on it.",c:"#fff9c4"},
+ {k:"Competitive parity",h:"Maintain efficiently",p:"Necessary to stay in the game but not a reason to win. Keep them at market standard at the lowest sensible cost.",c:"#f2f2f2"},
+ {k:"Competitive disadvantage",h:"Fix or stop",p:"Not valuable today. Improve them if they are essential, or stop investing in them.",c:"#fbe9e7"}
+];
+function vy(){if(!S.vy)S.vy={co:"",rows:[{n:"",e:"",yn:["","","",""]},{n:"",e:"",yn:["","","",""]},{n:"",e:"",yn:["","","",""]},{n:"",e:"",yn:["","","",""]},{n:"",e:"",yn:["","","",""]}]};return S.vy}
+function drawVY(){
+  var V=vy();
+  if(!V.co)V.co=S.company||"";
+  $("vyCo").value=V.co;
+  $("vyT").innerHTML='<thead><tr><th>Resource or capability</th>'+VCOLS.map(function(c){return '<th>'+c+'?</th>'}).join("")+'<th>Implication</th><th aria-label="Remove"></th></tr></thead><tbody>'+
+    V.rows.map(function(r,i){var a=r.yn,imp=impOf(a),stop=-1;for(var j=0;j<4;j++){if(a[j]==="N"){stop=j;break}}
+      return '<tr><td><input type="text" data-r="'+i+'" data-f="n" maxlength="80" placeholder="Resource '+(i+1)+'" value="'+esc(r.n)+'"><input type="text" data-r="'+i+'" data-f="e" maxlength="140" placeholder="Evidence (optional)" style="margin-top:6px;font-size:13px" value="'+esc(r.e||"")+'"></td>'+
+        [0,1,2,3].map(function(j){var dis=(stop>=0&&j>stop)||(j>0&&!a[j-1]);
+          return '<td><span class="yn">'+["Y","N"].map(function(v){return '<button type="button" data-r="'+i+'" data-j="'+j+'" data-v="'+v+'" aria-pressed="'+(a[j]===v)+'"'+(dis?' disabled':'')+' aria-label="'+VCOLS[j]+' '+v+'">'+v+'</button>'}).join("")+'</span></td>'}).join("")+
+        '<td>'+(imp?'<span class="imp '+impCls(imp)+'">'+imp+'</span>':'<span class="note">\u2013</span>')+'</td><td><button type="button" class="del" data-del="'+i+'" aria-label="Remove resource">\u00d7</button></td></tr>'}).join("")+'</tbody>';
+  concl();save();
+}
+function vyDone(){return vy().rows.filter(function(r){return r.n.trim()&&impOf(r.yn)})}
+function conclHTML(rows,print){
+  if(!rows.length)return '<p class="note">Complete the tests for at least one named resource to see the conclusion.</p>';
+  var html='<div class="concl">';
+  VYG.forEach(function(g){var L=rows.filter(function(r){return impOf(r.yn)===g.k});if(!L.length)return;
+    html+='<div class="cbox" style="background:'+g.c+(print?';border:1px solid #ccc;-webkit-print-color-adjust:exact;print-color-adjust:exact':'')+'"><h4>'+g.h+' <span class="imp '+impCls(g.k)+'">'+g.k+'</span></h4><p>'+g.p+'</p><ul>'+
+      L.map(function(r){return '<li><b>'+esc(r.n)+'</b>'+(r.e?' <span class="note">('+esc(r.e)+')</span>':'')+'</li>'}).join("")+'</ul></div>'});
+  var sus=rows.filter(function(r){return impOf(r.yn)==="Sustained advantage"}),unu=rows.filter(function(r){return impOf(r.yn)==="Unused advantage"});
+  html+='</div><p style="margin-top:12px"><b>Bottom line:</b> '+(sus.length?esc(vy().co||"The company")+' can rely on '+esc(sus.map(function(r){return r.n}).join(", "))+'.':'No resource passes all four tests yet, so the company has no sustained advantage on this list.')+
+    (unu.length?' Its biggest opportunity is to organize itself to use '+esc(unu.map(function(r){return r.n}).join(", "))+'.':'')+'</p>';
+  return html;
+}
+function concl(){$("vyOut").innerHTML=conclHTML(vyDone(),false)}
+$("vyCo").addEventListener("input",function(){vy().co=$("vyCo").value;save();concl()});
+$("vyT").addEventListener("input",function(e){var t=e.target;if(t.dataset.r==null)return;vy().rows[+t.dataset.r][t.dataset.f]=t.value;save();concl()});
+$("vyT").addEventListener("click",function(e){
+  var d=e.target.closest("[data-del]");if(d){var V=vy();V.rows.splice(+d.dataset.del,1);if(!V.rows.length)V.rows.push({n:"",e:"",yn:["","","",""]});drawVY();return}
+  var b=e.target.closest("button[data-v]");if(!b||b.disabled)return;
+  var a=vy().rows[+b.dataset.r].yn,j=+b.dataset.j;a[j]=b.dataset.v;if(a[j]==="N")for(var k=j+1;k<4;k++)a[k]="";drawVY();
+});
+$("vyAdd").addEventListener("click",function(){var V=vy();if(V.rows.length>=12){$("vyMsg").textContent="Up to 12 resources.";return}V.rows.push({n:"",e:"",yn:["","","",""]});drawVY()});
+$("vyClr").addEventListener("click",function(){S.vy=null;S.vySent=false;drawVY();$("vyMsg").textContent="";$("ckVY").textContent=""});
+$("vySub").addEventListener("click",function(){
+  var V=vy(),rows=vyDone(),err="";
+  if(!(V.co||"").trim())err="Enter the company you are analysing.";
+  else if(rows.length<3)err="Name and complete the tests for at least three resources.";
+  $("vyErr").textContent=err;$("vyErr").classList.toggle("hidden",!err);if(err)return;
+  $("vySub").disabled=true;$("vyMsg").textContent="Sending\u2026";
+  var body={_subject:"VRIO: Your Company \u2013 "+V.co+" ("+(S.team||S.company)+")",_template:"table",_captcha:"false",
+    "Participant company":S.company,"Name / table":S.team||"-","Company analysed":V.co,Submitted:stamp()};
+  rows.forEach(function(r,i){body["R"+(i+1)+". "+r.n]="V/R/I/O: "+r.yn.filter(Boolean).join(" ")+" \u2192 "+impOf(r.yn)+(r.e?" | "+r.e:"")});
+  VYG.forEach(function(g){var L=rows.filter(function(r){return impOf(r.yn)===g.k});if(L.length)body[g.h]=L.map(function(r){return r.n}).join(", ")});
+  fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)})
+   .then(function(r){return r.json()}).then(function(j){
+     $("vySub").disabled=false;
+     if(j.success===true||j.success==="true"){S.vySent=true;save();$("ckVY").textContent=" \u2713";$("vyMsg").textContent="\u2714 Sent to the trainer. You can edit and send an updated version.";$("vySub").textContent="Send updated version"}
+     else $("vyMsg").textContent="Sending failed. Check the connection and try again, or export the PDF.";
+   }).catch(function(){$("vySub").disabled=false;$("vyMsg").textContent="Sending failed (you may be offline). Try again, or export the PDF and share it."});
+});
+$("vyPDF").addEventListener("click",function(){
+  var V=vy(),rows=vyDone();
+  if(!rows.length){$("vyMsg").textContent="Complete at least one resource before exporting.";return}
+  $("report").innerHTML='<h1>VRIO: '+esc(V.co||"Your Company")+'</h1><div>Strategy in Action \u00b7 Beltone Academy</div><div>'+esc(who())+' \u00b7 '+esc(stamp())+'</div>'+
+    '<h2>VRIO test</h2><table><thead><tr><th>Resource</th><th>V</th><th>R</th><th>I</th><th>O</th><th>Implication</th></tr></thead><tbody>'+
+    rows.map(function(r){return '<tr class="avoid"><td>'+esc(r.n)+(r.e?'<br><span style="font-size:10px">'+esc(r.e)+'</span>':'')+'</td>'+[0,1,2,3].map(function(j){return '<td style="text-align:center">'+(r.yn[j]||"\u2013")+'</td>'}).join("")+'<td>'+impOf(r.yn)+'</td></tr>'}).join("")+'</tbody></table>'+
+    '<div class="avoid"><h2>Conclusion: what the company can rely on</h2>'+conclHTML(rows,true)+'</div>';
+  $("vyMsg").textContent="In the print window, choose \u201cSave as PDF\u201d.";
+  try{window.print()}catch(e){$("vyMsg").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}
+});
 
 /* ---------- Team board (Google Sheet) ---------- */
 var BOARD_URL="";            /* Google Apps Script web app URL goes here */
@@ -920,7 +1030,7 @@ $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=/^#a(11|14|16|17|SL|SW)$/.test(location.hash)?location.hash.slice(1):null;
+var hashTab=/^#a(11|14|16|17|SL|SW|VY)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
