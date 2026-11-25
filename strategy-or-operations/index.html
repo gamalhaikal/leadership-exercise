@@ -173,6 +173,26 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
 .cbox h4{margin:0 0 2px;font-size:16px}
 .cbox p{margin:0 0 6px;font-size:14px;color:#333}
 .cbox ul{margin:0;padding-left:20px}
+/* strategy canvas */
+.sc{overflow-x:auto;margin-top:12px}
+.sc table{border-collapse:collapse;width:100%;min-width:640px}
+.sc th,.sc td{border:1px solid var(--line);padding:6px;text-align:center;vertical-align:middle}
+.sc th{background:var(--dk);color:#fff;font-size:14px}
+.sc td:first-child{text-align:left;width:34%}
+.sc input[type=text]{width:100%;font:inherit;font-size:15px;padding:8px;border:1px solid #bbb;border-radius:8px}
+.sc input[type=number]{width:64px;font:inherit;font-size:16px;padding:8px 4px;border:1px solid #bbb;border-radius:8px;text-align:center}
+.sc tr.new td{background:#eef6ff}
+.errc{display:inline-block;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700;white-space:nowrap}
+.e-E{background:#e06666;color:#fff}.e-R{background:#f6b26b}.e-U{background:#93c47d}.e-C{background:#6fa8dc;color:#fff}.e-K{background:#eee;color:#666}
+.eg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:10px}
+@media(max-width:600px){.eg{grid-template-columns:minmax(0,1fr)}}
+.eg div{border-radius:12px;padding:10px 12px;font-size:14px}.eg h4{margin:0 0 4px;font-size:16px}.eg ul{margin:0;padding-left:18px}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px;margin-top:10px}
+.gal .gc{border:1px solid var(--line);border-radius:12px;padding:10px;background:#fff}
+.gal .gc.mine{background:#fffde0}
+.gal svg{width:100%;height:200px;display:block}
+.chk{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:6px}
+.chk li{padding:8px 12px;border-radius:10px;font-size:14px}.chk .ok{background:#e3f4ea}.chk .warn{background:#fff3cd}
 /* vision match */
 .vmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
 .vmt{border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;flex-direction:column;overflow:hidden}
@@ -217,6 +237,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <button class="tab" role="tab" id="tVY" type="button">VRIO: Your Company<span class="ck" id="ckVY"></span></button>
     <button class="tab" role="tab" id="tSW" type="button">A. SWOT Team Board<span class="ck" id="ckSW"></span></button>
     <button class="tab" role="tab" id="t21" type="button">2.1 Warm-up: Whose Vision?<span class="ck" id="ck21"></span></button>
+    <button class="tab" role="tab" id="tSC" type="button">B. Strategy Canvas<span class="ck" id="ckSC"></span></button>
     <button class="tab" role="tab" id="tSL" type="button">Sensitivity Lab</button>
   </div>
 
@@ -400,6 +421,47 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     </div>
   </div>
 
+  <div id="pSC" class="card hidden" role="tabpanel">
+    <h2>Major Activity B: Strategy Canvas and ERRC</h2>
+    <p class="lead">Score the industry average and DCI today on each competing factor (0 to 10). Then design DCI's future curve: the app reads your changes as Eliminate, Reduce, Raise or Create and draws the canvas live.</p>
+    <div class="who wh"></div>
+    <div class="swg" style="margin-top:6px">
+      <div><label for="scTeam">Team name (required)</label><input type="text" id="scTeam" maxlength="60" placeholder="e.g. Kemet"></div>
+      <div><label for="scSeg">Our segment</label><select id="scSeg" style="width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid #bbb;border-radius:10px;background:#fff"><option>SME</option><option>Corporate medical</option><option>Fleet motor</option><option>Other</option></select></div>
+    </div>
+    <div class="sc"><table id="scT"></table></div>
+    <div class="row" style="margin-top:8px">
+      <button class="btn sec" id="scAdd" type="button">+ Add a new factor (Create)</button>
+      <span class="note">Edit any factor name to fit your segment. To eliminate a factor, set DCI future to 0.</span>
+    </div>
+    <h3>Strategy canvas</h3>
+    <div class="fig" style="height:320px"><svg id="scChart" role="img" aria-label="Strategy canvas chart"></svg></div>
+    <div class="legend"><span><i style="background:#9a9a9a"></i>Industry average</span><span><i style="background:#343432"></i>DCI today</span><span><i style="background:#c9a800"></i>DCI future</span></div>
+    <h3>ERRC grid (from your future curve)</h3>
+    <div id="scE"></div>
+    <h3>Check your new curve</h3>
+    <ul class="chk" id="scChk"></ul>
+    <label for="scTag">Our tagline for the new offer (one line)</label>
+    <input type="text" id="scTag" maxlength="140">
+    <details style="margin-top:12px"><summary style="cursor:pointer;font-weight:600">See an example (SME)</summary>
+      <p class="note" style="font-size:14px;margin-top:6px"><b>Eliminate:</b> paper forms, branch visits. <b>Reduce:</b> product customisation, price discounting. <b>Raise:</b> issuance speed, claims speed, digital self-service. <b>Create:</b> a one-page bundle (property, liability, cyber, staff medical) sold through the bank app. A good curve differs clearly from the industry on two or three factors and is lower on at least one.</p>
+    </details>
+    <div id="scErr" class="err hidden"></div>
+    <div class="row">
+      <button class="btn y" id="scSub" type="button">Submit our canvas</button>
+      <button class="btn sec" id="scPDF" type="button">Export report (PDF)</button>
+      <button class="btn sec" id="scClr" type="button">Clear all</button>
+      <span class="note" id="scMsg"></span>
+    </div>
+    <h3 style="margin-top:22px">Gallery walk: all teams</h3>
+    <div class="row" style="margin-top:0">
+      <button class="btn sec" id="scRef" type="button">Refresh</button>
+      <button class="btn sec" id="scGPDF" type="button">Export gallery (PDF)</button>
+      <span class="note" id="scStat"></span>
+    </div>
+    <div class="gal" id="scGal"></div>
+  </div>
+
   <div id="pSW" class="card hidden" role="tabpanel">
     <h2>Activity A: SWOT Team Board</h2>
     <p class="lead">Build DCI's SWOT as a team: three sharp points per box, one point per line. Submit, then see every team's SWOT side by side.</p>
@@ -471,18 +533,21 @@ function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",ti
 
 var IDS=["11","14","16","17","21"];
 function showTab(a){
-  if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&IDS.indexOf(a.slice(1))<0)a="a11";
+  if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&a!=="aSC"&&IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
   IDS.forEach(function(id){$("t"+id).setAttribute("aria-selected",a==="a"+id);$("p"+id).classList.toggle("hidden",a!=="a"+id);$("ck"+id).textContent=S["r"+id]?" \u2713":""});
   var sl=a==="aSL";$("tSL").setAttribute("aria-selected",sl);$("pSL").classList.toggle("hidden",!sl);
   var vy=a==="aVY";$("tVY").setAttribute("aria-selected",vy);$("pVY").classList.toggle("hidden",!vy);$("ckVY").textContent=S.vySent?" \u2713":"";
   var sw=a==="aSW";$("tSW").setAttribute("aria-selected",sw);$("pSW").classList.toggle("hidden",!sw);$("ckSW").textContent=S.swSent?" \u2713":"";
   if(!sw)stopSW();
-  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
+  var scv=a==="aSC";$("tSC").setAttribute("aria-selected",scv);$("pSC").classList.toggle("hidden",!scv);$("ckSC").textContent=S.scSent?" \u2713":"";
+  if(!scv)stopSC();
+  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,aSC:drawSC,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
 }
 $("tSL").addEventListener("click",function(){showTab("aSL")});
 $("tSW").addEventListener("click",function(){showTab("aSW")});
 $("tVY").addEventListener("click",function(){showTab("aVY")});
+$("tSC").addEventListener("click",function(){showTab("aSC")});
 IDS.forEach(function(id){$("t"+id).addEventListener("click",function(){showTab("a"+id)})});
 function nextBtn(id){
   var nx=IDS.filter(function(x){return x!==id&&!S["r"+x]})[0];
@@ -727,6 +792,110 @@ $("swPDF").addEventListener("click",function(){
   if(!swRows.length){$("swStat").textContent="No submissions to export yet.";return}
   $("report").innerHTML='<h1>Activity A: SWOT Team Board</h1><div>Strategy in Action · Beltone Academy · '+esc(SESSION)+'</div><div>'+esc(stamp())+' · '+swRows.length+' teams</div><h2>All teams</h2>'+boardTable(swRows,null);
   try{window.print()}catch(e){$("swStat").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}
+});
+
+/* ---------- B. Strategy Canvas ---------- */
+var SCF=["Price","Product range","Branch access","Speed of issuance","Claims speed","Digital self-service","Risk advice","Bundled covers"];
+var SCC={ind:"#9a9a9a",now:"#343432",fut:"#c9a800"};
+var ERRC={E:{h:"Eliminate",c:"#fbe9e7"},R:{h:"Reduce",c:"#fff1e0"},U:{h:"Raise",c:"#e3f4ea"},C:{h:"Create",c:"#e6f0fb"}};
+function sc(){if(!S.sc)S.sc={team:S.team||"",seg:"SME",tag:"",rows:SCF.map(function(f){return {f:f,ind:null,now:null,fut:null,nw:false}})};return S.sc}
+function nv(v){return v===null||v===""||v===undefined||isNaN(+v)?null:+v}
+function errcOf(r){var n=nv(r.now),f=nv(r.fut);if(f===null)return "";
+  if(r.nw)return f>0?"C":"K";if(n===null)return "";if(f===0&&n>0)return "E";if(f<n)return "R";if(f>n)return "U";return "K"}
+function errcLab(k){return k==="K"?"Keep":k?ERRC[k].h:""}
+function scChartSVG(D,W,H,small){
+  var rows=D.rows.filter(function(r){return r.f.trim()}),n=Math.max(rows.length,1),pl=small?22:30,pr=10,pt=10,pb=small?34:58;
+  var x=function(i){return pl+(W-pl-pr)*(i+0.5)/n},y=function(v){return pt+(H-pt-pb)*(1-v/10)},g='';
+  for(var t=0;t<=10;t+=2)g+='<line x1="'+pl+'" x2="'+(W-pr)+'" y1="'+y(t)+'" y2="'+y(t)+'" stroke="#e3e3e3"/><text x="'+(pl-5)+'" y="'+(y(t)+4)+'" font-size="10" text-anchor="end" fill="#777">'+t+'</text>';
+  rows.forEach(function(r,i){var lab=r.f,mx=small?10:Math.max(8,Math.floor((W-pl-pr)/n/6.5));if(lab.length>mx)lab=lab.slice(0,mx-1)+"…";
+    var tx=x(i),ty=H-pb+14;g+='<text x="'+tx+'" y="'+ty+'" font-size="'+(small?9:11)+'" text-anchor="end" fill="#444" transform="rotate(-30 '+tx+' '+ty+')">'+esc(lab)+'</text>'});
+  [["ind",2.5],["now",3],["fut",4]].forEach(function(k){var pts=[];rows.forEach(function(r,i){var v=nv(r[k[0]]);if(v===null&&r.nw&&k[0]!=="fut")v=0;if(v!==null)pts.push([x(i),y(v)])});
+    if(pts.length>1)g+='<polyline fill="none" stroke="'+SCC[k[0]]+'" stroke-width="'+(small?k[1]-1:k[1])+'"'+(k[0]==="ind"?' stroke-dasharray="6 4"':'')+' points="'+pts.map(function(p){return p.join(",")}).join(" ")+'"/>';
+    pts.forEach(function(p){g+='<circle cx="'+p[0]+'" cy="'+p[1]+'" r="'+(small?3:(k[0]==="fut"?5.5:4))+'" fill="'+SCC[k[0]]+'"/>'})});
+  return g;
+}
+function scChart(){var el=$("scChart");el.setAttribute("viewBox","0 0 "+(el.clientWidth||700)+" "+(el.clientHeight||320));el.innerHTML=scChartSVG(sc(),el.clientWidth||700,el.clientHeight||320,false)}
+function errcHTML(D){var g={E:[],R:[],U:[],C:[]};D.rows.forEach(function(r){var k=errcOf(r);if(g[k]&&r.f.trim())g[k].push(r.f+(k==="C"?"":" ("+nv(r.now)+" → "+nv(r.fut)+")"))});
+  return '<div class="eg">'+["E","U","R","C"].map(function(k){return '<div style="background:'+ERRC[k].c+';border:1px solid #ddd"><h4>'+ERRC[k].h+'</h4>'+(g[k].length?'<ul>'+g[k].map(function(t){return '<li>'+esc(t)+'</li>'}).join("")+'</ul>':'<span class="note">–</span>')+'</div>'}).join("")+'</div>'}
+function scChecks(D){
+  var R=D.rows.filter(function(r){return r.f.trim()&&nv(r.fut)!==null}),L=[];
+  if(!R.length)return [["warn","Enter DCI's future scores to check the curve."]];
+  var diff=R.filter(function(r){var i=r.nw?0:nv(r.ind);return i!==null&&Math.abs(nv(r.fut)-i)>=2}).length;
+  var lower=R.filter(function(r){var i=nv(r.ind);return !r.nw&&i!==null&&nv(r.fut)<i}).length;
+  var red=R.filter(function(r){var k=errcOf(r);return k==="E"||k==="R"}).length,up=R.filter(function(r){var k=errcOf(r);return k==="U"||k==="C"}).length;
+  L.push(diff>=2?["ok","Your future curve stands apart from the industry on "+diff+" factors (2+ points). Good divergence."]:["warn","Your future curve is close to the industry. Aim for a clear difference on two or three factors."]);
+  L.push(lower>=1?["ok","It is below the industry on "+lower+" factor"+(lower>1?"s":"")+": you are choosing what not to compete on."]:["warn","It is not lower than the industry anywhere. Raising everything is a cost problem, not a strategy: what will you reduce or eliminate?"]);
+  L.push(red>=1&&up>=1?["ok","You both cut ("+red+") and invest ("+up+"). That is the ERRC trade-off."]:["warn","Use both sides of ERRC: cut something to fund what you raise or create."]);
+  return L;
+}
+function drawSC(){
+  var D=sc();$("scTeam").value=D.team||"";$("scSeg").value=D.seg||"SME";$("scTag").value=D.tag||"";
+  var num=function(i,k,v){return '<input type="number" min="0" max="10" step="1" data-r="'+i+'" data-k="'+k+'" value="'+(v==null?"":v)+'" aria-label="'+k+'">'};
+  $("scT").innerHTML='<thead><tr><th>Competing factor</th><th>Industry average</th><th>DCI today</th><th>DCI future</th><th>ERRC</th><th aria-label="Remove"></th></tr></thead><tbody>'+
+    D.rows.map(function(r,i){var k=errcOf(r);return '<tr'+(r.nw?' class="new"':'')+'><td><input type="text" data-r="'+i+'" data-k="f" maxlength="40" value="'+esc(r.f)+'" placeholder="'+(r.nw?"New factor DCI will create":"Factor")+'"></td>'+
+      (r.nw?'<td class="note">new</td><td class="note">new</td>':'<td>'+num(i,"ind",r.ind)+'</td><td>'+num(i,"now",r.now)+'</td>')+'<td>'+num(i,"fut",r.fut)+'</td><td id="sce'+i+'">'+(k?'<span class="errc e-'+k+'">'+errcLab(k)+'</span>':'<span class="note">–</span>')+'</td><td><button type="button" class="del" style="border:0;background:none;font-size:20px;color:#5d6268;cursor:pointer;min-width:36px;min-height:36px" data-del="'+i+'" aria-label="Remove factor">×</button></td></tr>'}).join("")+'</tbody>';
+  scRefresh();if(BOARD_URL){loadSC();stopSC();scTimer=setInterval(loadSC,20000)}else{$("scStat").textContent="The gallery is not connected yet; canvases are emailed to the trainer. Teams can also show the chart on screen.";renderGal([])}
+}
+function scRefresh(){var D=sc();D.rows.forEach(function(r,i){var c=$("sce"+i);if(c){var k=errcOf(r);c.innerHTML=k?'<span class="errc e-'+k+'">'+errcLab(k)+'</span>':'<span class="note">–</span>'}});
+  scChart();$("scE").innerHTML=errcHTML(D);$("scChk").innerHTML=scChecks(D).map(function(c){return '<li class="'+c[0]+'">'+(c[0]==="ok"?"✔ ":"⚠ ")+esc(c[1])+'</li>'}).join("");save()}
+$("scT").addEventListener("input",function(e){var t=e.target;if(t.dataset.r==null)return;var r=sc().rows[+t.dataset.r];
+  if(t.dataset.k==="f")r.f=t.value;else{var v=t.value===""?null:Math.max(0,Math.min(10,Math.round(+t.value)));if(v!==null&&String(v)!==t.value)t.value=v;r[t.dataset.k]=v}scRefresh()});
+$("scT").addEventListener("click",function(e){var d=e.target.closest("[data-del]");if(!d)return;var D=sc();D.rows.splice(+d.dataset.del,1);if(!D.rows.length)D.rows.push({f:"",ind:null,now:null,fut:null,nw:false});drawSC()});
+$("scAdd").addEventListener("click",function(){var D=sc();if(D.rows.length>=12){$("scMsg").textContent="Up to 12 factors.";return}D.rows.push({f:"",ind:null,now:null,fut:null,nw:true});drawSC();var ins=$("scT").querySelectorAll('input[type=text]');ins[ins.length-1].focus()});
+["scTeam","scSeg","scTag"].forEach(function(id){$(id).addEventListener(id==="scSeg"?"change":"input",function(){sc()[{scTeam:"team",scSeg:"seg",scTag:"tag"}[id]]=$(id).value;save()})});
+$("scClr").addEventListener("click",function(){S.sc=null;S.scSent=false;$("scMsg").textContent="";$("ckSC").textContent="";$("scSub").textContent="Submit our canvas";drawSC()});
+window.addEventListener("resize",function(){if(!$("pSC").classList.contains("hidden"))scChart()});
+var scTimer=null,scRows=[];
+function stopSC(){if(scTimer){clearInterval(scTimer);scTimer=null}}
+function loadSC(){if(!BOARD_URL)return;$("scStat").textContent="Loading…";
+  fetch(BOARD_URL+"?activity=CANVAS&session="+encodeURIComponent(SESSION)).then(function(r){return r.json()}).then(function(j){
+    var latest={};(j.rows||[]).forEach(function(r){var k=String(r.team||"").trim().toLowerCase();if(k)latest[k]=r});
+    scRows=Object.keys(latest).map(function(k){return latest[k]}).sort(function(a,b){return String(a.team).localeCompare(String(b.team))});
+    renderGal(scRows);$("scStat").textContent=scRows.length+" team"+(scRows.length===1?"":"s")+" · updated "+new Date().toLocaleTimeString("en-GB",{hour:"2-digit",minute:"2-digit"})+" · refreshes every 20 seconds"})
+   .catch(function(){$("scStat").textContent="Could not load the gallery. Check the connection and press Refresh."})}
+function galHTML(rows,mine){return rows.map(function(r){var d=r.data||{};if(!d.rows)return "";
+  return '<div class="gc'+(mine&&String(r.team).trim().toLowerCase()===mine?' mine':'')+'"><b>'+esc(r.team)+'</b> <span class="note">· '+esc(d.seg||"")+'</span>'+(d.tag?'<div style="font-style:italic;font-size:14px">“'+esc(d.tag)+'”</div>':'')+
+    '<svg viewBox="0 0 340 200" preserveAspectRatio="none">'+scChartSVG(d,340,200,true)+'</svg>'+errcHTML(d).replace('class="eg"','class="eg" style="font-size:12px"')+'</div>'}).join("")}
+function renderGal(rows){$("scGal").innerHTML=rows.length?galHTML(rows,String(sc().team||"").trim().toLowerCase()):'<p class="note">No team has submitted yet.</p>'}
+$("scRef").addEventListener("click",loadSC);
+$("scSub").addEventListener("click",function(){
+  var D=sc(),err="",R=D.rows.filter(function(r){return r.f.trim()});
+  D.team=$("scTeam").value.trim();
+  if(!D.team)err="Enter your team name.";
+  else if(R.length<4)err="Keep at least four named factors.";
+  else if(R.some(function(r){return nv(r.fut)===null||(!r.nw&&(nv(r.ind)===null||nv(r.now)===null))}))err="Score every factor: industry average, DCI today and DCI future (0 to 10).";
+  $("scErr").textContent=err;$("scErr").classList.toggle("hidden",!err);if(err)return;
+  $("scSub").disabled=true;$("scMsg").textContent="Submitting…";
+  var data={seg:D.seg,tag:D.tag||"",rows:R};
+  var g={E:[],R:[],U:[],C:[]};R.forEach(function(r){var k=errcOf(r);if(g[k])g[k].push(r.f)});
+  var body={_subject:"Activity B Strategy Canvas – "+D.team+" ("+S.company+", "+D.seg+")",_template:"table",_captcha:"false",Company:S.company,Team:D.team,Segment:D.seg,Tagline:D.tag||"-",Submitted:stamp()};
+  R.forEach(function(r,i){body["F"+(i+1)+". "+r.f]=(r.nw?"NEW":"Industry "+r.ind+" | DCI today "+r.now)+" | DCI future "+r.fut+" → "+errcLab(errcOf(r))});
+  ["E","R","U","C"].forEach(function(k){body[ERRC[k].h]=g[k].join(", ")||"-"});
+  var mail=fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)}).then(function(r){return r.json()});
+  var post=BOARD_URL?fetch(BOARD_URL,{method:"POST",body:JSON.stringify({session:SESSION,activity:"CANVAS",company:S.company,team:D.team,data:data,
+    summary:D.seg+" | E: "+g.E.join(", ")+" | R: "+g.R.join(", ")+" | Raise: "+g.U.join(", ")+" | C: "+g.C.join(", ")})}).then(function(r){return r.json()}).catch(function(){return null}):Promise.resolve(null);
+  Promise.all([mail.catch(function(){return null}),post]).then(function(o){
+    var ok=o[0]&&(o[0].success===true||o[0].success==="true");$("scSub").disabled=false;
+    if(ok||o[1]){S.scSent=true;save();$("ckSC").textContent=" ✓";$("scSub").textContent="Send updated canvas";$("scMsg").textContent="✔ Sent to the trainer"+(BOARD_URL?" and added to the gallery":"")+". You can edit and send again.";loadSC()}
+    else $("scMsg").textContent="Sending failed (you may be offline). Try again, or export the PDF.";
+  });
+});
+function scReportHTML(D,R){return '<div class="avoid"><h2>Strategy canvas</h2><svg viewBox="0 0 700 300" style="width:100%;height:280px">'+scChartSVG(D,700,300,false)+'</svg><div class="legend"><span><i style="background:#9a9a9a"></i>Industry average</span><span><i style="background:#343432"></i>DCI today</span><span><i style="background:#c9a800"></i>DCI future</span></div></div>'+
+  '<h2>Scores</h2><table><thead><tr><th>Factor</th><th>Industry</th><th>DCI today</th><th>DCI future</th><th>ERRC</th></tr></thead><tbody>'+R.map(function(r){return '<tr><td>'+esc(r.f)+'</td><td>'+(r.nw?"new":nv(r.ind))+'</td><td>'+(r.nw?"new":nv(r.now))+'</td><td>'+(nv(r.fut)===null?"–":nv(r.fut))+'</td><td>'+errcLab(errcOf(r))+'</td></tr>'}).join("")+'</tbody></table>'+
+  '<div class="avoid"><h2>ERRC grid</h2>'+errcHTML(D).replace(/class="eg"/,'style="display:grid;grid-template-columns:1fr 1fr;gap:6px"').replace(/background:/g,"-webkit-print-color-adjust:exact;print-color-adjust:exact;background:")+'</div>'}
+$("scPDF").addEventListener("click",function(){
+  var D=sc(),R=D.rows.filter(function(r){return r.f.trim()});
+  $("report").innerHTML='<h1>Major Activity B: Strategy Canvas and ERRC</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · Team: '+esc($("scTeam").value||"-")+' · Segment: '+esc(D.seg)+' · '+esc(stamp())+'</div>'+
+    (D.tag?'<h2>Tagline</h2><p style="font-size:15px;font-style:italic">“'+esc(D.tag)+'”</p>':'')+scReportHTML(D,R)+
+    '<div class="avoid"><h2>Check of the new curve</h2><ul>'+scChecks(D).map(function(c){return '<li>'+esc(c[1])+'</li>'}).join("")+'</ul></div>';
+  $("scMsg").textContent="In the print window, choose “Save as PDF”.";
+  try{window.print()}catch(e){$("scMsg").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}
+});
+$("scGPDF").addEventListener("click",function(){
+  if(!scRows.length){$("scStat").textContent="No submissions to export yet.";return}
+  $("report").innerHTML='<h1>Major Activity B: Gallery of strategy canvases</h1><div>Strategy in Action · '+esc(SESSION)+' · '+esc(stamp())+'</div>'+
+    scRows.map(function(r){var d=r.data||{};return d.rows?'<div class="avoid" style="margin-top:10px"><h2>'+esc(r.team)+' · '+esc(d.seg||"")+'</h2>'+(d.tag?'<p><i>“'+esc(d.tag)+'”</i></p>':'')+scReportHTML(d,d.rows)+'</div>':""}).join("");
+  try{window.print()}catch(e){$("scStat").textContent="Printing is blocked here."}
 });
 
 /* ---------- 2.1 Whose vision? ---------- */
@@ -1117,7 +1286,7 @@ $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=/^#a(11|14|16|17|21|SL|SW|VY)$/.test(location.hash)?location.hash.slice(1):null;
+var hashTab=/^#a(11|14|16|17|21|SL|SW|VY|SC)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
