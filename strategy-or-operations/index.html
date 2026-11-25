@@ -151,6 +151,20 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
 .board2 td ul{margin:0;padding-left:18px}
 .board2 tr.mine td{background:#fffde0}
 .board2 td:first-child{font-weight:700;width:14%}
+.vt{overflow-x:auto;margin-top:12px}
+.vt table{border-collapse:collapse;width:100%;min-width:680px}
+.vt th,.vt td{border:1px solid var(--line);padding:8px;text-align:center;vertical-align:middle}
+.vt th{background:var(--dk);color:#fff;font-size:14px}
+.vt td:first-child{text-align:left;font-weight:600;width:34%}
+.yn{display:inline-flex;gap:4px}
+.yn button{font:inherit;font-size:14px;min-width:40px;min-height:40px;border:1px solid #bbb;background:#fff;border-radius:8px;cursor:pointer}
+.yn button[aria-pressed=true]{background:var(--yl);border-color:var(--dk);font-weight:700}
+.yn button:disabled{opacity:.3;cursor:not-allowed}
+.imp{display:inline-block;border-radius:999px;padding:3px 10px;font-size:13px;font-weight:700;white-space:nowrap}
+.imp-sus{background:#93c47d}.imp-unu{background:#f6b26b}.imp-tem{background:#ffe599}.imp-par{background:#d9d9d9}.imp-dis{background:#e06666;color:#fff}
+.pick{display:grid;gap:6px;margin-top:8px}
+.pick label{display:flex;gap:10px;align-items:center;font-weight:500;margin:0;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer}
+.pick input[type=radio]{width:20px;height:20px}
 footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
 @media(prefers-reduced-motion:reduce){.prog i{transition:none}}
 </style>
@@ -177,6 +191,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <button class="tab" role="tab" id="t11" type="button">1.1 Strategy or Operations?<span class="ck" id="ck11"></span></button>
     <button class="tab" role="tab" id="t14" type="button">1.4 Signal Spotting<span class="ck" id="ck14"></span></button>
     <button class="tab" role="tab" id="t16" type="button">1.6 Unique Selling Proposition<span class="ck" id="ck16"></span></button>
+    <button class="tab" role="tab" id="t17" type="button">1.7 VRIO Test<span class="ck" id="ck17"></span></button>
     <button class="tab" role="tab" id="tSW" type="button">A. SWOT Team Board<span class="ck" id="ckSW"></span></button>
     <button class="tab" role="tab" id="tSL" type="button">Sensitivity Lab</button>
   </div>
@@ -286,6 +301,33 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <details style="margin-top:8px"><summary><b>Sources for the rules of thumb</b></summary><div id="slSrc"></div></details>
   </div>
 
+  <div id="p17" class="card hidden" role="tabpanel">
+    <div id="b17">
+      <h2>Activity 1.7: VRIO Test</h2>
+      <p class="lead">Find which of DCI's resources give a real competitive advantage. Answer each test in order: if a resource fails one test, the later tests don't apply.</p>
+      <div class="defs">
+        <div><b>V · Valuable</b>Helps DCI win customers or cut costs</div>
+        <div><b>R · Rare</b>Few competitors have it</div>
+        <div><b>I · Inimitable</b>Hard or slow for rivals to copy</div>
+        <div><b>O · Organized</b>DCI's systems and processes actually use it</div>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <div class="who wh"></div>
+        <div class="prog" aria-hidden="true"><i id="pb17"></i></div>
+        <div class="who" id="pt17">0 / 6 complete</div>
+      </div>
+      <div class="vt"><table id="vt17"></table></div>
+      <h3>Which one resource should DCI build its strategy around?</h3>
+      <div class="pick" id="pk17"></div>
+      <div id="e17" class="err hidden"></div>
+      <div class="row">
+        <button class="btn y" id="sub17" type="button">Submit answers</button>
+        <button class="btn sec" id="rst17" type="button">Clear my answers</button>
+      </div>
+    </div>
+    <div id="r17" class="hidden"></div>
+  </div>
+
   <div id="pSW" class="card hidden" role="tabpanel">
     <h2>Activity A: SWOT Team Board</h2>
     <p class="lead">Build DCI's SWOT as a team: three sharp points per box, one point per line. Submit, then see every team's SWOT side by side.</p>
@@ -355,7 +397,7 @@ function load(){try{return JSON.parse(localStorage.getItem(LS)||"null")}catch(e)
 function who(){return S.company+(S.team?" · "+S.team:"")}
 function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",timeStyle:"short"})}
 
-var IDS=["11","14","16"];
+var IDS=["11","14","16","17"];
 function showTab(a){
   if(a!=="aSL"&&a!=="aSW"&&IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
@@ -363,7 +405,7 @@ function showTab(a){
   var sl=a==="aSL";$("tSL").setAttribute("aria-selected",sl);$("pSL").classList.toggle("hidden",!sl);
   var sw=a==="aSW";$("tSW").setAttribute("aria-selected",sw);$("pSW").classList.toggle("hidden",!sw);$("ckSW").textContent=S.swSent?" \u2713":"";
   if(!sw)stopSW();
-  ({a11:draw11,a14:draw14,a16:draw16,aSL:drawSL,aSW:drawSW})[a]();
+  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,aSL:drawSL,aSW:drawSW})[a]();
 }
 $("tSL").addEventListener("click",function(){showTab("aSL")});
 $("tSW").addEventListener("click",function(){showTab("aSW")});
@@ -433,6 +475,53 @@ $("sub14").addEventListener("click",function(){
   var sc=0;A14.forEach(function(it,i){if(S.ans[i]===it.k)sc++});
   S.r14={ans:JSON.parse(JSON.stringify(S.ans)),score:sc,at:stamp(),sent:false};save();showTab("a14");send("14");
 });
+
+/* ---------- 1.7 VRIO ---------- */
+var A17=[
+ {t:"Property and engineering underwriting expertise",k:"Sustained advantage",m:["Y","Y","Y","Y"],x:"Brokers still call DCI first for big engineering risks; the team took many years to build and is used in daily underwriting."},
+ {t:"Broker relationships",k:"Competitive parity",m:["Y","N","",""],x:"Valuable, but every serious insurer works closely with brokers."},
+ {t:"A-rated reinsurance panel",k:"Competitive parity",m:["Y","N","",""],x:"Essential, but standard for established insurers in Egypt."},
+ {t:"25 years of medical claims data",k:"Unused advantage",m:["Y","Y","Y","N"],x:"Rare and impossible to copy quickly, but DCI's old systems cannot use it, so it is not organized."},
+ {t:"32-branch network",k:"Competitive parity",m:["Y","N","",""],x:"Useful for reach, but Pyramid General has more branches; arguably a cost burden as customers go digital."},
+ {t:"Partnership with one bank",k:"Temporary advantage",m:["Y","Y","N",""],x:"Few rivals have it today, but any insurer can sign a bank deal, so the advantage won't last."}
+];
+var VCOLS=["Valuable","Rare","Inimitable","Organized"];
+function impOf(a){if(!a||!a[0])return "";if(a[0]==="N")return "Competitive disadvantage";if(!a[1])return "";if(a[1]==="N")return "Competitive parity";if(!a[2])return "";if(a[2]==="N")return "Temporary advantage";if(!a[3])return "";return a[3]==="N"?"Unused advantage":"Sustained advantage"}
+function impCls(t){return {"Sustained advantage":"imp-sus","Unused advantage":"imp-unu","Temporary advantage":"imp-tem","Competitive parity":"imp-par","Competitive disadvantage":"imp-dis"}[t]||""}
+function v17(){if(!S.v17)S.v17={yn:A17.map(function(){return ["","","",""]}),pick:null,why:""};return S.v17}
+function draw17(){
+  if(S.r17){$("b17").classList.add("hidden");$("r17").classList.remove("hidden");report("17");return}
+  $("b17").classList.remove("hidden");$("r17").classList.add("hidden");
+  var V=v17(),done=0;
+  $("vt17").innerHTML='<thead><tr><th>Resource</th>'+VCOLS.map(function(c){return '<th>'+c+'?</th>'}).join("")+'<th>Implication</th></tr></thead><tbody>'+
+    A17.map(function(it,i){var a=V.yn[i],imp=impOf(a);if(imp)done++;
+      var stop=-1;for(var j=0;j<4;j++){if(a[j]==="N"){stop=j;break}}
+      return '<tr><td>'+esc(it.t)+'</td>'+[0,1,2,3].map(function(j){var dis=(stop>=0&&j>stop)||(j>0&&!a[j-1]);
+        return '<td><span class="yn">'+["Y","N"].map(function(v){return '<button type="button" data-i="'+i+'" data-j="'+j+'" data-v="'+v+'" aria-pressed="'+(a[j]===v)+'"'+(dis?' disabled':'')+' aria-label="'+VCOLS[j]+' '+v+'">'+v+'</button>'}).join("")+'</span></td>'}).join("")+
+        '<td>'+(imp?'<span class="imp '+impCls(imp)+'">'+imp+'</span>':'<span class="note">–</span>')+'</td></tr>'}).join("")+'</tbody>';
+  $("pb17").style.width=(done/6*100)+"%";$("pt17").textContent=done+" / 6 complete";
+  $("pk17").innerHTML=A17.map(function(it,i){return '<label><input type="radio" name="pk17" value="'+i+'"'+(V.pick===i?' checked':'')+'>'+esc(it.t)+'</label>'}).join("")+
+    '<label for="why17" style="border:0;padding:4px 0 0;display:block;font-weight:600">Why? (one line, optional)</label><input type="text" id="why17" maxlength="160" value="'+esc(V.why||"")+'">';
+  $("why17").oninput=function(){v17().why=this.value;save()};
+  save();
+}
+$("vt17").addEventListener("click",function(e){var b=e.target.closest("button[data-v]");if(!b||b.disabled)return;
+  var a=v17().yn[+b.dataset.i],j=+b.dataset.j;a[j]=b.dataset.v;for(var k=j+1;k<4;k++)if(a[j]==="N")a[k]="";draw17()});
+$("pk17").addEventListener("change",function(e){if(e.target.name==="pk17"){v17().pick=+e.target.value;save()}});
+$("rst17").addEventListener("click",function(){S.v17=null;draw17()});
+$("sub17").addEventListener("click",function(){
+  var V=v17(),imps=V.yn.map(impOf),err="";
+  if(imps.some(function(x){return !x}))err="Complete the tests for all six resources.";
+  else if(V.pick==null)err="Choose the one resource DCI should build its strategy around.";
+  $("e17").textContent=err;$("e17").classList.toggle("hidden",!err);if(err)return;
+  var sc=0;A17.forEach(function(it,i){if(imps[i]===it.k)sc++});
+  S.r17={ans:imps,yn:JSON.parse(JSON.stringify(V.yn)),pick:V.pick,why:V.why||"",score:sc,at:stamp(),sent:false};save();showTab("a17");send("17");
+});
+function pick17HTML(r){
+  var ok=r.pick===0;
+  return '<h3>Resource to build the strategy around</h3><div class="res"><li style="list-style:none"><div class="m '+(ok?"ok":"no")+'">'+(ok?"✓":"✗")+'</div><div><b>Your choice: '+esc(r.pick!=null?A17[r.pick].t:"-")+'</b>'+(r.why?'<div class="tag">'+esc(r.why)+'</div>':'')+
+    '<div class="ex">Suggested: <b>'+esc(A17[0].t)+'</b>. It is the only resource that passes all four tests. The medical claims data could join it once DCI is organized to use it.</div></div></li></div>';
+}
 
 /* ---------- Team board (Google Sheet) ---------- */
 var BOARD_URL="";            /* Google Apps Script web app URL goes here */
@@ -517,7 +606,8 @@ function exportPdf(id){
     html='<h1>'+esc(c.title)+'</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · submitted '+esc(r2.at)+'</div>'+
       '<h2>Score: '+r2.score+' / '+c.max+'</h2><p>'+esc(c.msg(r2.score))+'</p>'+
       '<h2>Answers and model answer</h2><table><thead><tr><th>#</th><th>Statement</th><th>Our answer</th><th>Model answer</th><th>Why</th></tr></thead><tbody>'+
-      c.items.map(function(it,i){var y=r2.ans[i],ok=y===it.k;return '<tr class="avoid"><td>'+(i+1)+'</td><td style="text-align:left">'+esc(it.t)+'</td><td>'+esc(c.name(y))+(ok?" ✓":" ✗")+'</td><td>'+esc(c.name(it.k))+'</td><td style="text-align:left">'+esc(it.x)+'</td></tr>'}).join("")+'</tbody></table>';
+      c.items.map(function(it,i){var y=r2.ans[i],ok=y===it.k;return '<tr class="avoid"><td>'+(i+1)+'</td><td style="text-align:left">'+esc(it.t)+(id==="17"&&r2.yn?'<br><span style="font-size:10px">V/R/I/O: '+(r2.yn[i].filter(Boolean).join(" · "))+'</span>':'')+'</td><td>'+esc(c.name(y))+(ok?" ✓":" ✗")+'</td><td>'+esc(c.name(it.k))+'</td><td style="text-align:left">'+esc(it.x)+'</td></tr>'}).join("")+'</tbody></table>'+
+      (id==="17"?'<h2>Resource to build the strategy around</h2><p>Our choice: <b>'+esc(r2.pick!=null?A17[r2.pick].t:"-")+'</b>'+(r2.why?' — '+esc(r2.why):'')+'</p><p>Suggested: <b>'+esc(A17[0].t)+'</b>. It is the only resource that passes all four tests. The medical claims data could join it once DCI is organized to use it.</p>':'');
   }
   $("report").innerHTML=html;
   var m=$("pdfm"+id);if(m)m.textContent="In the print window, choose “Save as PDF”.";
@@ -529,9 +619,11 @@ var CFG={
    msg:function(s){return s>=9?"Excellent. You separate choices from improvements clearly.":s>=7?"Good. Look at the items you missed: what makes them a choice or an improvement?":"Worth a second look. The test is not importance or cost, but whether it is a choice with a trade-off."}},
  "14":{title:"Activity 1.4 Signal Spotting",items:A14,max:8,name:function(v){return v||"-"},
    msg:function(s){return s>=7?"Excellent. You read the strength and timing of change well.":s>=5?"Good. Weak signals and trends are easy to confuse: ask how broad and how visible the change already is.":"Worth a second look. Check each item against the four definitions: how broad, how sudden, how likely?"}},
- "16":{title:"Activity 1.6 Unique Selling Proposition"}
+ "16":{title:"Activity 1.6 Unique Selling Proposition"},
+ "17":{title:"Activity 1.7 VRIO Test",items:A17,max:6,name:function(v){return v||"-"},
+   msg:function(s){return s>=6?"Excellent. You separate real advantages from things every insurer has.":s>=4?"Good. Check the resources you missed: is it really rare, and could a rival copy it quickly?":"Worth a second look. Most resources are valuable; very few are rare, hard to copy and well organized."}}
 };
-var sendState={"11":"idle","14":"idle","16":"idle"};
+var sendState={"11":"idle","14":"idle","16":"idle","17":"idle"};
 function report(id){
   if(id==="16")return report16();
   var c=CFG[id],r=S["r"+id],el=$("r"+id);
@@ -540,7 +632,7 @@ function report(id){
     '<div class="status" id="st'+id+'"></div><h3>Model answer</h3><ul class="res">'+
     c.items.map(function(it,i){var y=r.ans[i],ok=y===it.k;
       return '<li><div class="m '+(ok?"ok":"no")+'">'+(ok?"✓":"✗")+'</div><div><b>'+(i+1)+'. '+esc(it.t)+'</b><div class="tag">Your answer: '+esc(c.name(y))+' · Model answer: <b>'+esc(c.name(it.k))+'</b></div><div class="ex">'+esc(it.x)+'</div></div></li>'}).join("")+
-    '</ul>'+pdfBtn(id)+nextBtn(id);
+    '</ul>'+(id==="17"?pick17HTML(r):"")+pdfBtn(id)+nextBtn(id);
   wireNext(id);wirePdf(id);
   status(id);
 }
@@ -548,6 +640,7 @@ function plain(id){
   if(id==="16")return plain16();
   var c=CFG[id],r=S["r"+id],L=[c.title+" – result","Company: "+S.company,"Name/table: "+(S.team||"-"),"Score: "+r.score+"/"+c.max,"Submitted: "+r.at,""];
   c.items.forEach(function(it,i){L.push((r.ans[i]===it.k?"[OK] ":"[X]  ")+(i+1)+". "+it.t+" | answer: "+c.name(r.ans[i])+" | model: "+c.name(it.k))});
+  if(id==="17")L.push("","Resource to build strategy around: "+(r.pick!=null?A17[r.pick].t:"-")+" (suggested: "+A17[0].t+")");
   return L.join("\n");
 }
 function status(id){
@@ -576,7 +669,8 @@ function send(id){
   else{
   body={_subject:c.title+" – "+S.company+" ("+r.score+"/"+c.max+")",_template:"table",_captcha:"false",
     Company:S.company,"Name / table":S.team||"-",Score:r.score+"/"+c.max,Submitted:r.at};
-  c.items.forEach(function(it,i){body["Q"+(i+1)+". "+it.t]=c.name(r.ans[i])+(r.ans[i]===it.k?"  ✓":"  ✗ (model: "+c.name(it.k)+")")});
+  c.items.forEach(function(it,i){body["Q"+(i+1)+". "+it.t]=(id==="17"&&r.yn?"V/R/I/O: "+r.yn[i].join(" ")+" → ":"")+c.name(r.ans[i])+(r.ans[i]===it.k?"  ✓":"  ✗ (model: "+c.name(it.k)+")")});
+  if(id==="17"){body["Resource to build strategy around"]=(r.pick!=null?A17[r.pick].t:"-")+(r.why?" — "+r.why:"");}
   }
   var ctrl=("AbortController" in window)?new AbortController():null;
   var to=setTimeout(function(){if(ctrl)ctrl.abort()},15000);
@@ -826,7 +920,7 @@ $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=/^#a(11|14|16|SL|SW)$/.test(location.hash)?location.hash.slice(1):null;
+var hashTab=/^#a(11|14|16|17|SL|SW)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
