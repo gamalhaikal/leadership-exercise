@@ -132,6 +132,8 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
   #report th:first-child,#report td:first-child{text-align:left}#report thead th{background:#343432;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report .torn .bar i{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report .avoid{break-inside:avoid}
+  #report .legend{display:flex;gap:12px;font-size:11px}#report .legend i{display:inline-block;width:12px;height:4px;margin-right:4px;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #report svg{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   @page{margin:14mm}
 }
 footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
@@ -385,6 +387,35 @@ $("sub14").addEventListener("click",function(){
   S.r14={ans:JSON.parse(JSON.stringify(S.ans)),score:sc,at:stamp(),sent:false};save();showTab("a14");send("14");
 });
 
+/* ---------- PDF export for activity results ---------- */
+function pdfBtn(id){return '<div class="row"><button class="btn y" type="button" id="pdf'+id+'">Export report (PDF)</button><span class="note" id="pdfm'+id+'"></span></div>'}
+function wirePdf(id){var b=$("pdf"+id);if(b)b.onclick=function(){exportPdf(id)}}
+function exportPdf(id){
+  var html;
+  if(id==="16"){
+    var r=S.r16;
+    var head='<tr><th>Criterion</th><th>DCI</th>'+r.comp.map(function(c){return '<th>'+esc(c)+'</th>'}).join("")+'<th>DCI stands out?</th></tr>';
+    var rows=r.crit.map(function(c,i){var w=r.wins.indexOf(i)>=0;return '<tr><td>'+esc(c)+'</td>'+[0,1,2,3].map(function(j){return '<td>'+r.r[j][i]+'</td>'}).join("")+'<td>'+(w?"Yes":"")+'</td></tr>'}).join("");
+    var rc=$("rchart"),svg=rc?'<svg viewBox="0 0 '+(rc.clientWidth||600)+' '+(rc.clientHeight||300)+'" preserveAspectRatio="xMidYMid meet" style="width:100%;height:280px">'+rc.innerHTML+'</svg>':"";
+    var leg=$("rleg")?'<div class="legend">'+$("rleg").innerHTML+'</div>':"";
+    html='<h1>Activity 1.6 Unique Selling Proposition</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · submitted '+esc(r.at)+'</div>'+
+      '<h2>Our USP</h2><p style="font-size:15px;font-style:italic">“'+esc(r.usp)+'”</p>'+
+      '<div class="avoid"><h2>Comparison (ratings 1 to 10)</h2><table><thead>'+head+'</thead><tbody>'+rows+'</tbody></table>'+
+      '<p><b>Where DCI stands out:</b> '+(r.wins.length?esc(r.wins.map(function(i){return r.crit[i]}).join(", ")):"none of the chosen criteria")+'</p></div>'+
+      '<div class="avoid"><h2>Chart</h2><div>'+svg+'</div>'+leg+'</div>'+
+      '<div class="avoid"><h2>Suggested answer for discussion</h2><p>Typical criteria from the case: price, claims speed, technical expertise for complex risks, ease of buying online, and broker service. Against Pyramid General, NileTech and OrientMed, DCI usually stands out only on technical expertise for large property and engineering risks and broker relationships; it trails on price, claims speed and digital ease.</p><p><b>Example USP:</b> “For companies with large, complex property and engineering risks, DCI is the specialist insurer brokers trust most for expert underwriting and risk advice.”</p></div>';
+  }else{
+    var c=CFG[id],r2=S["r"+id];
+    html='<h1>'+esc(c.title)+'</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · submitted '+esc(r2.at)+'</div>'+
+      '<h2>Score: '+r2.score+' / '+c.max+'</h2><p>'+esc(c.msg(r2.score))+'</p>'+
+      '<h2>Answers and model answer</h2><table><thead><tr><th>#</th><th>Statement</th><th>Our answer</th><th>Model answer</th><th>Why</th></tr></thead><tbody>'+
+      c.items.map(function(it,i){var y=r2.ans[i],ok=y===it.k;return '<tr class="avoid"><td>'+(i+1)+'</td><td style="text-align:left">'+esc(it.t)+'</td><td>'+esc(c.name(y))+(ok?" ✓":" ✗")+'</td><td>'+esc(c.name(it.k))+'</td><td style="text-align:left">'+esc(it.x)+'</td></tr>'}).join("")+'</tbody></table>';
+  }
+  $("report").innerHTML=html;
+  var m=$("pdfm"+id);if(m)m.textContent="In the print window, choose “Save as PDF”.";
+  try{window.print()}catch(e){if(m)m.textContent="Printing is blocked here. Open the online link in Chrome or Edge, then choose “Save as PDF”."}
+}
+
 var CFG={
  "11":{title:"Activity 1.1 Strategy or Operations?",items:A11,max:10,name:function(v){return N11[v]||"-"},
    msg:function(s){return s>=9?"Excellent. You separate choices from improvements clearly.":s>=7?"Good. Look at the items you missed: what makes them a choice or an improvement?":"Worth a second look. The test is not importance or cost, but whether it is a choice with a trade-off."}},
@@ -401,8 +432,8 @@ function report(id){
     '<div class="status" id="st'+id+'"></div><h3>Model answer</h3><ul class="res">'+
     c.items.map(function(it,i){var y=r.ans[i],ok=y===it.k;
       return '<li><div class="m '+(ok?"ok":"no")+'">'+(ok?"✓":"✗")+'</div><div><b>'+(i+1)+'. '+esc(it.t)+'</b><div class="tag">Your answer: '+esc(c.name(y))+' · Model answer: <b>'+esc(c.name(it.k))+'</b></div><div class="ex">'+esc(it.x)+'</div></div></li>'}).join("")+
-    '</ul>'+nextBtn(id);
-  wireNext(id);
+    '</ul>'+pdfBtn(id)+nextBtn(id);
+  wireNext(id);wirePdf(id);
   status(id);
 }
 function plain(id){
@@ -653,8 +684,8 @@ function report16(){
     '<h3>Your USP</h3><p style="font-size:18px;font-style:italic">“'+esc(r.usp)+'”</p>'+
     '<div class="sugg"><h3 style="margin-top:0">Suggested answer for discussion</h3>'+
     '<p style="margin:0 0 8px">Typical criteria from the case: price, claims speed, technical expertise for complex risks, ease of buying online, and broker service. Against Pyramid General, NileTech and OrientMed, DCI usually stands out only on <b>technical expertise for large property and engineering risks</b> and <b>broker relationships</b>; it trails on price, claims speed and digital ease.</p>'+
-    '<p style="margin:0"><b>Example USP:</b> “For companies with large, complex property and engineering risks, DCI is the specialist insurer brokers trust most for expert underwriting and risk advice.”</p></div>'+nextBtn("16");
-  wireNext("16");
+    '<p style="margin:0"><b>Example USP:</b> “For companies with large, complex property and engineering risks, DCI is the specialist insurer brokers trust most for expert underwriting and risk advice.”</p></div>'+pdfBtn("16")+nextBtn("16");
+  wireNext("16");wirePdf("16");
   var rs={crit:r.crit,comp:r.comp,r:r.r};
   requestAnimationFrame(function(){chart16(rs,$("rchart"),$("rleg"))});
   status("16");
