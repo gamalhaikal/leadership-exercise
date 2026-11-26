@@ -132,6 +132,7 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
   #report th:first-child,#report td:first-child{text-align:left}#report thead th{background:#343432;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report .torn .bar i{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report .avoid{break-inside:avoid}
+  #report .sc{font-size:14px;margin:10px 0}#report .sc b{font-size:36px}
   #report .cbox{border-radius:8px;padding:8px 10px;margin-bottom:6px}#report .cbox h4{margin:0 0 2px}#report .cbox p{margin:0 0 4px}#report .imp{border-radius:10px;padding:1px 6px;font-size:10px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   #report td ul{margin:0;padding-left:14px}#report .sw td,#report .sw th{vertical-align:top;text-align:left}
   #report .legend{display:flex;gap:12px;font-size:11px}#report .legend i{display:inline-block;width:12px;height:4px;margin-right:4px;vertical-align:middle;-webkit-print-color-adjust:exact;print-color-adjust:exact}
@@ -271,6 +272,32 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
 .pfc .neg{color:var(--bad)}.pfc .pos{color:var(--ok)}
 .pfc .dots{letter-spacing:2px;color:#b45f06}
 .slot .pfc table,.slot .pfc tbody{display:flex;flex-wrap:wrap;gap:2px 0}.slot .pfc tr{display:flex;gap:6px;margin-right:14px}.slot .pfc td{padding:2px 0 2px 10px}.slot .pfc .t{min-height:0}
+/* initiatives game */
+.ig{overflow-x:auto;margin-top:10px}
+.ig table{border-collapse:separate;border-spacing:0;width:100%;min-width:860px}
+.ig th,.ig td{border-bottom:1px solid var(--line);border-right:1px solid #eee;padding:0;height:46px;text-align:center;font-size:13px}
+.ig th{background:var(--dk);color:#fff;padding:6px 4px;height:auto;line-height:1.2}
+.ig td.nm{text-align:left;padding:4px 8px;font-weight:600;font-size:13px;width:210px;line-height:1.2;background:#fff}
+.ig td.nm small{display:block;font-weight:400;color:var(--muted);font-size:11.5px}
+.ig td.q{cursor:pointer;background:#fbfbfb}
+.ig td.q:hover{background:var(--ob)}
+.ig td.q.on{background:var(--yl);border-right-color:var(--yl)}
+.ig td.q.on.first{border-radius:8px 0 0 8px}.ig td.q.on.last{border-radius:0 8px 8px 0;border-right-color:#eee}
+.ig td.q.ben{background:repeating-linear-gradient(45deg,#e3f4ea,#e3f4ea 6px,#f3faf6 6px,#f3faf6 12px)}
+.ig td.q.over{outline:2px solid var(--o);outline-offset:-2px}
+.ig td.x{width:34px}
+.ig td.x button{border:0;background:none;font-size:18px;color:#5d6268;cursor:pointer;min-width:32px;min-height:32px}
+.ig tr.cap td{height:auto;padding:4px;font-size:12px;font-weight:700;background:#f4f4f4}
+.ig tr.cap td.bad{background:#fdecea;color:var(--bad)}
+.igp{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px}
+.igc{background:#fff;border:1px solid #cfcfcf;border-left:6px solid var(--yl);border-radius:12px;padding:8px 10px;cursor:grab;box-shadow:0 1px 3px rgba(0,0,0,.08);user-select:none;touch-action:none;font-size:12.5px}
+.igc b{display:block;font-size:14px;line-height:1.25;margin-bottom:4px}
+.igc.sel{outline:3px solid var(--o)}.igc.used{opacity:.55;border-left-color:#bbb}.igc.drag{opacity:.4}
+.igc .kv{display:flex;justify-content:space-between}.igc .kv span:last-child{font-weight:700}
+.igc .dep{color:#b45f06;font-size:11.5px;margin-top:3px}
+.plan th,.plan td{border:1px solid var(--line);padding:6px 8px;font-size:13px;text-align:center}.plan th{background:var(--dk);color:#fff}
+.igsc{display:flex;align-items:center;gap:16px;flex-wrap:wrap;background:var(--dk);color:#fff;border-radius:14px;padding:14px 18px;margin:10px 0}
+.igsc b{font-size:46px;color:var(--yl);line-height:1}.igsc span{font-size:15px}
 /* vision match */
 .vmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
 .vmt{border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;flex-direction:column;overflow:hidden}
@@ -320,6 +347,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <button class="tab" role="tab" id="tPF" type="button">Portfolio Game<span class="ck" id="ckPF"></span></button>
     <button class="tab" role="tab" id="t32" type="button">3.2 Spot the Trap<span class="ck" id="ck32"></span></button>
     <button class="tab" role="tab" id="tPC" type="button">C. Prioritization<span class="ck" id="ckPC"></span></button>
+    <button class="tab" role="tab" id="tIG" type="button">Initiatives Game<span class="ck" id="ckIG"></span></button>
     <button class="tab" role="tab" id="tRA" type="button">4.4 RACI Builder<span class="ck" id="ckRA"></span></button>
     <button class="tab" role="tab" id="tSL" type="button">Sensitivity Lab</button>
   </div>
@@ -627,6 +655,31 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <div id="r32" class="hidden"></div>
   </div>
 
+  <div id="pIG" class="card hidden" role="tabpanel">
+    <div id="bIG">
+      <h2>Initiatives Game: Plan DCI's Next Two Years</h2>
+      <p class="lead">Choose which initiatives to fund and when to start them over 2027–2028. Each initiative starts paying its yearly benefit the quarter after it finishes. Deliver the most benefit by the end of 2029 without breaking the three rules.</p>
+      <div class="who wh"></div>
+      <div class="defs" style="margin-top:4px">
+        <div><b>Rule 1: Budget</b>No more than EGP 60m in total</div>
+        <div><b>Rule 2: Capacity</b>No more than 3 initiatives running in the same quarter</div>
+        <div><b>Rule 3: Dependencies</b>The SME bundle can start only after core system phase 1 is finished</div>
+        <div><b>Goal</b>The highest benefit delivered by the end of 2029. Unfunded initiatives stay in the pool.</div>
+      </div>
+      <div class="pfm" id="igM"></div>
+      <p class="tap">Drag a card onto its own row, in the quarter it should start. On a phone or tablet: tap a card, then tap a quarter in its row. Place it again to move it; × removes it.</p>
+      <div class="ig"><table id="igT"></table></div>
+      <h3>Initiative cards</h3>
+      <div class="igp" id="igP"></div>
+      <div id="igMsg" class="status" style="margin-top:12px"></div>
+      <div class="row">
+        <button class="btn y" id="igSub" type="button">Submit our plan</button>
+        <button class="btn sec" id="igRst" type="button">Start again</button>
+      </div>
+    </div>
+    <div id="rIG" class="hidden"></div>
+  </div>
+
   <div id="pRA" class="card hidden" role="tabpanel">
     <div id="bRA">
       <h2>Activity 4.4: RACI Builder</h2>
@@ -774,7 +827,7 @@ function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",ti
 
 var IDS=["11","14","16","17","21","32"];
 function showTab(a){
-  if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&a!=="aSC"&&a!=="aPC"&&a!=="aMC"&&a!=="aRA"&&a!=="aPF"&&IDS.indexOf(a.slice(1))<0)a="a11";
+  if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&a!=="aSC"&&a!=="aPC"&&a!=="aMC"&&a!=="aRA"&&a!=="aPF"&&a!=="aIG"&&IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
   IDS.forEach(function(id){$("t"+id).setAttribute("aria-selected",a==="a"+id);$("p"+id).classList.toggle("hidden",a!=="a"+id);$("ck"+id).textContent=S["r"+id]?" \u2713":""});
   var sl=a==="aSL";$("tSL").setAttribute("aria-selected",sl);$("pSL").classList.toggle("hidden",!sl);
@@ -784,11 +837,12 @@ function showTab(a){
   var scv=a==="aSC";$("tSC").setAttribute("aria-selected",scv);$("pSC").classList.toggle("hidden",!scv);$("ckSC").textContent=S.scSent?" \u2713":"";
   if(!scv)stopSC();
   var pfv=a==="aPF";$("tPF").setAttribute("aria-selected",pfv);$("pPF").classList.toggle("hidden",!pfv);$("ckPF").textContent=S.pfDone?" \u2713":"";
+  var igv=a==="aIG";$("tIG").setAttribute("aria-selected",igv);$("pIG").classList.toggle("hidden",!igv);$("ckIG").textContent=S.rIG?" \u2713":"";
   var rav=a==="aRA";$("tRA").setAttribute("aria-selected",rav);$("pRA").classList.toggle("hidden",!rav);$("ckRA").textContent=S.rRA?" \u2713":"";
   var mcv=a==="aMC";$("tMC").setAttribute("aria-selected",mcv);$("pMC").classList.toggle("hidden",!mcv);$("ckMC").textContent=S.rMC?" \u2713":"";
   var pcv=a==="aPC";$("tPC").setAttribute("aria-selected",pcv);$("pPC").classList.toggle("hidden",!pcv);$("ckPC").textContent=S.pcSent?" \u2713":"";
   if(!pcv)stopPC();
-  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,a32:draw32,aSC:drawSC,aMC:drawMC,aRA:drawRA,aPF:drawPF,aPC:drawPC,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
+  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,a32:draw32,aSC:drawSC,aMC:drawMC,aRA:drawRA,aPF:drawPF,aIG:drawIG,aPC:drawPC,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
 }
 $("tSL").addEventListener("click",function(){showTab("aSL")});
 $("tSW").addEventListener("click",function(){showTab("aSW")});
@@ -797,6 +851,7 @@ $("tSC").addEventListener("click",function(){showTab("aSC")});
 $("tMC").addEventListener("click",function(){showTab("aMC")});
 $("tRA").addEventListener("click",function(){showTab("aRA")});
 $("tPF").addEventListener("click",function(){showTab("aPF")});
+$("tIG").addEventListener("click",function(){showTab("aIG")});
 $("tPC").addEventListener("click",function(){showTab("aPC")});
 IDS.forEach(function(id){$("t"+id).addEventListener("click",function(){showTab("a"+id)})});
 function nextBtn(id){
@@ -1561,6 +1616,125 @@ $("pfPDF").addEventListener("click",function(){
   try{window.print()}catch(e){$("pfN").textContent="Printing is blocked here."}
 });
 
+/* ---------- Initiatives Game (Projecto style, scored) ---------- */
+var IGH=8,IGBUD=60,IGCAP=3,IGEND=12;
+var IGQ=["Q1 27","Q2 27","Q3 27","Q4 27","Q1 28","Q2 28","Q3 28","Q4 28"];
+var IGI=[
+ {n:"Medical pre-approval automation",c:8,d:2,a:30},
+ {n:"Core system phase 1",c:18,d:4,a:12},
+ {n:"SME digital bundle with banks",c:12,d:3,a:30,dep:1},
+ {n:"Motor price-cut campaign",c:10,d:1,a:-20},
+ {n:"Six new branches",c:18,d:4,a:4},
+ {n:"Broker portal",c:7,d:2,a:18},
+ {n:"Claims analytics and fraud detection",c:9,d:3,a:22},
+ {n:"Cyber and PI launch",c:6,d:2,a:14}
+];
+var IGBEST=248;
+var igSel=null;
+function igS(){if(!S.ig)S.ig={st:IGI.map(function(){return null}),tries:0};return S.ig}
+function igEval(st){var cost=0,load=[],v=0,E=[],rows=[];for(var q=0;q<=IGH;q++)load.push(0);
+  IGI.forEach(function(it,i){var s=st[i];if(s==null){rows.push(null);return}var e=s+it.d-1;cost+=it.c;for(var q=s;q<=e;q++)load[q]++;var yrs=(IGEND-e)/4,ben=it.a*yrs;v+=ben;rows.push({s:s,e:e,yrs:yrs,ben:ben})});
+  if(cost>IGBUD)E.push("Budget: EGP "+cost+"m is over the EGP 60m limit.");
+  var bad=[];for(var q=1;q<=IGH;q++)if(load[q]>IGCAP)bad.push(IGQ[q-1]);
+  if(bad.length)E.push("Capacity: more than 3 initiatives run in "+bad.join(", ")+".");
+  IGI.forEach(function(it,i){if(it.dep==null||st[i]==null)return;var d=rows[it.dep];if(!d)E.push(IGI[i].n+" needs "+IGI[it.dep].n+", which is not funded.");else if(st[i]<=d.e)E.push(IGI[i].n+" starts before "+IGI[it.dep].n+" finishes ("+IGQ[d.e-1]+").")});
+  return {cost:cost,load:load,v:v,E:E,rows:rows,n:st.filter(function(x){return x!=null}).length}}
+function igFmt(v){var r=Math.round(v*10)/10;return (r<0?"−":"")+Math.abs(r).toLocaleString("en-US")}
+function igCard(i,used){var it=IGI[i];return '<div class="igc'+(igSel===i?" sel":"")+(used?" used":"")+'" draggable="true" tabindex="0" role="button" data-c="'+i+'"><b>'+esc(it.n)+'</b>'+
+  '<div class="kv"><span>Cost</span><span>EGP '+it.c+'m</span></div><div class="kv"><span>Duration</span><span>'+it.d+' quarter'+(it.d>1?"s":"")+'</span></div><div class="kv"><span>Benefit per year</span><span class="'+(it.a<0?"dn":"up")+'">'+(it.a<0?"−":"+")+'EGP '+Math.abs(it.a)+'m</span></div>'+
+  (it.dep!=null?'<div class="dep">Needs: '+esc(IGI[it.dep].n)+' finished first</div>':'')+(used?'<div class="note" style="font-size:11.5px">Scheduled: starts '+IGQ[igS().st[i]-1]+'</div>':'')+'</div>'}
+function drawIG(){
+  if(S.rIG){$("bIG").classList.add("hidden");$("rIG").classList.remove("hidden");reportIG();return}
+  $("bIG").classList.remove("hidden");$("rIG").classList.add("hidden");
+  var G=igS(),ev=igEval(G.st);
+  var m=function(lbl,val,lim,bad,pct,note){return '<div'+(bad?' class="over"':'')+'><span>'+lbl+'</span><b>'+val+' <small>'+lim+'</small></b>'+(pct!=null?'<div class="bar"><i style="width:'+Math.min(100,pct)+'%"></i></div>':'')+(note?'<span>'+note+'</span>':'')+'</div>'};
+  var peak=Math.max.apply(null,ev.load);
+  $("igM").innerHTML=m("Budget used (EGP m)",ev.cost,"/ 60",ev.cost>IGBUD,ev.cost/IGBUD*100)+m("Busiest quarter",peak,"/ 3 running",peak>IGCAP,peak/IGCAP*100)+
+    '<div><span>Benefit by end of 2029 (EGP m)</span><b class="'+(ev.v<0?"dn":"up")+'">'+(ev.n?igFmt(ev.v):"–")+'</b><span>Benefit starts the quarter after an initiative finishes</span></div>'+m("Initiatives funded",ev.n,"/ 8",false,ev.n/8*100);
+  $("igT").innerHTML='<thead><tr><th style="text-align:left;padding-left:8px">Initiative</th>'+IGQ.map(function(q){return '<th>'+q+'</th>'}).join("")+'<th aria-label="Remove"></th></tr></thead><tbody>'+
+    IGI.map(function(it,i){var r=ev.rows[i];return '<tr data-r="'+i+'"><td class="nm">'+esc(it.n)+'<small>EGP '+it.c+'m · '+it.d+'Q · '+(it.a<0?"−":"+")+Math.abs(it.a)+'/yr</small></td>'+
+      IGQ.map(function(q,k){var qq=k+1,on=r&&qq>=r.s&&qq<=r.e,ben=r&&qq>r.e;return '<td class="q'+(on?" on":"")+(on&&qq===r.s?" first":"")+(on&&qq===r.e?" last":"")+(ben?" ben":"")+'" data-r="'+i+'" data-q="'+qq+'" title="'+esc(it.n)+', start '+q+'"></td>'}).join("")+
+      '<td class="x">'+(r?'<button type="button" data-x="'+i+'" aria-label="Remove '+esc(it.n)+'">×</button>':'')+'</td></tr>'}).join("")+
+    '<tr class="cap"><td class="nm" style="background:#f4f4f4">Initiatives running</td>'+IGQ.map(function(q,k){var l=ev.load[k+1];return '<td class="'+(l>IGCAP?"bad":"")+'">'+(l||"")+'</td>'}).join("")+'<td></td></tr></tbody>';
+  $("igP").innerHTML=IGI.map(function(it,i){return igCard(i,G.st[i]!=null)}).join("");
+  var msg=$("igMsg");msg.className="status";
+  if(ev.E.length){msg.classList.add("warn");msg.innerHTML=ev.E.map(function(e){return "❌ "+esc(e)}).join("<br>")}
+  else if(!ev.n)msg.textContent="Start: drag an initiative card onto its row, in the quarter you want it to start. Striped green cells show the quarters when its benefit is flowing.";
+  else{msg.classList.add("good");msg.textContent="✔ Your plan follows all three rules. Improve it, or submit when your table agrees."}
+  save();
+}
+function igPut(i,q){var it=IGI[i],G=igS();if(q+it.d-1>IGH){q=IGH-it.d+1;igToast(it.n+" takes "+it.d+" quarters; it now starts "+IGQ[q-1]+" so it finishes by Q4 28.")}G.st[i]=q;igSel=null;drawIG()}
+function igToast(t){setTimeout(function(){var m=$("igMsg");m.className="status warn";m.textContent=t},0)}
+(function(){var root=$("pIG");
+  root.addEventListener("dragstart",function(e){var c=e.target.closest&&e.target.closest(".igc");if(!c)return;e.stopPropagation();e.dataTransfer.setData("text/plain","ig"+c.dataset.c);c.classList.add("drag")});
+  root.addEventListener("dragend",function(){root.querySelectorAll(".q.over,.igc.drag").forEach(function(z){z.classList.remove("over");z.classList.remove("drag")})});
+  root.addEventListener("dragover",function(e){var z=e.target.closest&&e.target.closest("td.q");if(!z)return;e.preventDefault();root.querySelectorAll("td.q.over").forEach(function(o){if(o!==z)o.classList.remove("over")});z.classList.add("over")});
+  root.addEventListener("drop",function(e){var z=e.target.closest&&e.target.closest("td.q");if(!z)return;e.preventDefault();e.stopPropagation();var d=e.dataTransfer.getData("text/plain");if(d.indexOf("ig")!==0)return;var i=+d.slice(2);
+    if(+z.dataset.r!==i){igToast("Drop the card on its own row: "+IGI[i].n+".");drawIG();return}igPut(i,+z.dataset.q)});
+  root.addEventListener("click",function(e){var x=e.target.closest("[data-x]");if(x){igS().st[+x.dataset.x]=null;drawIG();return}
+    var c=e.target.closest(".igc");if(c){var i=+c.dataset.c;igSel=igSel===i?null:i;drawIG();return}
+    var z=e.target.closest("td.q");if(z){var r=+z.dataset.r;if(igSel==null){if(igS().st[r]!=null){igPut(r,+z.dataset.q);return}igToast("First tap a card in the pool below, then tap the quarter it should start.");return}
+      if(r!==igSel){igToast("Tap a quarter in its own row: "+IGI[igSel].n+".");return}igPut(igSel,+z.dataset.q)}});
+  root.addEventListener("keydown",function(e){var c=e.target.closest&&e.target.closest(".igc");if(c&&(e.key==="Enter"||e.key===" ")){e.preventDefault();c.click()}});
+})();
+$("igRst").addEventListener("click",function(){S.ig=null;igSel=null;drawIG()});
+$("igSub").addEventListener("click",function(){
+  var G=igS(),ev=igEval(G.st),msg=$("igMsg");
+  if(!ev.n){msg.className="status warn";msg.textContent="Schedule at least one initiative before submitting.";return}
+  G.tries++;save();
+  if(ev.E.length){msg.className="status warn";msg.innerHTML="❌ Not accepted. Your plan breaks a rule:<br>"+ev.E.map(esc).join("<br>")+"<br>Fix it and submit again. (Attempt "+G.tries+")";
+    sendIGraw(G,ev,null);return}
+  var sc=Math.max(0,Math.round(ev.v/IGBEST*100));
+  S.rIG={st:G.st.slice(),v:ev.v,score:sc,tries:G.tries,at:stamp(),sent:false};save();showTab("aIG");sendIG();
+});
+function igPlanTable(st,print){var ev=igEval(st);
+  return '<table'+(print?'':' style="width:100%;border-collapse:collapse;min-width:640px"')+'><thead><tr><th style="text-align:left">Initiative</th><th>Funded</th><th>Start</th><th>Finish</th><th>Cost</th><th>Benefit / year</th><th>Years of benefit</th><th>Benefit by 2029</th></tr></thead><tbody>'+
+   IGI.map(function(it,i){var r=ev.rows[i];return '<tr><td style="text-align:left">'+esc(it.n)+'</td><td>'+(r?"Yes":"No")+'</td><td style="white-space:nowrap">'+(r?IGQ[r.s-1]:"–")+'</td><td style="white-space:nowrap">'+(r?IGQ[r.e-1]:"–")+'</td><td>'+(r?it.c:"–")+'</td><td>'+(it.a<0?"−":"+")+Math.abs(it.a)+'</td><td>'+(r?r.yrs.toFixed(2):"–")+'</td><td><b>'+(r?igFmt(r.ben):"–")+'</b></td></tr>'}).join("")+
+   '<tr><td style="text-align:left"><b>Total</b></td><td><b>'+ev.n+'</b></td><td></td><td></td><td><b>'+ev.cost+'</b></td><td></td><td></td><td><b>'+igFmt(ev.v)+'</b></td></tr></tbody></table>'}
+function igInsights(st){var ev=igEval(st),L=[],R=ev.rows;
+  if(R[3])L.push("The motor price cut destroys value: it costs EGP 10m and loses EGP 20m a year.");
+  if(R[4])L.push("Six new branches use EGP 18m of budget for only EGP 4m a year. That money could fund faster-paying digital initiatives.");
+  if(!R[1])L.push("Core system phase 1 was not funded, so the SME bundle (EGP 30m a year) could not be started.");
+  else if(R[1].s>1)L.push("Core system phase 1 starts in "+IGQ[R[1].s-1]+". Starting it in Q1 27 brings the SME bundle forward.");
+  if(R[0]&&R[0].s>1)L.push("Medical automation is the biggest quick win (EGP 30m a year in 2 quarters). Starting it earlier adds benefit.");
+  if(!R[0])L.push("Medical automation was not funded, although it is the biggest quick win.");
+  if(ev.cost<IGBUD)L.push("EGP "+(IGBUD-ev.cost)+"m of the budget is unused.");
+  if(!L.length)L.push("Quick wins first, the enabler early, and the big benefit (SME bundle) as soon as the dependency allows.");
+  return L}
+function reportIG(){var r=S.rIG;
+  $("rIG").innerHTML='<h2>Initiatives Game: your report</h2><div class="who">'+esc(who())+' · '+esc(r.at)+' · attempt '+r.tries+'</div>'+
+    '<div class="igsc"><b>'+r.score+'<small style="font-size:20px;color:#fff">/100</small></b><span>Your plan delivers <b style="font-size:16px;color:var(--yl)">EGP '+igFmt(r.v)+'m</b> of benefit by the end of 2029.<br>The best possible plan delivers EGP '+IGBEST+'m.'+(r.score>=100?'<br>🎉 You found the best combination!':'')+'</span></div>'+
+    '<div class="status" id="stIG"></div>'+
+    '<h3>Your plan</h3><div class="ig" style="overflow-x:auto">'+igPlanTable(r.st,false).replace('<table','<table class="plan"')+'</div>'+
+    '<h3>What drives your score</h3><ul>'+igInsights(r.st).map(function(t){return '<li>'+esc(t)+'</li>'}).join("")+'</ul>'+
+    '<div class="row"><button class="btn y" type="button" id="pdfIG">Export our report (PDF)</button><span class="note" id="pdfmIG"></span></div>'+
+    '<div class="row"><button class="btn sec" type="button" id="igAgain">Improve our plan and resubmit</button></div>';
+  $("pdfIG").onclick=pdfIG;$("igAgain").onclick=function(){S.ig={st:r.st.slice(),tries:r.tries};S.rIG=null;save();drawIG()};
+  statusIG()}
+var igState="idle";
+function statusIG(){var el=$("stIG"),r=S.rIG;if(!el||!r)return;el.className="status";
+  if(r.sent||igState==="ok"){el.classList.add("good");el.textContent="✔ Your plan and score have been sent to the trainer.";return}
+  if(igState==="sending"){el.textContent="Sending your plan to the trainer…";return}
+  if(igState==="fail"){el.classList.add("warn");el.innerHTML='Automatic sending failed (you may be offline). <div class="b"><button class="btn" type="button" id="rtIG">Retry</button></div>';$("rtIG").onclick=sendIG;return}
+  el.textContent=""}
+function igBody(st,tries,score,ev){var body={_subject:"Initiatives Game – "+S.company+(S.team?" ("+S.team+")":"")+" – "+(score==null?"rule broken":"score "+score+"/100")+" (attempt "+tries+")",_template:"table",_captcha:"false",Company:S.company,"Name / table":S.team||"-",Attempt:tries,Score:score==null?"Not accepted":score+"/100",Submitted:stamp()};
+  IGI.forEach(function(it,i){var r=ev.rows[i];body[it.n]=r?"Start "+IGQ[r.s-1]+", finish "+IGQ[r.e-1]+", benefit "+igFmt(r.ben):"Not funded"});
+  body["Budget used"]="EGP "+ev.cost+"m / 60";body["Benefit by 2029"]="EGP "+igFmt(ev.v)+"m (best "+IGBEST+")";if(ev.E.length)body.Problems=ev.E.join(" ");return body}
+function sendIGraw(G,ev,score){fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(igBody(G.st,G.tries,score,ev))}).catch(function(){})}
+function sendIG(){var r=S.rIG;if(!r||r.sent)return;igState="sending";statusIG();
+  fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(igBody(r.st,r.tries,r.score,igEval(r.st)))})
+   .then(function(res){return res.json()}).then(function(j){if(j.success===true||j.success==="true"){r.sent=true;igState="ok";save()}else igState="fail";statusIG()})
+   .catch(function(){igState="fail";statusIG()})}
+function pdfIG(){var r=S.rIG,ev=igEval(r.st);
+  var gantt='<table><thead><tr><th style="text-align:left">Initiative</th>'+IGQ.map(function(q){return '<th>'+q+'</th>'}).join("")+'</tr></thead><tbody>'+IGI.map(function(it,i){var x=ev.rows[i];return '<tr><td style="text-align:left">'+esc(it.n)+'</td>'+IGQ.map(function(q,k){var qq=k+1,on=x&&qq>=x.s&&qq<=x.e;return '<td style="'+(on?'background:#ffeb00;-webkit-print-color-adjust:exact;print-color-adjust:exact':'')+'"></td>'}).join("")+'</tr>'}).join("")+'</tbody></table>';
+  $("report").innerHTML='<h1>Initiatives Game: Plan DCI’s Next Two Years</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · '+esc(r.at)+' · attempt '+r.tries+'</div>'+
+    '<div class="sc"><b>'+r.score+'</b> / 100</div><p>Benefit delivered by the end of 2029: <b>EGP '+igFmt(r.v)+'m</b> (best possible EGP '+IGBEST+'m). Budget used: EGP '+ev.cost+'m of 60.</p>'+
+    '<div class="avoid"><h2>Timeline</h2>'+gantt+'</div><div class="avoid"><h2>Plan details</h2>'+igPlanTable(r.st,true)+'</div>'+
+    '<div class="avoid"><h2>What drives the score</h2><ul>'+igInsights(r.st).map(function(t){return '<li>'+esc(t)+'</li>'}).join("")+'</ul></div>'+
+    '<p style="font-size:10px">Rules: budget EGP 60m; no more than 3 initiatives running in a quarter; the SME bundle starts after core system phase 1 finishes. Benefit = yearly benefit × years from the quarter after finishing to the end of 2029.</p>';
+  $("pdfmIG").textContent="In the print window, choose “Save as PDF”.";
+  try{window.print()}catch(e){$("pdfmIG").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}}
+
 /* ---------- 2.1 Whose vision? ---------- */
 var A21=[
  {t:"IKEA",sec:"Home furnishing · Sweden",s:"To create a better everyday life for the many people.",ty:"Vision",x:"IKEA's vision. “The many people” drives its business idea: well-designed products at prices most people can afford."},
@@ -1948,12 +2122,13 @@ function enter(){
   IDS.forEach(function(id){var r=S["r"+id];if(r&&!r.sent)send(id)});
   if(S.rMC&&!S.rMC.sent)sendMC();
   if(S.rRA&&!S.rRA.sent)sendRA();
+  if(S.rIG&&!S.rIG.sent)sendIG();
 }
 $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=/^#a(11|14|16|17|21|32|SL|SW|VY|SC|PC|MC|RA|PF)$/.test(location.hash)?location.hash.slice(1):null;
+var hashTab=/^#a(11|14|16|17|21|32|SL|SW|VY|SC|PC|MC|RA|PF|IG)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
