@@ -1348,11 +1348,14 @@ function reportMC(){
   $("rMC").innerHTML='<h2>Activity 2.1 Mission Check</h2><div class="who">'+esc(who())+' · '+esc(r.at)+'</div>'+
     '<div class="reveal" style="font-size:18px">Company X is <b>Gulf Insurance Group (GIG)</b>, the parent group of GIG Egypt.</div>'+
     '<div class="status" id="stMC"></div>'+
-    '<div class="row"><button class="btn y" type="button" id="pdfMC">Export our answers (PDF)</button><span class="note" id="pdfmMC"></span></div>';
+    '<div class="row"><button class="btn y" type="button" id="pdfMC">Export our answers (PDF)</button><span class="note" id="pdfmMC"></span></div>'+
+    '<div class="row"><button class="btn sec" type="button" id="mcNew">Submit another response</button><span class="note">Clears this tab so another table can answer on this device.</span></div>';
   $("pdfMC").onclick=pdfMC;
+  $("mcNew").onclick=function(){if(S.rMC&&!S.rMC.sent&&mcState!=="ok"&&!confirmNew())return;S.rMC=null;S.mc=null;mcState="idle";$("ckMC").textContent="";save();drawMC();window.scrollTo(0,$("pMC").offsetTop-10)};
   statusMC();
 }
 var mcState="idle";
+function confirmNew(){var el=$("stMC");el.className="status warn";el.textContent="Your answers have not been sent yet. Press Retry first, or press Submit another response again to discard them.";S.rMC.sent=true;return false}
 function statusMC(){var el=$("stMC"),r=S.rMC;if(!el||!r)return;el.className="status";
   if(r.sent||mcState==="ok"){el.classList.add("good");el.textContent="✔ Your answers have been sent to the trainer.";return}
   if(mcState==="sending"){el.textContent="Sending your answers to the trainer…";return}
