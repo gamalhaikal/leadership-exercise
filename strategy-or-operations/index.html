@@ -244,6 +244,7 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
 .rt th{background:var(--dk);color:#fff;font-size:13px;line-height:1.25}
 .rt td:first-child{text-align:left;font-weight:600;font-size:14px;width:22%}
 .rt select{font:inherit;font-size:15px;font-weight:700;padding:7px 4px;border:1px solid #bbb;border-radius:8px;min-width:62px;min-height:40px;background:#fff}
+.rt td:first-child input{width:100%;font:inherit;font-size:14px;font-weight:600;padding:8px;border:1px solid #bbb;border-radius:8px}
 .rt td.chk2{font-size:13px;text-align:left;width:18%}
 /* vision match */
 .vmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
@@ -588,13 +589,16 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
         <div class="rc-I"><b><span class="l" style="background:#fff">I</span>Informed</b>Kept up to date on progress or decisions. One-way communication; no input needed.</div>
         <div class="rc-AR"><b><span class="l" style="background:#fff;font-size:12px">A/R</span>Accountable and responsible</b>The same person owns the result and also does the work.</div>
       </div>
+      <label for="raIn">Initiative</label>
+      <input type="text" id="raIn" maxlength="100">
       <div class="rt"><table id="raT"></table></div>
-      <p class="note">Leave a cell blank if the role has no part in that activity.</p>
+      <div class="row" style="margin-top:8px"><button class="btn sec" id="raAdd" type="button">+ Add activity</button><span class="note">Edit any activity name, remove rows with ×, or add your own (up to 15). Leave a cell blank if the role has no part in that activity.</span></div>
       <label for="raNote">Where did you disagree as a pair, and how did you decide? (optional)</label>
       <input type="text" id="raNote" maxlength="200">
       <div id="raErr" class="err hidden"></div>
       <div class="row">
         <button class="btn y" id="raSub" type="button">Submit our RACI</button>
+        <button class="btn sec" id="raPDF0" type="button">Export report (PDF)</button>
         <button class="btn sec" id="raClr" type="button">Clear all</button>
       </div>
     </div>
@@ -1339,7 +1343,8 @@ $("sub32").addEventListener("click",function(){
 var RAR=["CEO","Head of Medical","CIO","CFO","Claims team","HR"];
 var RAA=["Approve business case","Design approval rules","Build system workflow","Train claims staff","Launch to corporate clients","Track KPIs"];
 var RAV=["","R","A","A/R","C","I"];
-function ra(){if(!S.ra)S.ra={g:RAA.map(function(){return RAR.map(function(){return ""})}),note:""};return S.ra}
+function ra(){if(!S.ra)S.ra={acts:RAA.slice(),g:RAA.map(function(){return RAR.map(function(){return ""})}),note:""};if(!S.ra.acts)S.ra.acts=RAA.slice(0,S.ra.g.length);return S.ra}
+function raActs(r){return r.acts||RAA}
 function raRow(row){var a=0,r=0;row.forEach(function(v){if(v==="A"||v==="A/R")a++;if(v==="R"||v==="A/R")r++});
   if(!row.some(Boolean))return ["","Not started"];
   if(a===0)return ["warn","No A: who owns the result?"];
@@ -1350,32 +1355,39 @@ function raCls(v){return v?"rc-"+v.replace("/",""):""}
 function drawRA(){
   if(S.rRA){$("bRA").classList.add("hidden");$("rRA").classList.remove("hidden");reportRA();return}
   $("bRA").classList.remove("hidden");$("rRA").classList.add("hidden");
-  var G=ra().g;$("raNote").value=ra().note||"";
-  $("raT").innerHTML='<thead><tr><th>Activity</th>'+RAR.map(function(r){return '<th>'+r+'</th>'}).join("")+'<th>Check</th></tr></thead><tbody>'+
-    RAA.map(function(act,i){var c=raRow(G[i]);return '<tr><td>'+act+'</td>'+RAR.map(function(role,j){var v=G[i][j];return '<td class="'+raCls(v)+'"><select data-i="'+i+'" data-j="'+j+'" aria-label="'+act+', '+role+'">'+RAV.map(function(o){return '<option value="'+o+'"'+(o===v?' selected':'')+'>'+(o||"–")+'</option>'}).join("")+'</select></td>'}).join("")+
-      '<td class="chk2 '+(c[0]==="ok"?"up":c[0]==="warn"?"dn":"")+'" id="rac'+i+'">'+c[1]+'</td></tr>'}).join("")+'</tbody>';
+  var R=ra(),G=R.g;$("raNote").value=R.note||"";$("raIn").value=R.ini==null?"DCI medical pre-approval automation":R.ini;
+  $("raT").innerHTML='<thead><tr><th>Activity</th>'+RAR.map(function(r){return '<th>'+r+'</th>'}).join("")+'<th>Check</th><th aria-label="Remove"></th></tr></thead><tbody>'+
+    R.acts.map(function(act,i){var c=raRow(G[i]);return '<tr><td><input type="text" data-a="'+i+'" maxlength="70" value="'+esc(act)+'" placeholder="Activity '+(i+1)+'" aria-label="Activity name"></td>'+RAR.map(function(role,j){var v=G[i][j];return '<td class="'+raCls(v)+'"><select data-i="'+i+'" data-j="'+j+'" aria-label="'+esc(act||"Activity "+(i+1))+', '+role+'">'+RAV.map(function(o){return '<option value="'+o+'"'+(o===v?' selected':'')+'>'+(o||"\u2013")+'</option>'}).join("")+'</select></td>'}).join("")+
+      '<td class="chk2 '+(c[0]==="ok"?"up":c[0]==="warn"?"dn":"")+'" id="rac'+i+'">'+c[1]+'</td><td style="width:40px"><button type="button" style="border:0;background:none;font-size:20px;color:#5d6268;cursor:pointer;min-width:36px;min-height:36px" data-del="'+i+'" aria-label="Remove activity">\u00d7</button></td></tr>'}).join("")+'</tbody>';
   save();
 }
 $("raT").addEventListener("change",function(e){var t=e.target;if(t.dataset.i==null)return;ra().g[+t.dataset.i][+t.dataset.j]=t.value;drawRA()});
+$("raT").addEventListener("input",function(e){var t=e.target;if(t.dataset.a==null)return;ra().acts[+t.dataset.a]=t.value;save()});
+$("raT").addEventListener("click",function(e){var d=e.target.closest("[data-del]");if(!d)return;var R=ra(),i=+d.dataset.del;if(R.acts.length<=1)return;R.acts.splice(i,1);R.g.splice(i,1);drawRA()});
+$("raAdd").addEventListener("click",function(){var R=ra();if(R.acts.length>=15)return;R.acts.push("");R.g.push(RAR.map(function(){return ""}));drawRA();var ins=$("raT").querySelectorAll("input[data-a]");ins[ins.length-1].focus()});
+$("raPDF0").addEventListener("click",function(){var R=ra();pdfRA({acts:R.acts,g:R.g,ini:R.ini,note:(R.note||"").trim(),at:stamp()},true)});
 $("raNote").addEventListener("input",function(){ra().note=$("raNote").value;save()});
+$("raIn").addEventListener("input",function(){ra().ini=$("raIn").value;save()});
+function raIni(r){return (r.ini==null?"DCI medical pre-approval automation":r.ini).trim()||"Initiative"}
 $("raClr").addEventListener("click",function(){S.ra=null;drawRA()});
 $("raSub").addEventListener("click",function(){
-  var R=ra(),empty=R.g.filter(function(row){return !row.some(Boolean)}).length;
-  if(empty){$("raErr").textContent="Complete every row ("+empty+" still empty).";$("raErr").classList.remove("hidden");return}
+  var R=ra(),keep=[];R.acts.forEach(function(a,i){if(a.trim()||R.g[i].some(Boolean))keep.push(i)});
+  var err=!keep.length?"Add at least one activity.":keep.some(function(i){return !R.acts[i].trim()})?"Give every activity a name.":keep.some(function(i){return !R.g[i].some(Boolean)})?"Complete every row ("+keep.filter(function(i){return !R.g[i].some(Boolean)}).length+" still empty).":"";
+  if(err){$("raErr").textContent=err;$("raErr").classList.remove("hidden");return}
   $("raErr").classList.add("hidden");
-  S.rRA={g:R.g.map(function(r){return r.slice()}),note:(R.note||"").trim(),at:stamp(),sent:false};save();showTab("aRA");sendRA();
+  S.rRA={ini:R.ini,acts:keep.map(function(i){return R.acts[i].trim()}),g:keep.map(function(i){return R.g[i].slice()}),note:(R.note||"").trim(),at:stamp(),sent:false};save();showTab("aRA");sendRA();
 });
-function raTable(g,print){return '<table'+(print?'':' style="min-width:700px"')+'><thead><tr><th>Activity</th>'+RAR.map(function(r){return '<th>'+r+'</th>'}).join("")+'<th>Check</th></tr></thead><tbody>'+
-  RAA.map(function(act,i){var c=raRow(g[i]);return '<tr><td style="text-align:left">'+act+'</td>'+g[i].map(function(v){return '<td class="'+raCls(v)+'" style="font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+(v||"")+'</td>'}).join("")+'<td style="text-align:left;font-size:'+(print?10:13)+'px">'+c[1]+'</td></tr>'}).join("")+'</tbody></table>'}
+function raTable(r,print){var g=r.g;return '<table'+(print?'':' style="min-width:700px"')+'><thead><tr><th>Activity</th>'+RAR.map(function(r){return '<th>'+r+'</th>'}).join("")+'<th>Check</th></tr></thead><tbody>'+
+  raActs(r).map(function(act,i){var c=raRow(g[i]);return '<tr><td style="text-align:left">'+esc(act)+'</td>'+g[i].map(function(v){return '<td class="'+raCls(v)+'" style="font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+(v||"")+'</td>'}).join("")+'<td style="text-align:left;font-size:'+(print?10:13)+'px">'+c[1]+'</td></tr>'}).join("")+'</tbody></table>'}
 function reportRA(){var r=S.rRA,ok=r.g.filter(function(row){return raRow(row)[0]==="ok"}).length;
   $("rRA").innerHTML='<h2>Activity 4.4 RACI Builder: your RACI</h2><div class="who">'+esc(who())+' · '+esc(r.at)+'</div>'+
     '<div class="status" id="stRA"></div>'+
-    '<div class="rt">'+raTable(r.g,false)+'</div>'+
-    '<p class="note">'+(ok===RAA.length?"Every row has exactly one A and at least one R.":ok+" of "+RAA.length+" rows meet the rule of one A and at least one R. Discuss the others with your facilitator.")+'</p>'+
+    '<h3>'+esc(raIni(r))+'</h3><div class="rt">'+raTable(r,false)+'</div>'+
+    '<p class="note">'+(ok===r.g.length?"Every row has exactly one A and at least one R.":ok+" of "+r.g.length+" rows meet the rule of one A and at least one R. Discuss the others with your facilitator.")+'</p>'+
     (r.note?'<p class="note">Your note: '+esc(r.note)+'</p>':'')+
     '<div class="row"><button class="btn y" type="button" id="pdfRA">Export our RACI (PDF)</button><span class="note" id="pdfmRA"></span></div>'+
     '<div class="row"><button class="btn sec" type="button" id="raAgain">Edit our RACI</button></div>';
-  $("pdfRA").onclick=pdfRA;$("raAgain").onclick=function(){S.ra={g:r.g.map(function(x){return x.slice()}),note:r.note};S.rRA=null;save();drawRA()};
+  $("pdfRA").onclick=function(){pdfRA(S.rRA,false)};$("raAgain").onclick=function(){S.ra={ini:r.ini,acts:raActs(r).slice(),g:r.g.map(function(x){return x.slice()}),note:r.note};S.rRA=null;save();drawRA()};
   statusRA()}
 var raState="idle";
 function statusRA(){var el=$("stRA"),r=S.rRA;if(!el||!r)return;el.className="status";
@@ -1384,19 +1396,21 @@ function statusRA(){var el=$("stRA"),r=S.rRA;if(!el||!r)return;el.className="sta
   if(raState==="fail"){el.classList.add("warn");el.innerHTML='Automatic sending failed (you may be offline). <div class="b"><button class="btn" type="button" id="rtRA">Retry</button></div>';$("rtRA").onclick=sendRA;return}
   el.textContent=""}
 function sendRA(){var r=S.rRA;if(!r||r.sent)return;raState="sending";statusRA();
-  var body={_subject:"Activity 4.4 RACI – "+S.company+(S.team?" ("+S.team+")":""),_template:"table",_captcha:"false",Company:S.company,"Name / pair":S.team||"-",Submitted:r.at};
-  RAA.forEach(function(act,i){body[act]=RAR.map(function(role,j){return r.g[i][j]?role+": "+r.g[i][j]:""}).filter(Boolean).join(" | ")+" ("+raRow(r.g[i])[1].replace("✔ ","")+")"});
+  var body={_subject:"Activity 4.4 RACI – "+S.company+(S.team?" ("+S.team+")":""),_template:"table",_captcha:"false",Company:S.company,"Name / pair":S.team||"-",Submitted:r.at,Initiative:raIni(r)};
+  raActs(r).forEach(function(act,i){body[(i+1)+". "+act]=RAR.map(function(role,j){return r.g[i][j]?role+": "+r.g[i][j]:""}).filter(Boolean).join(" | ")+" ("+raRow(r.g[i])[1].replace("✔ ","")+")"});
   body.Note=r.note||"-";
   fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)})
    .then(function(res){return res.json()}).then(function(j){if(j.success===true||j.success==="true"){r.sent=true;raState="ok";save()}else raState="fail";statusRA()})
    .catch(function(){raState="fail";statusRA()})}
-function pdfRA(){var r=S.rRA;
+function pdfRA(r,draft){var ok=r.g.filter(function(row){return raRow(row)[0]==="ok"}).length;
   $("report").innerHTML='<h1>Activity 4.4 RACI Builder</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · '+esc(r.at)+'</div>'+
-    '<h2>Medical pre-approval automation</h2>'+raTable(r.g,true)+
+    (draft?'<p><i>Draft, not yet submitted.</i></p>':'')+
+    '<h2>'+esc(raIni(r))+'</h2>'+raTable(r,true)+
+    '<p>'+(ok===r.g.length?"Every row has exactly one A and at least one R.":ok+" of "+r.g.length+" rows meet the rule of one A and at least one R.")+'</p>'+
     '<h2>Key</h2><ul><li><b>R Responsible:</b> does the work.</li><li><b>A Accountable:</b> owns the result and signs it off; only one per activity.</li><li><b>C Consulted:</b> gives input before the work or decision (two-way).</li><li><b>I Informed:</b> kept up to date (one-way).</li><li><b>A/R:</b> the same person is accountable and responsible.</li></ul>'+
     (r.note?'<p>Our note: '+esc(r.note)+'</p>':'');
-  $("pdfmRA").textContent="In the print window, choose “Save as PDF”.";
-  try{window.print()}catch(e){$("pdfmRA").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}}
+  var m=$("pdfmRA");if(m)m.textContent="In the print window, choose \u201cSave as PDF\u201d.";
+  try{window.print()}catch(e){if(m)m.textContent="Printing is blocked here. Open the online link in Chrome or Edge."}}
 
 /* ---------- 2.1 Whose vision? ---------- */
 var A21=[
