@@ -512,20 +512,20 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
 
   <div id="pSC" class="card hidden" role="tabpanel">
     <h2>Major Activity B: Strategy Canvas and ERRC</h2>
-    <p class="lead">Score the industry average and DCI today on each competing factor (0 to 10). Then design DCI's future curve: the app reads your changes as Eliminate, Reduce, Raise or Create and draws the canvas live.</p>
+    <p class="lead">Enter the company and segment you are analysing. Score the industry average and the company today on each competing factor (0 to 10), then design its future curve: the app reads your changes as Eliminate, Reduce, Raise or Create and draws the canvas live.</p>
     <div class="who wh"></div>
     <div class="swg" style="margin-top:6px">
-      <div><label for="scTeam">Team name (required)</label><input type="text" id="scTeam" maxlength="60" placeholder="e.g. Kemet"></div>
-      <div><label for="scSeg">Our segment</label><select id="scSeg" style="width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid #bbb;border-radius:10px;background:#fff"><option>SME</option><option>Corporate medical</option><option>Fleet motor</option><option>Other</option></select></div>
+      <div><label for="scTeam">Company name (required)</label><input type="text" id="scTeam" maxlength="60" placeholder="e.g. GIG Egypt"></div>
+      <div><label for="scSeg">Segment (type your own or choose)</label><input type="text" id="scSeg" list="scSegL" maxlength="60" placeholder="Type or choose a segment"><datalist id="scSegL"><option value="SME"><option value="Corporate medical"><option value="Fleet motor"><option value="Retail motor"><option value="Individual medical"><option value="Property and engineering"><option value="Marine cargo"><option value="Life"></datalist></div>
     </div>
     <div class="sc"><table id="scT"></table></div>
     <div class="row" style="margin-top:8px">
       <button class="btn sec" id="scAdd" type="button">+ Add a new factor (Create)</button>
-      <span class="note">Edit any factor name to fit your segment. To eliminate a factor, set DCI future to 0.</span>
+      <span class="note">Edit any factor name to fit your segment. To eliminate a factor, set the future score to 0.</span>
     </div>
     <h3>Strategy canvas</h3>
     <div class="fig" style="height:320px"><svg id="scChart" role="img" aria-label="Strategy canvas chart"></svg></div>
-    <div class="legend"><span><i style="background:#9a9a9a"></i>Industry average</span><span><i style="background:#343432"></i>DCI today</span><span><i style="background:#c9a800"></i>DCI future</span></div>
+    <div class="legend" id="scLeg"></div>
     <h3>ERRC grid (from your future curve)</h3>
     <div id="scE"></div>
     <h3>Check your new curve</h3>
@@ -996,7 +996,9 @@ $("swPDF").addEventListener("click",function(){
 var SCF=["Price","Product range","Branch access","Speed of issuance","Claims speed","Digital self-service","Risk advice","Bundled covers"];
 var SCC={ind:"#9a9a9a",now:"#343432",fut:"#c9a800"};
 var ERRC={E:{h:"Eliminate",c:"#fbe9e7"},R:{h:"Reduce",c:"#fff1e0"},U:{h:"Raise",c:"#e3f4ea"},C:{h:"Create",c:"#e6f0fb"}};
-function sc(){if(!S.sc)S.sc={team:S.team||"",seg:"SME",tag:"",rows:SCF.map(function(f){return {f:f,ind:null,now:null,fut:null,nw:false}})};return S.sc}
+function scN(D){return String((D&&D.team)||"").trim()||"Company"}
+function scLeg(D){return '<span><i style="background:#9a9a9a"></i>Industry average</span><span><i style="background:#343432"></i>'+esc(scN(D))+' today</span><span><i style="background:#c9a800"></i>'+esc(scN(D))+' future</span>'}
+function sc(){if(!S.sc)S.sc={team:S.company||"",seg:"",tag:"",rows:SCF.map(function(f){return {f:f,ind:null,now:null,fut:null,nw:false}})};return S.sc}
 function nv(v){return v===null||v===""||v===undefined||isNaN(+v)?null:+v}
 function errcOf(r){var n=nv(r.now),f=nv(r.fut);if(f===null)return "";
   if(r.nw)return f>0?"C":"K";if(n===null)return "";if(f===0&&n>0)return "E";if(f<n)return "R";if(f>n)return "U";return "K"}
@@ -1017,7 +1019,7 @@ function errcHTML(D){var g={E:[],R:[],U:[],C:[]};D.rows.forEach(function(r){var 
   return '<div class="eg">'+["E","U","R","C"].map(function(k){return '<div style="background:'+ERRC[k].c+';border:1px solid #ddd"><h4>'+ERRC[k].h+'</h4>'+(g[k].length?'<ul>'+g[k].map(function(t){return '<li>'+esc(t)+'</li>'}).join("")+'</ul>':'<span class="note">–</span>')+'</div>'}).join("")+'</div>'}
 function scChecks(D){
   var R=D.rows.filter(function(r){return r.f.trim()&&nv(r.fut)!==null}),L=[];
-  if(!R.length)return [["warn","Enter DCI's future scores to check the curve."]];
+  if(!R.length)return [["warn","Enter the future scores to check the curve."]];
   var diff=R.filter(function(r){var i=r.nw?0:nv(r.ind);return i!==null&&Math.abs(nv(r.fut)-i)>=2}).length;
   var lower=R.filter(function(r){var i=nv(r.ind);return !r.nw&&i!==null&&nv(r.fut)<i}).length;
   var red=R.filter(function(r){var k=errcOf(r);return k==="E"||k==="R"}).length,up=R.filter(function(r){var k=errcOf(r);return k==="U"||k==="C"}).length;
@@ -1027,20 +1029,20 @@ function scChecks(D){
   return L;
 }
 function drawSC(){
-  var D=sc();$("scTeam").value=D.team||"";$("scSeg").value=D.seg||"SME";$("scTag").value=D.tag||"";
+  var D=sc();$("scTeam").value=D.team||"";$("scSeg").value=D.seg||"";$("scTag").value=D.tag||"";
   var num=function(i,k,v){return '<input type="number" min="0" max="10" step="1" data-r="'+i+'" data-k="'+k+'" value="'+(v==null?"":v)+'" aria-label="'+k+'">'};
-  $("scT").innerHTML='<thead><tr><th>Competing factor</th><th>Industry average</th><th>DCI today</th><th>DCI future</th><th>ERRC</th><th aria-label="Remove"></th></tr></thead><tbody>'+
-    D.rows.map(function(r,i){var k=errcOf(r);return '<tr'+(r.nw?' class="new"':'')+'><td><input type="text" data-r="'+i+'" data-k="f" maxlength="40" value="'+esc(r.f)+'" placeholder="'+(r.nw?"New factor DCI will create":"Factor")+'"></td>'+
+  $("scT").innerHTML='<thead><tr><th>Competing factor</th><th>Industry average</th><th id="scH1">'+esc(scN(D))+' today</th><th id="scH2">'+esc(scN(D))+' future</th><th>ERRC</th><th aria-label="Remove"></th></tr></thead><tbody>'+
+    D.rows.map(function(r,i){var k=errcOf(r);return '<tr'+(r.nw?' class="new"':'')+'><td><input type="text" data-r="'+i+'" data-k="f" maxlength="40" value="'+esc(r.f)+'" placeholder="'+(r.nw?"New factor to create":"Factor")+'"></td>'+
       (r.nw?'<td class="note">new</td><td class="note">new</td>':'<td>'+num(i,"ind",r.ind)+'</td><td>'+num(i,"now",r.now)+'</td>')+'<td>'+num(i,"fut",r.fut)+'</td><td id="sce'+i+'">'+(k?'<span class="errc e-'+k+'">'+errcLab(k)+'</span>':'<span class="note">–</span>')+'</td><td><button type="button" class="del" style="border:0;background:none;font-size:20px;color:#5d6268;cursor:pointer;min-width:36px;min-height:36px" data-del="'+i+'" aria-label="Remove factor">×</button></td></tr>'}).join("")+'</tbody>';
   scRefresh();if(BOARD_URL){loadSC();stopSC();scTimer=setInterval(loadSC,20000)}else{$("scStat").textContent="The gallery is not connected yet; canvases are emailed to the trainer. Teams can also show the chart on screen.";renderGal([])}
 }
 function scRefresh(){var D=sc();D.rows.forEach(function(r,i){var c=$("sce"+i);if(c){var k=errcOf(r);c.innerHTML=k?'<span class="errc e-'+k+'">'+errcLab(k)+'</span>':'<span class="note">–</span>'}});
-  scChart();$("scE").innerHTML=errcHTML(D);$("scChk").innerHTML=scChecks(D).map(function(c){return '<li class="'+c[0]+'">'+(c[0]==="ok"?"✔ ":"⚠ ")+esc(c[1])+'</li>'}).join("");save()}
+  scChart();$("scLeg").innerHTML=scLeg(D);$("scE").innerHTML=errcHTML(D);$("scChk").innerHTML=scChecks(D).map(function(c){return '<li class="'+c[0]+'">'+(c[0]==="ok"?"✔ ":"⚠ ")+esc(c[1])+'</li>'}).join("");save()}
 $("scT").addEventListener("input",function(e){var t=e.target;if(t.dataset.r==null)return;var r=sc().rows[+t.dataset.r];
   if(t.dataset.k==="f")r.f=t.value;else{var v=t.value===""?null:Math.max(0,Math.min(10,Math.round(+t.value)));if(v!==null&&String(v)!==t.value)t.value=v;r[t.dataset.k]=v}scRefresh()});
 $("scT").addEventListener("click",function(e){var d=e.target.closest("[data-del]");if(!d)return;var D=sc();D.rows.splice(+d.dataset.del,1);if(!D.rows.length)D.rows.push({f:"",ind:null,now:null,fut:null,nw:false});drawSC()});
 $("scAdd").addEventListener("click",function(){var D=sc();if(D.rows.length>=12){$("scMsg").textContent="Up to 12 factors.";return}D.rows.push({f:"",ind:null,now:null,fut:null,nw:true});drawSC();var ins=$("scT").querySelectorAll('input[type=text]');ins[ins.length-1].focus()});
-["scTeam","scSeg","scTag"].forEach(function(id){$(id).addEventListener(id==="scSeg"?"change":"input",function(){sc()[{scTeam:"team",scSeg:"seg",scTag:"tag"}[id]]=$(id).value;save()})});
+["scTeam","scSeg","scTag"].forEach(function(id){$(id).addEventListener("input",function(){var D=sc();D[{scTeam:"team",scSeg:"seg",scTag:"tag"}[id]]=$(id).value;if(id==="scTeam"){$("scH1").textContent=scN(D)+" today";$("scH2").textContent=scN(D)+" future";$("scLeg").innerHTML=scLeg(D)}save()})});
 $("scClr").addEventListener("click",function(){S.sc=null;S.scSent=false;$("scMsg").textContent="";$("ckSC").textContent="";$("scSub").textContent="Submit our canvas";drawSC()});
 window.addEventListener("resize",function(){if(!$("pSC").classList.contains("hidden"))scChart()});
 var scTimer=null,scRows=[];
@@ -1058,19 +1060,20 @@ function renderGal(rows){$("scGal").innerHTML=rows.length?galHTML(rows,String(sc
 $("scRef").addEventListener("click",loadSC);
 $("scSub").addEventListener("click",function(){
   var D=sc(),err="",R=D.rows.filter(function(r){return r.f.trim()});
-  D.team=$("scTeam").value.trim();
-  if(!D.team)err="Enter your team name.";
+  D.team=$("scTeam").value.trim();D.seg=$("scSeg").value.trim();
+  if(!D.team)err="Enter the company name.";
+  else if(!D.seg)err="Enter the segment.";
   else if(R.length<4)err="Keep at least four named factors.";
-  else if(R.some(function(r){return nv(r.fut)===null||(!r.nw&&(nv(r.ind)===null||nv(r.now)===null))}))err="Score every factor: industry average, DCI today and DCI future (0 to 10).";
+  else if(R.some(function(r){return nv(r.fut)===null||(!r.nw&&(nv(r.ind)===null||nv(r.now)===null))}))err="Score every factor: industry average, today and future (0 to 10).";
   $("scErr").textContent=err;$("scErr").classList.toggle("hidden",!err);if(err)return;
   $("scSub").disabled=true;$("scMsg").textContent="Submitting…";
-  var data={seg:D.seg,tag:D.tag||"",rows:R};
+  var data={co:D.team,seg:D.seg,tag:D.tag||"",rows:R};
   var g={E:[],R:[],U:[],C:[]};R.forEach(function(r){var k=errcOf(r);if(g[k])g[k].push(r.f)});
-  var body={_subject:"Activity B Strategy Canvas – "+D.team+" ("+S.company+", "+D.seg+")",_template:"table",_captcha:"false",Company:S.company,Team:D.team,Segment:D.seg,Tagline:D.tag||"-",Submitted:stamp()};
-  R.forEach(function(r,i){body["F"+(i+1)+". "+r.f]=(r.nw?"NEW":"Industry "+r.ind+" | DCI today "+r.now)+" | DCI future "+r.fut+" → "+errcLab(errcOf(r))});
+  var body={_subject:"Activity B Strategy Canvas – "+D.team+", "+D.seg+(S.team?" ("+S.team+")":""),_template:"table",_captcha:"false","Participant company":S.company,"Name / table":S.team||"-","Company analysed":D.team,Segment:D.seg,Tagline:D.tag||"-",Submitted:stamp()};
+  R.forEach(function(r,i){body["F"+(i+1)+". "+r.f]=(r.nw?"NEW":"Industry "+r.ind+" | Today "+r.now)+" | Future "+r.fut+" → "+errcLab(errcOf(r))});
   ["E","R","U","C"].forEach(function(k){body[ERRC[k].h]=g[k].join(", ")||"-"});
   var mail=fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)}).then(function(r){return r.json()});
-  var post=BOARD_URL?fetch(BOARD_URL,{method:"POST",body:JSON.stringify({session:SESSION,activity:"CANVAS",company:S.company,team:D.team,data:data,
+  var post=BOARD_URL?fetch(BOARD_URL,{method:"POST",body:JSON.stringify({session:SESSION,activity:"CANVAS",company:S.company,team:D.team+(S.team?" ("+S.team+")":""),data:data,
     summary:D.seg+" | E: "+g.E.join(", ")+" | R: "+g.R.join(", ")+" | Raise: "+g.U.join(", ")+" | C: "+g.C.join(", ")})}).then(function(r){return r.json()}).catch(function(){return null}):Promise.resolve(null);
   Promise.all([mail.catch(function(){return null}),post]).then(function(o){
     var ok=o[0]&&(o[0].success===true||o[0].success==="true");$("scSub").disabled=false;
@@ -1078,12 +1081,12 @@ $("scSub").addEventListener("click",function(){
     else $("scMsg").textContent="Sending failed (you may be offline). Try again, or export the PDF.";
   });
 });
-function scReportHTML(D,R){return '<div class="avoid"><h2>Strategy canvas</h2><svg viewBox="0 0 700 300" style="width:100%;height:280px">'+scChartSVG(D,700,300,false)+'</svg><div class="legend"><span><i style="background:#9a9a9a"></i>Industry average</span><span><i style="background:#343432"></i>DCI today</span><span><i style="background:#c9a800"></i>DCI future</span></div></div>'+
-  '<h2>Scores</h2><table><thead><tr><th>Factor</th><th>Industry</th><th>DCI today</th><th>DCI future</th><th>ERRC</th></tr></thead><tbody>'+R.map(function(r){return '<tr><td>'+esc(r.f)+'</td><td>'+(r.nw?"new":nv(r.ind))+'</td><td>'+(r.nw?"new":nv(r.now))+'</td><td>'+(nv(r.fut)===null?"–":nv(r.fut))+'</td><td>'+errcLab(errcOf(r))+'</td></tr>'}).join("")+'</tbody></table>'+
+function scReportHTML(D,R){return '<div class="avoid"><h2>Strategy canvas</h2><svg viewBox="0 0 700 300" style="width:100%;height:280px">'+scChartSVG(D,700,300,false)+'</svg><div class="legend">'+scLeg({team:D.co||D.team})+'</div></div>'+
+  '<h2>Scores</h2><table><thead><tr><th>Factor</th><th>Industry</th><th>Today</th><th>Future</th><th>ERRC</th></tr></thead><tbody>'+R.map(function(r){return '<tr><td>'+esc(r.f)+'</td><td>'+(r.nw?"new":nv(r.ind))+'</td><td>'+(r.nw?"new":nv(r.now))+'</td><td>'+(nv(r.fut)===null?"–":nv(r.fut))+'</td><td>'+errcLab(errcOf(r))+'</td></tr>'}).join("")+'</tbody></table>'+
   '<div class="avoid"><h2>ERRC grid</h2>'+errcHTML(D).replace(/class="eg"/,'style="display:grid;grid-template-columns:1fr 1fr;gap:6px"').replace(/background:/g,"-webkit-print-color-adjust:exact;print-color-adjust:exact;background:")+'</div>'}
 $("scPDF").addEventListener("click",function(){
   var D=sc(),R=D.rows.filter(function(r){return r.f.trim()});
-  $("report").innerHTML='<h1>Major Activity B: Strategy Canvas and ERRC</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · Team: '+esc($("scTeam").value||"-")+' · Segment: '+esc(D.seg)+' · '+esc(stamp())+'</div>'+
+  $("report").innerHTML='<h1>Major Activity B: Strategy Canvas and ERRC</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · Company analysed: '+esc($("scTeam").value||"-")+' · Segment: '+esc(D.seg||"-")+' · '+esc(stamp())+'</div>'+
     (D.tag?'<h2>Tagline</h2><p style="font-size:15px;font-style:italic">“'+esc(D.tag)+'”</p>':'')+scReportHTML(D,R)+
     '<div class="avoid"><h2>Check of the new curve</h2><ul>'+scChecks(D).map(function(c){return '<li>'+esc(c[1])+'</li>'}).join("")+'</ul></div>';
   $("scMsg").textContent="In the print window, choose “Save as PDF”.";
