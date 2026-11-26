@@ -232,6 +232,19 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
 .q select{width:100%;max-width:360px;font:inherit;font-size:16px;padding:10px 12px;border:1px solid #bbb;border-radius:10px;background:#fff;margin-top:10px;min-height:44px}
 .q select.set{background:var(--ob);border-color:var(--dk);font-weight:600}
 .q .quote{font-style:italic}
+/* raci */
+.rk{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;margin:10px 0}
+.rk div{border-radius:10px;padding:10px 12px;font-size:14px;border:1px solid #ddd}
+.rk b{display:block;font-size:16px;margin-bottom:2px}
+.rk .l{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;font-weight:800;margin-right:6px;font-size:16px}
+.rc-R{background:#d9ead3}.rc-A{background:#fce5cd}.rc-AR{background:#fff2cc}.rc-C{background:#cfe2f3}.rc-I{background:#eeeeee}
+.rt{overflow-x:auto;margin-top:10px}
+.rt table{border-collapse:collapse;width:100%;min-width:760px}
+.rt th,.rt td{border:1px solid var(--line);padding:6px;text-align:center;vertical-align:middle}
+.rt th{background:var(--dk);color:#fff;font-size:13px;line-height:1.25}
+.rt td:first-child{text-align:left;font-weight:600;font-size:14px;width:22%}
+.rt select{font:inherit;font-size:15px;font-weight:700;padding:7px 4px;border:1px solid #bbb;border-radius:8px;min-width:62px;min-height:40px;background:#fff}
+.rt td.chk2{font-size:13px;text-align:left;width:18%}
 /* vision match */
 .vmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
 .vmt{border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;flex-direction:column;overflow:hidden}
@@ -280,6 +293,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <button class="tab" role="tab" id="tSC" type="button">B. Strategy Canvas<span class="ck" id="ckSC"></span></button>
     <button class="tab" role="tab" id="t32" type="button">3.2 Spot the Trap<span class="ck" id="ck32"></span></button>
     <button class="tab" role="tab" id="tPC" type="button">C. Prioritization<span class="ck" id="ckPC"></span></button>
+    <button class="tab" role="tab" id="tRA" type="button">4.4 RACI Builder<span class="ck" id="ckRA"></span></button>
     <button class="tab" role="tab" id="tSL" type="button">Sensitivity Lab</button>
   </div>
 
@@ -562,6 +576,31 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <div id="r32" class="hidden"></div>
   </div>
 
+  <div id="pRA" class="card hidden" role="tabpanel">
+    <div id="bRA">
+      <h2>Activity 4.4: RACI Builder</h2>
+      <p class="lead">Clarify who owns what in DCI's medical pre-approval automation. For each activity, choose a letter for each role. Rule of thumb: exactly one A and at least one R in every row.</p>
+      <div class="who wh"></div>
+      <div class="rk">
+        <div class="rc-R"><b><span class="l" style="background:#fff">R</span>Responsible</b>Does the work. The person or team that carries out the task. There can be more than one R.</div>
+        <div class="rc-A"><b><span class="l" style="background:#fff">A</span>Accountable</b>Owns the result and signs it off. The one person who answers for it if it fails. Only one A per activity.</div>
+        <div class="rc-C"><b><span class="l" style="background:#fff">C</span>Consulted</b>Gives input before the work is done or a decision is made. Two-way communication.</div>
+        <div class="rc-I"><b><span class="l" style="background:#fff">I</span>Informed</b>Kept up to date on progress or decisions. One-way communication; no input needed.</div>
+        <div class="rc-AR"><b><span class="l" style="background:#fff;font-size:12px">A/R</span>Accountable and responsible</b>The same person owns the result and also does the work.</div>
+      </div>
+      <div class="rt"><table id="raT"></table></div>
+      <p class="note">Leave a cell blank if the role has no part in that activity.</p>
+      <label for="raNote">Where did you disagree as a pair, and how did you decide? (optional)</label>
+      <input type="text" id="raNote" maxlength="200">
+      <div id="raErr" class="err hidden"></div>
+      <div class="row">
+        <button class="btn y" id="raSub" type="button">Submit our RACI</button>
+        <button class="btn sec" id="raClr" type="button">Clear all</button>
+      </div>
+    </div>
+    <div id="rRA" class="hidden"></div>
+  </div>
+
   <div id="pPC" class="card hidden" role="tabpanel">
     <h2>Major Activity C: Prioritization Challenge (your company)</h2>
     <p class="lead">Suggest the initiatives your company could invest in, score each one against the criteria using the key below, then choose what to fund within the budget. The app calculates the weighted scores, ranks them and checks your choices.</p>
@@ -681,7 +720,7 @@ function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",ti
 
 var IDS=["11","14","16","17","21","32"];
 function showTab(a){
-  if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&a!=="aSC"&&a!=="aPC"&&a!=="aMC"&&IDS.indexOf(a.slice(1))<0)a="a11";
+  if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&a!=="aSC"&&a!=="aPC"&&a!=="aMC"&&a!=="aRA"&&IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
   IDS.forEach(function(id){$("t"+id).setAttribute("aria-selected",a==="a"+id);$("p"+id).classList.toggle("hidden",a!=="a"+id);$("ck"+id).textContent=S["r"+id]?" \u2713":""});
   var sl=a==="aSL";$("tSL").setAttribute("aria-selected",sl);$("pSL").classList.toggle("hidden",!sl);
@@ -690,16 +729,18 @@ function showTab(a){
   if(!sw)stopSW();
   var scv=a==="aSC";$("tSC").setAttribute("aria-selected",scv);$("pSC").classList.toggle("hidden",!scv);$("ckSC").textContent=S.scSent?" \u2713":"";
   if(!scv)stopSC();
+  var rav=a==="aRA";$("tRA").setAttribute("aria-selected",rav);$("pRA").classList.toggle("hidden",!rav);$("ckRA").textContent=S.rRA?" \u2713":"";
   var mcv=a==="aMC";$("tMC").setAttribute("aria-selected",mcv);$("pMC").classList.toggle("hidden",!mcv);$("ckMC").textContent=S.rMC?" \u2713":"";
   var pcv=a==="aPC";$("tPC").setAttribute("aria-selected",pcv);$("pPC").classList.toggle("hidden",!pcv);$("ckPC").textContent=S.pcSent?" \u2713":"";
   if(!pcv)stopPC();
-  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,a32:draw32,aSC:drawSC,aMC:drawMC,aPC:drawPC,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
+  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,a32:draw32,aSC:drawSC,aMC:drawMC,aRA:drawRA,aPC:drawPC,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
 }
 $("tSL").addEventListener("click",function(){showTab("aSL")});
 $("tSW").addEventListener("click",function(){showTab("aSW")});
 $("tVY").addEventListener("click",function(){showTab("aVY")});
 $("tSC").addEventListener("click",function(){showTab("aSC")});
 $("tMC").addEventListener("click",function(){showTab("aMC")});
+$("tRA").addEventListener("click",function(){showTab("aRA")});
 $("tPC").addEventListener("click",function(){showTab("aPC")});
 IDS.forEach(function(id){$("t"+id).addEventListener("click",function(){showTab("a"+id)})});
 function nextBtn(id){
@@ -1294,6 +1335,69 @@ $("sub32").addEventListener("click",function(){
   S.r32={ans:A32.map(function(it,i){return A[i]}),score:sc,at:stamp(),sent:false};save();showTab("a32");send("32");
 });
 
+/* ---------- 4.4 RACI Builder (no score) ---------- */
+var RAR=["CEO","Head of Medical","CIO","CFO","Claims team","HR"];
+var RAA=["Approve business case","Design approval rules","Build system workflow","Train claims staff","Launch to corporate clients","Track KPIs"];
+var RAV=["","R","A","A/R","C","I"];
+function ra(){if(!S.ra)S.ra={g:RAA.map(function(){return RAR.map(function(){return ""})}),note:""};return S.ra}
+function raRow(row){var a=0,r=0;row.forEach(function(v){if(v==="A"||v==="A/R")a++;if(v==="R"||v==="A/R")r++});
+  if(!row.some(Boolean))return ["","Not started"];
+  if(a===0)return ["warn","No A: who owns the result?"];
+  if(a>1)return ["warn",a+" A’s: only one person can be accountable"];
+  if(r===0)return ["warn","No R: who does the work?"];
+  return ["ok","✔ One A, "+r+" R"]}
+function raCls(v){return v?"rc-"+v.replace("/",""):""}
+function drawRA(){
+  if(S.rRA){$("bRA").classList.add("hidden");$("rRA").classList.remove("hidden");reportRA();return}
+  $("bRA").classList.remove("hidden");$("rRA").classList.add("hidden");
+  var G=ra().g;$("raNote").value=ra().note||"";
+  $("raT").innerHTML='<thead><tr><th>Activity</th>'+RAR.map(function(r){return '<th>'+r+'</th>'}).join("")+'<th>Check</th></tr></thead><tbody>'+
+    RAA.map(function(act,i){var c=raRow(G[i]);return '<tr><td>'+act+'</td>'+RAR.map(function(role,j){var v=G[i][j];return '<td class="'+raCls(v)+'"><select data-i="'+i+'" data-j="'+j+'" aria-label="'+act+', '+role+'">'+RAV.map(function(o){return '<option value="'+o+'"'+(o===v?' selected':'')+'>'+(o||"–")+'</option>'}).join("")+'</select></td>'}).join("")+
+      '<td class="chk2 '+(c[0]==="ok"?"up":c[0]==="warn"?"dn":"")+'" id="rac'+i+'">'+c[1]+'</td></tr>'}).join("")+'</tbody>';
+  save();
+}
+$("raT").addEventListener("change",function(e){var t=e.target;if(t.dataset.i==null)return;ra().g[+t.dataset.i][+t.dataset.j]=t.value;drawRA()});
+$("raNote").addEventListener("input",function(){ra().note=$("raNote").value;save()});
+$("raClr").addEventListener("click",function(){S.ra=null;drawRA()});
+$("raSub").addEventListener("click",function(){
+  var R=ra(),empty=R.g.filter(function(row){return !row.some(Boolean)}).length;
+  if(empty){$("raErr").textContent="Complete every row ("+empty+" still empty).";$("raErr").classList.remove("hidden");return}
+  $("raErr").classList.add("hidden");
+  S.rRA={g:R.g.map(function(r){return r.slice()}),note:(R.note||"").trim(),at:stamp(),sent:false};save();showTab("aRA");sendRA();
+});
+function raTable(g,print){return '<table'+(print?'':' style="min-width:700px"')+'><thead><tr><th>Activity</th>'+RAR.map(function(r){return '<th>'+r+'</th>'}).join("")+'<th>Check</th></tr></thead><tbody>'+
+  RAA.map(function(act,i){var c=raRow(g[i]);return '<tr><td style="text-align:left">'+act+'</td>'+g[i].map(function(v){return '<td class="'+raCls(v)+'" style="font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact">'+(v||"")+'</td>'}).join("")+'<td style="text-align:left;font-size:'+(print?10:13)+'px">'+c[1]+'</td></tr>'}).join("")+'</tbody></table>'}
+function reportRA(){var r=S.rRA,ok=r.g.filter(function(row){return raRow(row)[0]==="ok"}).length;
+  $("rRA").innerHTML='<h2>Activity 4.4 RACI Builder: your RACI</h2><div class="who">'+esc(who())+' · '+esc(r.at)+'</div>'+
+    '<div class="status" id="stRA"></div>'+
+    '<div class="rt">'+raTable(r.g,false)+'</div>'+
+    '<p class="note">'+(ok===RAA.length?"Every row has exactly one A and at least one R.":ok+" of "+RAA.length+" rows meet the rule of one A and at least one R. Discuss the others with your facilitator.")+'</p>'+
+    (r.note?'<p class="note">Your note: '+esc(r.note)+'</p>':'')+
+    '<div class="row"><button class="btn y" type="button" id="pdfRA">Export our RACI (PDF)</button><span class="note" id="pdfmRA"></span></div>'+
+    '<div class="row"><button class="btn sec" type="button" id="raAgain">Edit our RACI</button></div>';
+  $("pdfRA").onclick=pdfRA;$("raAgain").onclick=function(){S.ra={g:r.g.map(function(x){return x.slice()}),note:r.note};S.rRA=null;save();drawRA()};
+  statusRA()}
+var raState="idle";
+function statusRA(){var el=$("stRA"),r=S.rRA;if(!el||!r)return;el.className="status";
+  if(r.sent||raState==="ok"){el.classList.add("good");el.textContent="✔ Your RACI has been sent to the trainer.";return}
+  if(raState==="sending"){el.textContent="Sending your RACI to the trainer…";return}
+  if(raState==="fail"){el.classList.add("warn");el.innerHTML='Automatic sending failed (you may be offline). <div class="b"><button class="btn" type="button" id="rtRA">Retry</button></div>';$("rtRA").onclick=sendRA;return}
+  el.textContent=""}
+function sendRA(){var r=S.rRA;if(!r||r.sent)return;raState="sending";statusRA();
+  var body={_subject:"Activity 4.4 RACI – "+S.company+(S.team?" ("+S.team+")":""),_template:"table",_captcha:"false",Company:S.company,"Name / pair":S.team||"-",Submitted:r.at};
+  RAA.forEach(function(act,i){body[act]=RAR.map(function(role,j){return r.g[i][j]?role+": "+r.g[i][j]:""}).filter(Boolean).join(" | ")+" ("+raRow(r.g[i])[1].replace("✔ ","")+")"});
+  body.Note=r.note||"-";
+  fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)})
+   .then(function(res){return res.json()}).then(function(j){if(j.success===true||j.success==="true"){r.sent=true;raState="ok";save()}else raState="fail";statusRA()})
+   .catch(function(){raState="fail";statusRA()})}
+function pdfRA(){var r=S.rRA;
+  $("report").innerHTML='<h1>Activity 4.4 RACI Builder</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · '+esc(r.at)+'</div>'+
+    '<h2>Medical pre-approval automation</h2>'+raTable(r.g,true)+
+    '<h2>Key</h2><ul><li><b>R Responsible:</b> does the work.</li><li><b>A Accountable:</b> owns the result and signs it off; only one per activity.</li><li><b>C Consulted:</b> gives input before the work or decision (two-way).</li><li><b>I Informed:</b> kept up to date (one-way).</li><li><b>A/R:</b> the same person is accountable and responsible.</li></ul>'+
+    (r.note?'<p>Our note: '+esc(r.note)+'</p>':'');
+  $("pdfmRA").textContent="In the print window, choose “Save as PDF”.";
+  try{window.print()}catch(e){$("pdfmRA").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}}
+
 /* ---------- 2.1 Whose vision? ---------- */
 var A21=[
  {t:"IKEA",sec:"Home furnishing · Sweden",s:"To create a better everyday life for the many people.",ty:"Vision",x:"IKEA's vision. “The many people” drives its business idea: well-designed products at prices most people can afford."},
@@ -1680,12 +1784,13 @@ function enter(){
   showTab(S.tab||"a11");
   IDS.forEach(function(id){var r=S["r"+id];if(r&&!r.sent)send(id)});
   if(S.rMC&&!S.rMC.sent)sendMC();
+  if(S.rRA&&!S.rRA.sent)sendRA();
 }
 $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=/^#a(11|14|16|17|21|32|SL|SW|VY|SC|PC|MC)$/.test(location.hash)?location.hash.slice(1):null;
+var hashTab=/^#a(11|14|16|17|21|32|SL|SW|VY|SC|PC|MC|RA)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
