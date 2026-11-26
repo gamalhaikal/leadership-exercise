@@ -246,6 +246,31 @@ textarea{width:100%;font:inherit;font-size:16px;padding:10px 12px;border:1px sol
 .rt select{font:inherit;font-size:15px;font-weight:700;padding:7px 4px;border:1px solid #bbb;border-radius:8px;min-width:62px;min-height:40px;background:#fff}
 .rt td:first-child input{width:100%;font:inherit;font-size:14px;font-weight:600;padding:8px;border:1px solid #bbb;border-radius:8px}
 .rt td.chk2{font-size:13px;text-align:left;width:18%}
+/* portfolio game */
+.pfm{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:12px 0}
+.pfm>div{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.pfm b{display:block;font-size:22px}.pfm b small{font-size:13px;color:var(--muted);font-weight:400}
+.pfm span{font-size:13px;color:var(--muted)}
+.pfm .bar{height:8px;background:#e4e4e4;border-radius:5px;overflow:hidden;margin-top:6px}.pfm .bar i{display:block;height:100%;background:var(--ok)}
+.pfm>.over{border-color:var(--bad);background:#fdecea}.pfm .over .bar i{background:var(--bad)}
+.pfl{display:grid;gap:10px;margin-top:10px}
+.pfr{display:grid;grid-template-columns:170px 1fr;gap:10px;align-items:stretch}
+@media(max-width:640px){.pfr{grid-template-columns:1fr}}
+.pfr .ln{border-radius:12px;padding:10px 12px;color:#fff;display:flex;flex-direction:column;justify-content:center}
+.pfr .ln b{font-size:16px}.pfr .ln small{font-size:12px;opacity:.9}
+.pfr .slot{border:2px dashed #c8c8c8;border-radius:12px;min-height:92px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:13px;padding:6px;background:#fafafa}
+.pfr.over .slot{border-color:var(--o);background:var(--ob)}
+.pfr .slot .pfc{width:100%;max-width:none}
+.pfpool{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px;margin-top:10px;padding:12px;border:2px dashed #c8c8c8;border-radius:12px;background:#fafafa;min-height:70px}
+.pfc{background:#fff;border:1px solid #cfcfcf;border-radius:12px;overflow:hidden;cursor:grab;box-shadow:0 1px 3px rgba(0,0,0,.08);touch-action:none;user-select:none;text-align:left}
+.pfc.sel{outline:3px solid var(--o)}.pfc.drag{opacity:.4}
+.pfc .h{padding:6px 10px;color:#fff;font-size:12px;font-weight:700;display:flex;justify-content:space-between}
+.pfc .t{padding:6px 10px 2px;font-weight:700;font-size:14px;line-height:1.25;min-height:36px}
+.pfc table{width:100%;border-collapse:collapse;font-size:12.5px;margin:2px 0 6px}
+.pfc td{padding:2px 10px}.pfc td:last-child{text-align:right;font-weight:700}
+.pfc .neg{color:var(--bad)}.pfc .pos{color:var(--ok)}
+.pfc .dots{letter-spacing:2px;color:#b45f06}
+.slot .pfc table,.slot .pfc tbody{display:flex;flex-wrap:wrap;gap:2px 0}.slot .pfc tr{display:flex;gap:6px;margin-right:14px}.slot .pfc td{padding:2px 0 2px 10px}.slot .pfc .t{min-height:0}
 /* vision match */
 .vmg{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;margin-top:12px}
 .vmt{border:1px solid var(--line);border-radius:14px;background:#fff;display:flex;flex-direction:column;overflow:hidden}
@@ -292,6 +317,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <button class="tab" role="tab" id="t21" type="button">2.1 Warm-up: Whose Vision?<span class="ck" id="ck21"></span></button>
     <button class="tab" role="tab" id="tMC" type="button">2.1 Mission Check<span class="ck" id="ckMC"></span></button>
     <button class="tab" role="tab" id="tSC" type="button">B. Strategy Canvas<span class="ck" id="ckSC"></span></button>
+    <button class="tab" role="tab" id="tPF" type="button">Portfolio Game<span class="ck" id="ckPF"></span></button>
     <button class="tab" role="tab" id="t32" type="button">3.2 Spot the Trap<span class="ck" id="ck32"></span></button>
     <button class="tab" role="tab" id="tPC" type="button">C. Prioritization<span class="ck" id="ckPC"></span></button>
     <button class="tab" role="tab" id="tRA" type="button">4.4 RACI Builder<span class="ck" id="ckRA"></span></button>
@@ -551,6 +577,30 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
     <div class="gal" id="scGal"></div>
   </div>
 
+  <div id="pPF" class="card hidden" role="tabpanel">
+    <h2>Portfolio Game: Where Should DCI Play?</h2>
+    <p class="lead">DCI's board asks you to reshape its portfolio. For each of the five lines of business, choose one card: shrink, hold or grow. Build the most profitable portfolio that stays within the board's three limits.</p>
+    <div class="who wh"></div>
+    <div class="defs" style="margin-top:4px">
+      <div><b>Limit 1: Capital</b>No more than EGP 600m of capital tied up</div>
+      <div><b>Limit 2: Risk appetite</b>No more than 10 risk points (volatility and catastrophe exposure)</div>
+      <div><b>Limit 3: Size</b>Total premium of at least EGP 3,300m (no shrinking overall)</div>
+      <div><b>Goal</b>The highest underwriting result (premium × (1 − combined ratio))</div>
+    </div>
+    <div class="pfm" id="pfM"></div>
+    <p class="tap">Drag a card onto its line. On a phone or tablet: tap a card, then tap its line. A new card on a line swaps the old one back; tap a placed card to remove it.</p>
+    <div class="pfl" id="pfL"></div>
+    <h3>Cards</h3>
+    <div class="pfpool" id="pfP"></div>
+    <div id="pfMsg" class="status" style="margin-top:12px"></div>
+    <div class="row">
+      <button class="btn y" id="pfSub" type="button" disabled>Submit our portfolio</button>
+      <button class="btn sec" id="pfPDF" type="button">Export report (PDF)</button>
+      <button class="btn sec" id="pfRst" type="button">Start again</button>
+      <span class="note" id="pfN"></span>
+    </div>
+  </div>
+
   <div id="p32" class="card hidden" role="tabpanel">
     <div id="b32">
       <h2>Activity 3.2: Spot the Trap</h2>
@@ -724,7 +774,7 @@ function stamp(){return new Date().toLocaleString("en-GB",{dateStyle:"medium",ti
 
 var IDS=["11","14","16","17","21","32"];
 function showTab(a){
-  if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&a!=="aSC"&&a!=="aPC"&&a!=="aMC"&&a!=="aRA"&&IDS.indexOf(a.slice(1))<0)a="a11";
+  if(a!=="aSL"&&a!=="aSW"&&a!=="aVY"&&a!=="aSC"&&a!=="aPC"&&a!=="aMC"&&a!=="aRA"&&a!=="aPF"&&IDS.indexOf(a.slice(1))<0)a="a11";
   S.tab=a;save();
   IDS.forEach(function(id){$("t"+id).setAttribute("aria-selected",a==="a"+id);$("p"+id).classList.toggle("hidden",a!=="a"+id);$("ck"+id).textContent=S["r"+id]?" \u2713":""});
   var sl=a==="aSL";$("tSL").setAttribute("aria-selected",sl);$("pSL").classList.toggle("hidden",!sl);
@@ -733,11 +783,12 @@ function showTab(a){
   if(!sw)stopSW();
   var scv=a==="aSC";$("tSC").setAttribute("aria-selected",scv);$("pSC").classList.toggle("hidden",!scv);$("ckSC").textContent=S.scSent?" \u2713":"";
   if(!scv)stopSC();
+  var pfv=a==="aPF";$("tPF").setAttribute("aria-selected",pfv);$("pPF").classList.toggle("hidden",!pfv);$("ckPF").textContent=S.pfDone?" \u2713":"";
   var rav=a==="aRA";$("tRA").setAttribute("aria-selected",rav);$("pRA").classList.toggle("hidden",!rav);$("ckRA").textContent=S.rRA?" \u2713":"";
   var mcv=a==="aMC";$("tMC").setAttribute("aria-selected",mcv);$("pMC").classList.toggle("hidden",!mcv);$("ckMC").textContent=S.rMC?" \u2713":"";
   var pcv=a==="aPC";$("tPC").setAttribute("aria-selected",pcv);$("pPC").classList.toggle("hidden",!pcv);$("ckPC").textContent=S.pcSent?" \u2713":"";
   if(!pcv)stopPC();
-  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,a32:draw32,aSC:drawSC,aMC:drawMC,aRA:drawRA,aPC:drawPC,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
+  ({a11:draw11,a14:draw14,a16:draw16,a17:draw17,a21:draw21,a32:draw32,aSC:drawSC,aMC:drawMC,aRA:drawRA,aPF:drawPF,aPC:drawPC,aSL:drawSL,aSW:drawSW,aVY:drawVY})[a]();
 }
 $("tSL").addEventListener("click",function(){showTab("aSL")});
 $("tSW").addEventListener("click",function(){showTab("aSW")});
@@ -745,6 +796,7 @@ $("tVY").addEventListener("click",function(){showTab("aVY")});
 $("tSC").addEventListener("click",function(){showTab("aSC")});
 $("tMC").addEventListener("click",function(){showTab("aMC")});
 $("tRA").addEventListener("click",function(){showTab("aRA")});
+$("tPF").addEventListener("click",function(){showTab("aPF")});
 $("tPC").addEventListener("click",function(){showTab("aPC")});
 IDS.forEach(function(id){$("t"+id).addEventListener("click",function(){showTab("a"+id)})});
 function nextBtn(id){
@@ -1415,6 +1467,100 @@ function pdfRA(r,draft){var ok=r.g.filter(function(row){return raRow(row)[0]==="
   var m=$("pdfmRA");if(m)m.textContent="In the print window, choose \u201cSave as PDF\u201d.";
   try{window.print()}catch(e){if(m)m.textContent="Printing is blocked here. Open the online link in Chrome or Edge."}}
 
+/* ---------- Portfolio Game (Projecto style) ---------- */
+var PFLIM={cap:600,risk:10,gwp:3300};
+var PFL=[
+ {n:"Motor",c:"#3d6fb6",now:"GWP 1,150 · CR 108%",o:[
+   {k:"Shrink",t:"Exit price-led retail motor, keep fleet",g:600,cr:98,cap:90,r:1},
+   {k:"Hold",t:"Keep the current motor book",g:1150,cr:108,cap:170,r:2},
+   {k:"Grow",t:"Cut prices to win back volume",g:1500,cr:115,cap:230,r:3}]},
+ {n:"Medical",c:"#2e8b6e",now:"GWP 980 · CR 110%",o:[
+   {k:"Shrink",t:"Reprice and drop loss-making schemes",g:750,cr:99,cap:90,r:1},
+   {k:"Hold",t:"Keep the current medical book",g:980,cr:110,cap:120,r:2},
+   {k:"Grow",t:"Automate pre-approvals and grow corporate medical",g:1200,cr:97,cap:150,r:2}]},
+ {n:"Property & Engineering",c:"#b45f06",now:"GWP 720 · CR 79%",o:[
+   {k:"Shrink",t:"Reduce large-risk exposure",g:500,cr:79,cap:120,r:2},
+   {k:"Hold",t:"Keep the current P&E book",g:720,cr:79,cap:175,r:3},
+   {k:"Grow",t:"Grow specialist large risks",g:950,cr:82,cap:230,r:4}]},
+ {n:"Marine",c:"#1f7a99",now:"GWP 260 · CR 87%",o:[
+   {k:"Shrink",t:"Write cargo only",g:150,cr:87,cap:30,r:1},
+   {k:"Hold",t:"Keep the current marine book",g:260,cr:87,cap:50,r:1},
+   {k:"Grow",t:"Expand hull and cargo",g:380,cr:90,cap:75,r:2}]},
+ {n:"Liability & Other",c:"#7a4fa3",now:"GWP 190 · CR 76%",o:[
+   {k:"Shrink",t:"Narrow to core liability",g:120,cr:76,cap:25,r:1},
+   {k:"Hold",t:"Keep the current liability book",g:190,cr:76,cap:40,r:1},
+   {k:"Grow",t:"Launch cyber and professional indemnity",g:330,cr:80,cap:70,r:2}]}
+];
+var PFORD=[[2,1],[0,2],[4,0],[1,0],[3,2],[0,0],[2,2],[1,2],[4,1],[3,0],[0,1],[2,0],[4,2],[1,1],[3,1]];
+function pfRes(o){return o.g*(100-o.cr)/100}
+function pfFmt(v){var r=Math.round(v*10)/10;return (r<0?"−":"")+Math.abs(r).toLocaleString("en-US")}
+var PFBEST=(function(){var best=null;(function go(i,acc){if(i===PFL.length){var t=pfTot(acc);if(t.cap<=PFLIM.cap&&t.risk<=PFLIM.risk&&t.gwp>=PFLIM.gwp&&(!best||t.res>best.res))best={res:t.res,pick:acc.slice()};return}for(var k=0;k<3;k++){acc.push(k);go(i+1,acc);acc.pop()}})(0,[]);return best})();
+function pfTot(pick){var t={gwp:0,cap:0,risk:0,res:0,n:0};pick.forEach(function(k,i){if(k==null)return;var o=PFL[i].o[k];t.gwp+=o.g;t.cap+=o.cap;t.risk+=o.r;t.res+=pfRes(o);t.n++});return t}
+var pfSel=null;
+function pf(){if(!S.pf)S.pf={pick:[null,null,null,null,null],tries:0};return S.pf}
+function pfCard(li,k){var L=PFL[li],o=L.o[k],res=pfRes(o);
+  return '<div class="pfc'+(pfSel&&pfSel[0]===li&&pfSel[1]===k?" sel":"")+'" draggable="true" tabindex="0" role="button" data-l="'+li+'" data-k="'+k+'"><div class="h" style="background:'+L.c+'"><span>'+esc(L.n)+'</span><span>'+o.k.toUpperCase()+'</span></div><div class="t">'+esc(o.t)+'</div>'+
+    '<table><tr><td>Premium (GWP)</td><td>'+o.g.toLocaleString("en-US")+'</td></tr><tr><td>Combined ratio</td><td>'+o.cr+'%</td></tr><tr><td>Underwriting result</td><td class="'+(res<0?"neg":"pos")+'">'+pfFmt(res)+'</td></tr><tr><td>Capital needed</td><td>'+o.cap+'</td></tr><tr><td>Risk points</td><td class="dots">'+"●".repeat(o.r)+'<span style="color:#ccc">'+"●".repeat(Math.max(0,4-o.r))+'</span></td></tr></table></div>'}
+function pfCheck(P){var t=pfTot(P.pick),E=[];
+  if(t.cap>PFLIM.cap)E.push("Capital EGP "+t.cap+"m is over the EGP "+PFLIM.cap+"m limit.");
+  if(t.risk>PFLIM.risk)E.push("Risk "+t.risk+" points is over the limit of "+PFLIM.risk+".");
+  if(t.n===5&&t.gwp<PFLIM.gwp)E.push("Total premium EGP "+t.gwp.toLocaleString("en-US")+"m is below the EGP 3,300m minimum.");
+  return {t:t,E:E}}
+function drawPF(){
+  var P=pf(),c=pfCheck(P),t=c.t;
+  var m=function(lbl,val,lim,unit,bad,pct,note){return '<div'+(bad?' class="over"':'')+'><span>'+lbl+'</span><b>'+val+' <small>'+lim+'</small></b><div class="bar"><i style="width:'+Math.min(100,pct)+'%"></i></div>'+(note?'<span>'+note+'</span>':'')+'</div>'};
+  $("pfM").innerHTML=m("Capital used (EGP m)",t.cap,"/ "+PFLIM.cap,"",t.cap>PFLIM.cap,t.cap/PFLIM.cap*100)+
+    m("Risk points",t.risk,"/ "+PFLIM.risk,"",t.risk>PFLIM.risk,t.risk/PFLIM.risk*100)+
+    m("Total premium (EGP m)",t.gwp.toLocaleString("en-US"),"min 3,300","",t.n===5&&t.gwp<PFLIM.gwp,t.gwp/PFLIM.gwp*100)+
+    '<div><span>Underwriting result (EGP m)</span><b class="'+(t.res<0?"dn":"up")+'">'+(t.n?pfFmt(t.res):"–")+'</b><span>Today: +41 (all lines on hold)</span></div>'+
+    '<div><span>Lines decided</span><b>'+t.n+' <small>/ 5</small></b><div class="bar"><i style="width:'+t.n/5*100+'%"></i></div></div>';
+  $("pfL").innerHTML=PFL.map(function(L,i){var k=P.pick[i];return '<div class="pfr" data-l="'+i+'"><div class="ln" style="background:'+L.c+'"><b>'+esc(L.n)+'</b><small>Today: '+L.now+'</small></div><div class="slot">'+(k!=null?pfCard(i,k):"Drop a "+esc(L.n)+" card here")+'</div></div>'}).join("");
+  $("pfP").innerHTML=PFORD.filter(function(x){return P.pick[x[0]]!==x[1]}).map(function(x){return pfCard(x[0],x[1])}).join("");
+  var msg=$("pfMsg");msg.className="status";
+  if(c.E.length){msg.classList.add("warn");msg.innerHTML=c.E.map(function(e){return "❌ "+esc(e)}).join("<br>")}
+  else if(t.n<5){msg.textContent=t.n?(5-t.n)+" line"+(5-t.n>1?"s":"")+" still to decide.":"Start: drag a card onto its line of business. You need one card for each of the five lines."}
+  else {msg.classList.add("good");msg.textContent="✔ Within all three limits. Submit when your table agrees.";}
+  $("pfSub").disabled=t.n<5;$("pfN").textContent=P.tries?"Attempts: "+P.tries:"";save();
+}
+function pfPut(li,k){var P=pf();P.pick[li]=k;pfSel=null;drawPF()}
+(function(){var root=$("pPF");
+  root.addEventListener("dragstart",function(e){var c=e.target.closest&&e.target.closest(".pfc");if(!c)return;e.stopPropagation();e.dataTransfer.setData("text/plain","pf"+c.dataset.l+","+c.dataset.k);c.classList.add("drag")});
+  root.addEventListener("dragend",function(){root.querySelectorAll(".over.pfr,.drag").forEach(function(z){z.classList.remove("over");z.classList.remove("drag")})});
+  root.addEventListener("dragover",function(e){var z=e.target.closest(".pfr,.pfpool");if(!z)return;e.preventDefault();root.querySelectorAll(".pfr.over").forEach(function(o){if(o!==z)o.classList.remove("over")});if(z.classList.contains("pfr"))z.classList.add("over")});
+  root.addEventListener("drop",function(e){var z=e.target.closest(".pfr,.pfpool");if(!z)return;e.preventDefault();e.stopPropagation();var d=e.dataTransfer.getData("text/plain");if(d.indexOf("pf")!==0)return;
+    var a=d.slice(2).split(","),li=+a[0],k=+a[1];
+    if(z.classList.contains("pfpool")){if(pf().pick[li]===k)pfPut(li,null);return}
+    var tl=+z.dataset.l;if(tl!==li){toast2("That card belongs to "+PFL[li].n+".");drawPF();return}pfPut(li,k)});
+  root.addEventListener("click",function(e){var c=e.target.closest(".pfc"),z=e.target.closest(".pfr");
+    if(c&&!c.closest(".slot")){var li=+c.dataset.l,k=+c.dataset.k;pfSel=(pfSel&&pfSel[0]===li&&pfSel[1]===k)?null:[li,k];drawPF();return}
+    if(c&&!pfSel){pfPut(+c.dataset.l,null);return}if(z&&pfSel){if(+z.dataset.l!==pfSel[0]){toast2("That card belongs to "+PFL[pfSel[0]].n+".");return}pfPut(pfSel[0],pfSel[1])}});
+  root.addEventListener("keydown",function(e){var c=e.target.closest&&e.target.closest(".pfc");if(c&&(e.key==="Enter"||e.key===" ")){e.preventDefault();var li=+c.dataset.l,k=+c.dataset.k;pfPut(li,pf().pick[li]===k?null:k)}});
+})();
+function toast2(t){var m=$("pfMsg");m.className="status warn";m.textContent=t}
+$("pfRst").addEventListener("click",function(){S.pf=null;S.pfDone=false;pfSel=null;$("ckPF").textContent="";drawPF()});
+$("pfSub").addEventListener("click",function(){
+  var P=pf(),c=pfCheck(P),t=c.t;if(t.n<5)return;P.tries++;
+  var best=!c.E.length&&Math.abs(t.res-PFBEST.res)<0.01,msg=$("pfMsg");msg.className="status";
+  if(c.E.length){msg.classList.add("warn");msg.innerHTML="❌ Not accepted: "+c.E.map(esc).join(" ")+" Review your cards and try again."}
+  else if(!best){msg.classList.add("warn");msg.innerHTML="⚠ Your portfolio is within the limits, with an underwriting result of EGP "+pfFmt(t.res)+"m. There is a more profitable combination. Review your cards and try again."}
+  else{S.pfDone=true;$("ckPF").textContent=" ✓";msg.classList.add("good");msg.innerHTML="🎉 Excellent! This is the best portfolio: underwriting result EGP "+pfFmt(t.res)+"m (today +41), capital EGP "+t.cap+"m, risk "+t.risk+" points, premium EGP "+t.gwp.toLocaleString("en-US")+"m.<br><b>The lesson:</b> stop chasing volume in loss-making motor, fix medical before growing it, and put scarce capital and risk appetite into the specialist lines where DCI is strong."}
+  $("pfN").textContent="Attempts: "+P.tries;save();
+  var body={_subject:"Portfolio Game – "+S.company+(S.team?" ("+S.team+")":"")+" – "+(best?"BEST portfolio":c.E.length?"outside limits":"valid, not best")+" (attempt "+P.tries+")",_template:"table",_captcha:"false",Company:S.company,"Name / table":S.team||"-",Attempt:P.tries,Submitted:stamp()};
+  PFL.forEach(function(L,i){var o=L.o[P.pick[i]];body[L.n]=o.k+": "+o.t});
+  body["Underwriting result"]="EGP "+pfFmt(t.res)+"m";body.Capital="EGP "+t.cap+"m / 600";body.Risk=t.risk+" / 10";body.Premium="EGP "+t.gwp+"m (min 3,300)";body.Outcome=best?"Best portfolio":c.E.length?"Outside limits: "+c.E.join(" "):"Within limits, not the best";
+  fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)}).catch(function(){});
+});
+$("pfPDF").addEventListener("click",function(){
+  var P=pf(),c=pfCheck(P),t=c.t;
+  $("report").innerHTML='<h1>Portfolio Game: Where Should DCI Play?</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · '+esc(stamp())+(P.tries?' · attempts: '+P.tries:'')+'</div>'+
+    '<h2>Our portfolio</h2><table><thead><tr><th>Line</th><th>Choice</th><th>Premium</th><th>Combined ratio</th><th>Result</th><th>Capital</th><th>Risk</th></tr></thead><tbody>'+
+    PFL.map(function(L,i){var k=P.pick[i];if(k==null)return '<tr><td>'+esc(L.n)+'</td><td colspan="6">Not decided</td></tr>';var o=L.o[k];return '<tr><td>'+esc(L.n)+'</td><td style="text-align:left">'+o.k+': '+esc(o.t)+'</td><td>'+o.g+'</td><td>'+o.cr+'%</td><td>'+pfFmt(pfRes(o))+'</td><td>'+o.cap+'</td><td>'+o.r+'</td></tr>'}).join("")+
+    '<tr><td><b>Total</b></td><td></td><td><b>'+t.gwp+'</b></td><td></td><td><b>'+pfFmt(t.res)+'</b></td><td><b>'+t.cap+'</b></td><td><b>'+t.risk+'</b></td></tr></tbody></table>'+
+    '<p>Limits: capital ≤ EGP 600m, risk ≤ 10 points, premium ≥ EGP 3,300m. Today (all lines on hold): result +41, capital 555, risk 9, premium 3,300.</p>'+
+    '<p><b>Status:</b> '+(t.n<5?"incomplete":c.E.length?esc(c.E.join(" ")):S.pfDone&&Math.abs(t.res-PFBEST.res)<0.01?"Best portfolio found.":"Within all limits.")+'</p>';
+  try{window.print()}catch(e){$("pfN").textContent="Printing is blocked here."}
+});
+
 /* ---------- 2.1 Whose vision? ---------- */
 var A21=[
  {t:"IKEA",sec:"Home furnishing · Sweden",s:"To create a better everyday life for the many people.",ty:"Vision",x:"IKEA's vision. “The many people” drives its business idea: well-designed products at prices most people can afford."},
@@ -1807,7 +1953,7 @@ $("bStart").addEventListener("click",start);
 ["co","tm"].forEach(function(id){$(id).addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();start()}})});
 
 if(location.hash==="#reset"){try{localStorage.removeItem(LS);localStorage.removeItem("sia_act11_v1")}catch(e){}history.replaceState(null,"",location.pathname)}
-var hashTab=/^#a(11|14|16|17|21|32|SL|SW|VY|SC|PC|MC|RA)$/.test(location.hash)?location.hash.slice(1):null;
+var hashTab=/^#a(11|14|16|17|21|32|SL|SW|VY|SC|PC|MC|RA|PF)$/.test(location.hash)?location.hash.slice(1):null;
 var saved=load();
 if(saved&&saved.company){S=Object.assign(S,saved);if(hashTab)S.tab=hashTab;enter()}
 else{
