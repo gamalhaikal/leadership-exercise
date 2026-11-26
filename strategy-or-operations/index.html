@@ -515,26 +515,15 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
   <div id="pMC" class="card hidden" role="tabpanel">
     <div id="bMC">
       <h2>Activity 2.1: Mission Check</h2>
-      <p class="lead">Below is the real mission statement of a company we will call <b>Company X</b>. Evaluate it as a table, guess the industry, then rewrite it in one sentence of no more than 25 words. The company is revealed when you submit.</p>
+      <p class="lead">Below is the real mission statement of a company we will call <b>Company X</b>. Evaluate it as a table against the five tests below. The company is revealed when you submit.</p>
       <div class="who wh"></div>
       <div class="mq" id="mcQ"></div>
       <div class="defs" style="margin-top:4px">
         <div><b>Vision</b>Where we are going (short, under 15 words)</div>
         <div><b>Mission</b>What we do, for whom and how, today (one sentence, up to 25 words)</div>
       </div>
-      <h3>1. Score the mission (1 = weak, 5 = strong)</h3>
+      <h3>Score the mission (1 = weak, 5 = strong)</h3>
       <div class="mt"><table id="mcT"></table></div>
-      <h3>2. Two quick judgements</h3>
-      <label>Which industry do you think Company X is in?</label>
-      <div class="opts" id="mcG" role="group" aria-label="Industry guess"></div>
-      <label style="margin-top:14px">Could a competitor use this mission unchanged?</label>
-      <div class="opts" id="mcC" role="group" aria-label="Could a competitor use it" style="grid-template-columns:repeat(2,minmax(0,1fr));max-width:360px"></div>
-      <h3>3. Rewrite it</h3>
-      <label for="mcRw">Our improved mission for Company X (one sentence, no more than 25 words)</label>
-      <textarea id="mcRw" maxlength="300"></textarea>
-      <div class="wc" id="mcWc"></div>
-      <label for="mcWhy">What did you change, and why? (optional)</label>
-      <input type="text" id="mcWhy" maxlength="160">
       <div id="mcErr" class="err hidden"></div>
       <div class="row">
         <button class="btn y" id="mcSub" type="button">Submit and reveal the company</button>
@@ -1312,7 +1301,6 @@ var MCT=[
  {t:"Why it matters",h:"Gives employees a purpose that energises them"},
  {t:"Clear and memorable",h:"One idea, easy to repeat"}
 ];
-var MCG=["Banking","Telecom","Insurance","Healthcare","Real estate","Retail","Investment","Other"];
 function mc(){if(!S.mc)S.mc={sc:[null,null,null,null,null],g:"",cp:"",rw:"",why:""};return S.mc}
 function wcount(t){return String(t||"").trim().split(/\s+/).filter(Boolean).length}
 function drawMC(){
@@ -1321,26 +1309,15 @@ function drawMC(){
   $("bMC").classList.remove("hidden");$("rMC").classList.add("hidden");
   var M=mc();
   $("mcT").innerHTML='<thead><tr><th>Test</th><th>Score</th></tr></thead><tbody>'+MCT.map(function(t,i){return '<tr><td><b>'+t.t+'</b><small>'+t.h+'</small></td><td><span class="sc5">'+[1,2,3,4,5].map(function(v){return '<button type="button" data-i="'+i+'" data-v="'+v+'" aria-pressed="'+(M.sc[i]===v)+'" aria-label="'+t.t+' '+v+'">'+v+'</button>'}).join("")+'</span></td></tr>'}).join("")+'</tbody>';
-  $("mcG").innerHTML=MCG.map(function(g){return '<button type="button" class="opt" data-g="'+g+'" aria-pressed="'+(M.g===g)+'">'+g+'</button>'}).join("");
-  $("mcC").innerHTML=["Yes","No"].map(function(g){return '<button type="button" class="opt" data-c="'+g+'" aria-pressed="'+(M.cp===g)+'">'+g+'</button>'}).join("");
-  $("mcRw").value=M.rw;$("mcWhy").value=M.why;mcWc();save();
+  save();
 }
-function mcWc(){var n=wcount(mc().rw);$("mcWc").innerHTML=n+' / 25 words'+(n>25?' <span class="dn">– too long, cut '+(n-25)+'</span>':n?' <span class="up">✔</span>':'')}
-$("mcT").addEventListener("click",function(e){var b=e.target.closest("button[data-v]");if(!b)return;mc().sc[+b.dataset.i]=+b.dataset.v;drawMC()});
-$("mcG").addEventListener("click",function(e){var b=e.target.closest("button[data-g]");if(!b)return;mc().g=b.dataset.g;drawMC()});
-$("mcC").addEventListener("click",function(e){var b=e.target.closest("button[data-c]");if(!b)return;mc().cp=b.dataset.c;drawMC()});
-$("mcRw").addEventListener("input",function(){mc().rw=$("mcRw").value;mcWc();save()});
-$("mcWhy").addEventListener("input",function(){mc().why=$("mcWhy").value;save()});
+$("mcT").addEventListener("click",function(e){var b=e.target.closest("button[data-v]");if(!b)return;mc().sc[+b.dataset.i]=+b.dataset.v;if(!mc().sc.some(function(v){return v===null}))$("mcErr").classList.add("hidden");drawMC()});
 $("mcRst").addEventListener("click",function(){S.mc=null;drawMC()});
 $("mcSub").addEventListener("click",function(){
   var M=mc(),err="";
   if(M.sc.some(function(v){return v===null}))err="Score all five tests.";
-  else if(!M.g)err="Guess the industry.";
-  else if(!M.cp)err="Answer whether a competitor could use it unchanged.";
-  else if(wcount(M.rw)<5)err="Write your improved mission.";
-  else if(wcount(M.rw)>25)err="Your mission is "+wcount(M.rw)+" words. Cut it to 25 or fewer.";
   $("mcErr").textContent=err;$("mcErr").classList.toggle("hidden",!err);if(err)return;
-  S.rMC={sc:M.sc.slice(),g:M.g,cp:M.cp,rw:M.rw.trim(),why:M.why.trim(),at:stamp(),sent:false};save();showTab("aMC");sendMC();
+  S.rMC={sc:M.sc.slice(),at:stamp(),sent:false};save();showTab("aMC");sendMC();
 });
 function mcAvg(a){return a.reduce(function(x,y){return x+y},0)/a.length}
 function reportMC(){
@@ -1364,7 +1341,7 @@ function statusMC(){var el=$("stMC"),r=S.rMC;if(!el||!r)return;el.className="sta
 function sendMC(){var r=S.rMC;if(!r||r.sent)return;mcState="sending";statusMC();
   var body={_subject:"Activity 2.1 Mission Check – "+S.company+(S.team?" ("+S.team+")":""),_template:"table",_captcha:"false",Company:S.company,"Name / table":S.team||"-",Submitted:r.at};
   MCT.forEach(function(t,i){body[t.t]=r.sc[i]});
-  body["Industry guess"]=r.g;body["Competitor could use it?"]=r.cp;body["Rewrite ("+wcount(r.rw)+" words)"]=r.rw;body["What changed"]=r.why||"-";
+  body["Average score"]=(r.sc.reduce(function(a,b){return a+b},0)/5).toFixed(1);
   fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)})
    .then(function(res){return res.json()}).then(function(j){if(j.success===true||j.success==="true"){r.sent=true;mcState="ok";save()}else mcState="fail";statusMC()})
    .catch(function(){mcState="fail";statusMC()});
@@ -1373,8 +1350,7 @@ function pdfMC(){var r=S.rMC;
   $("report").innerHTML='<h1>Activity 2.1 Mission Check</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · '+esc(r.at)+'</div>'+
     '<h2>The mission evaluated</h2><p style="font-size:14px;font-style:italic">“'+esc(MCQ)+'”</p><p>Company: Gulf Insurance Group (GIG), parent group of GIG Egypt.</p>'+
     '<h2>Our evaluation</h2><table><thead><tr><th>Test</th><th>Our score (1–5)</th></tr></thead><tbody>'+MCT.map(function(t,i){return '<tr><td>'+t.t+'</td><td>'+r.sc[i]+'</td></tr>'}).join("")+'</tbody></table>'+
-    '<p>Our industry guess: '+esc(r.g)+'. Could a competitor use it unchanged? '+esc(r.cp)+'.</p>'+
-    '<h2>Our rewrite ('+wcount(r.rw)+' words)</h2><p style="font-size:14px;font-style:italic">“'+esc(r.rw)+'”</p>'+(r.why?'<p>What we changed: '+esc(r.why)+'</p>':'');
+    '<p>Average score: '+(r.sc.reduce(function(a,b){return a+b},0)/5).toFixed(1)+' / 5</p>';
   $("pdfmMC").textContent="In the print window, choose “Save as PDF”.";
   try{window.print()}catch(e){$("pdfmMC").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}
 }
