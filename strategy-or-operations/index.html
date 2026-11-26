@@ -515,15 +515,19 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:10px}
   <div id="pMC" class="card hidden" role="tabpanel">
     <div id="bMC">
       <h2>Activity 2.1: Mission Check</h2>
-      <p class="lead">Below is the real mission statement of a company we will call <b>Company X</b>. Evaluate it as a table against the five tests below. The company is revealed when you submit.</p>
+      <p class="lead">Below is the real mission statement of a company we will call <b>Company X</b>. Evaluate it as a table against the five tests below, then rewrite it in one sentence of no more than 25 words. The company is revealed when you submit.</p>
       <div class="who wh"></div>
       <div class="mq" id="mcQ"></div>
       <div class="defs" style="margin-top:4px">
         <div><b>Vision</b>Where we are going (short, under 15 words)</div>
         <div><b>Mission</b>What we do, for whom and how, today (one sentence, up to 25 words)</div>
       </div>
-      <h3>Score the mission (1 = weak, 5 = strong)</h3>
+      <h3>1. Score the mission (1 = weak, 5 = strong)</h3>
       <div class="mt"><table id="mcT"></table></div>
+      <h3>2. Rewrite it</h3>
+      <label for="mcRw">Our improved mission for Company X (one sentence, no more than 25 words)</label>
+      <textarea id="mcRw" maxlength="300"></textarea>
+      <div class="wc" id="mcWc"></div>
       <div id="mcErr" class="err hidden"></div>
       <div class="row">
         <button class="btn y" id="mcSub" type="button">Submit and reveal the company</button>
@@ -1301,7 +1305,8 @@ var MCT=[
  {t:"Why it matters",h:"Gives employees a purpose that energises them"},
  {t:"Clear and memorable",h:"One idea, easy to repeat"}
 ];
-function mc(){if(!S.mc)S.mc={sc:[null,null,null,null,null],g:"",cp:"",rw:"",why:""};return S.mc}
+function mc(){if(!S.mc)S.mc={sc:[null,null,null,null,null],rw:""};if(S.mc.rw==null)S.mc.rw="";return S.mc}
+function mcWc(){var n=wcount(mc().rw);$("mcWc").innerHTML=n+' / 25 words'+(n>25?' <span class="dn">\u2013 too long, cut '+(n-25)+'</span>':n?' <span class="up">\u2714</span>':'')}
 function wcount(t){return String(t||"").trim().split(/\s+/).filter(Boolean).length}
 function drawMC(){
   $("mcQ").textContent="“"+MCQ+"”";
@@ -1309,15 +1314,19 @@ function drawMC(){
   $("bMC").classList.remove("hidden");$("rMC").classList.add("hidden");
   var M=mc();
   $("mcT").innerHTML='<thead><tr><th>Test</th><th>Score</th></tr></thead><tbody>'+MCT.map(function(t,i){return '<tr><td><b>'+t.t+'</b><small>'+t.h+'</small></td><td><span class="sc5">'+[1,2,3,4,5].map(function(v){return '<button type="button" data-i="'+i+'" data-v="'+v+'" aria-pressed="'+(M.sc[i]===v)+'" aria-label="'+t.t+' '+v+'">'+v+'</button>'}).join("")+'</span></td></tr>'}).join("")+'</tbody>';
+  $("mcRw").value=mc().rw;mcWc();
   save();
 }
-$("mcT").addEventListener("click",function(e){var b=e.target.closest("button[data-v]");if(!b)return;mc().sc[+b.dataset.i]=+b.dataset.v;if(!mc().sc.some(function(v){return v===null}))$("mcErr").classList.add("hidden");drawMC()});
+$("mcT").addEventListener("click",function(e){var b=e.target.closest("button[data-v]");if(!b)return;mc().sc[+b.dataset.i]=+b.dataset.v;$("mcErr").classList.add("hidden");drawMC()});
+$("mcRw").addEventListener("input",function(){mc().rw=$("mcRw").value;mcWc();save()});
 $("mcRst").addEventListener("click",function(){S.mc=null;drawMC()});
 $("mcSub").addEventListener("click",function(){
   var M=mc(),err="";
   if(M.sc.some(function(v){return v===null}))err="Score all five tests.";
+  else if(wcount(M.rw)<5)err="Write your improved mission.";
+  else if(wcount(M.rw)>25)err="Your mission is "+wcount(M.rw)+" words. Cut it to 25 or fewer.";
   $("mcErr").textContent=err;$("mcErr").classList.toggle("hidden",!err);if(err)return;
-  S.rMC={sc:M.sc.slice(),at:stamp(),sent:false};save();showTab("aMC");sendMC();
+  S.rMC={sc:M.sc.slice(),rw:M.rw.trim(),at:stamp(),sent:false};save();showTab("aMC");sendMC();
 });
 function mcAvg(a){return a.reduce(function(x,y){return x+y},0)/a.length}
 function reportMC(){
@@ -1341,7 +1350,7 @@ function statusMC(){var el=$("stMC"),r=S.rMC;if(!el||!r)return;el.className="sta
 function sendMC(){var r=S.rMC;if(!r||r.sent)return;mcState="sending";statusMC();
   var body={_subject:"Activity 2.1 Mission Check – "+S.company+(S.team?" ("+S.team+")":""),_template:"table",_captcha:"false",Company:S.company,"Name / table":S.team||"-",Submitted:r.at};
   MCT.forEach(function(t,i){body[t.t]=r.sc[i]});
-  body["Average score"]=(r.sc.reduce(function(a,b){return a+b},0)/5).toFixed(1);
+  body["Average score"]=(r.sc.reduce(function(a,b){return a+b},0)/5).toFixed(1);body["Rewrite ("+wcount(r.rw||"")+" words)"]=r.rw||"-";
   fetch("https://formsubmit.co/ajax/"+TRAINER_EMAIL,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(body)})
    .then(function(res){return res.json()}).then(function(j){if(j.success===true||j.success==="true"){r.sent=true;mcState="ok";save()}else mcState="fail";statusMC()})
    .catch(function(){mcState="fail";statusMC()});
@@ -1350,7 +1359,8 @@ function pdfMC(){var r=S.rMC;
   $("report").innerHTML='<h1>Activity 2.1 Mission Check</h1><div>Strategy in Action · Beltone Academy</div><div>'+esc(who())+' · '+esc(r.at)+'</div>'+
     '<h2>The mission evaluated</h2><p style="font-size:14px;font-style:italic">“'+esc(MCQ)+'”</p><p>Company: Gulf Insurance Group (GIG), parent group of GIG Egypt.</p>'+
     '<h2>Our evaluation</h2><table><thead><tr><th>Test</th><th>Our score (1–5)</th></tr></thead><tbody>'+MCT.map(function(t,i){return '<tr><td>'+t.t+'</td><td>'+r.sc[i]+'</td></tr>'}).join("")+'</tbody></table>'+
-    '<p>Average score: '+(r.sc.reduce(function(a,b){return a+b},0)/5).toFixed(1)+' / 5</p>';
+    '<p>Average score: '+(r.sc.reduce(function(a,b){return a+b},0)/5).toFixed(1)+' / 5</p>'+
+    (r.rw?'<h2>Our rewrite ('+wcount(r.rw)+' words)</h2><p style="font-size:14px;font-style:italic">\u201c'+esc(r.rw)+'\u201d</p>':'');
   $("pdfmMC").textContent="In the print window, choose “Save as PDF”.";
   try{window.print()}catch(e){$("pdfmMC").textContent="Printing is blocked here. Open the online link in Chrome or Edge."}
 }
